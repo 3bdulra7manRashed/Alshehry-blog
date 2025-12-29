@@ -160,7 +160,7 @@
             <div class="flex justify-between items-center">
                 <!-- Right: Logo -->
                 <a href="{{ route('home') }}" class="text-4xl md:text-4xl text-2xl font-serif font-bold text-brand-accent tracking-tight">
-                    مدونة تجريبية
+                    {{ config('app.name', 'مدونة تجريبي') }}
                 </a>
                 
                 <!-- Left: Menu Button (Desktop) -->

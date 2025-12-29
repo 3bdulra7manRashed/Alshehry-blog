@@ -37,8 +37,23 @@ class ProfileController extends Controller
             $user->email_verified_at = null;
         }
 
-        // Handle biography sanitization if provided (for super admin only)
-        if (($user->is_super_admin || $user->id === 1) && isset($validated['biography'])) {
+        // Handle Profile Photo Upload
+        if ($request->hasFile('photo')) {
+            $request->validate([
+                'photo' => ['nullable', 'image', 'max:1024'],
+            ]);
+
+            // Delete old photo if exists
+            if ($user->profile_photo_path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->profile_photo_path);
+            }
+
+            $path = $request->file('photo')->store('profile-photos', 'public');
+            $user->profile_photo_path = $path;
+        }
+
+        // Handle biography sanitization if provided
+        if (isset($validated['biography'])) {
             $biographyRaw = $validated['biography'];
             $biographySanitized = null;
 

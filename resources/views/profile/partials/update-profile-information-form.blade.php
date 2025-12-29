@@ -13,9 +13,25 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="space-y-6" id="profile-form">
+    <form method="post" action="{{ route('profile.update') }}" class="space-y-6" id="profile-form" enctype="multipart/form-data">
         @csrf
         @method('patch')
+
+        <!-- Hidden Profile Photo Input (UI is in Left Sidebar) -->
+        <input type="file" 
+               name="photo" 
+               id="photo" 
+               class="hidden"
+               accept="image/*"
+               x-on:change="
+                    const file = $event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => { photoPreview = e.target.result; };
+                        reader.readAsDataURL(file);
+                    }
+               ">
+        <x-input-error class="mt-2" :messages="$errors->get('photo')" />
 
         <!-- Name -->
         <div>
@@ -56,20 +72,20 @@
             <x-input-error class="mt-2" :messages="$errors->get('short_bio')" />
         </div>
 
-        <!-- Detailed Biography (Super Admin Only) -->
-        @if(auth()->user()->is_super_admin || auth()->id() === 1)
+        <!-- Detailed Biography -->
         <div>
             <x-input-label for="biography" :value="__('النبذة التعريفية')" />
             <p class="text-xs text-gray-500 mb-2">اكتب نبذة تفصيلية عنك تظهر في صفحة "عني"</p>
-            @php
-                $value = old('biography', $user->biography);
-            @endphp
-            <div class="min-h-[300px] md:min-h-[400px]">
-                @ckeditor('biography')
-            </div>
+            <textarea 
+                id="biography" 
+                name="biography" 
+                class="ckeditor mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
+                rows="10"
+                data-min-height="250px"
+                data-placeholder="اكتب نبذتك التعريفية هنا..."
+            >{{ old('biography', $user->biography) }}</textarea>
             <x-input-error class="mt-2" :messages="$errors->get('biography')" />
         </div>
-        @endif
 
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('حفظ التغييرات') }}</x-primary-button>

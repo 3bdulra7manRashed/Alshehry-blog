@@ -5,12 +5,10 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AdminUserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $name = env('ADMIN_NAME');
@@ -18,13 +16,10 @@ class AdminUserSeeder extends Seeder
         $password = env('ADMIN_PASSWORD');
 
         if (!$name || !$email || !$password) {
-            $this->command->error('ADMIN_NAME, ADMIN_EMAIL and ADMIN_PASSWORD env vars must be set.');
-            $this->command->error('Current values:');
-            $this->command->error('  ADMIN_NAME: ' . ($name ?: 'NOT SET'));
-            $this->command->error('  ADMIN_EMAIL: ' . ($email ?: 'NOT SET'));
-            $this->command->error('  ADMIN_PASSWORD: ' . ($password ? 'SET (hidden)' : 'NOT SET'));
-            return;
+             return;
         }
+
+        $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
 
         $user = User::updateOrCreate(
             ['email' => $email],
@@ -32,20 +27,16 @@ class AdminUserSeeder extends Seeder
                 'name' => $name,
                 'password' => Hash::make($password),
                 'is_admin' => true,
+                'is_super_admin' => true,
+                'role' => 'admin',
                 'email_verified_at' => now(),
             ]
         );
 
-        // Also assign admin role using Spatie Permission
         if (!$user->hasRole('admin')) {
-            $user->assignRole('admin');
+            $user->assignRole($role);
         }
 
-        $this->command->info("✓ Admin user created/updated: {$email}");
-        $this->command->info("  Name: {$name}");
-        $this->command->info("  Email: {$email}");
-        $this->command->info("  Password: {$password}");
-        $this->command->info("  Is Admin: " . ($user->is_admin ? 'Yes' : 'No'));
+        $this->command->info("✓ Admin user created (ID: 1) with Role: Admin");
     }
 }
-

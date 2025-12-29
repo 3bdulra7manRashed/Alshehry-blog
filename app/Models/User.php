@@ -31,7 +31,21 @@ class User extends Authenticatable
         'is_super_admin',
         'short_bio',
         'biography',
+        'profile_photo_path',
     ];
+
+    /**
+     * Get the profile photo URL or default avatar.
+     */
+    public function getProfilePhotoUrlAttribute(): string
+    {
+        if ($this->profile_photo_path) {
+            return asset('storage/' . $this->profile_photo_path);
+        }
+
+        $name = urlencode($this->name);
+        return "https://ui-avatars.com/api/?name={$name}&color=7F9CF5&background=EBF4FF";
+    }
 
     /**
      * The attributes that should be hidden for serialization.
