@@ -1,3 +1,8 @@
+# ==============================================================================
+# Coolify Deployment - Docker Compose Configuration
+# Uses Coolify magic variables for automatic configuration
+# ==============================================================================
+
 services:
   app:
     build:
@@ -17,35 +22,58 @@ services:
       # Coolify magic variables (auto-provided by Coolify)
       - SERVICE_FQDN_APP
       - SERVICE_PASSWORD_MYSQLROOT
-      # Laravel core configuration
+      
+      # Laravel Core Configuration
       - APP_ENV=${APP_ENV:-production}
       - APP_DEBUG=${APP_DEBUG:-false}
       - APP_KEY=${APP_KEY:-}
       - APP_NAME=${APP_NAME:-Laravel}
       - APP_URL=https://${SERVICE_FQDN_APP}
       - APP_MAINTENANCE_DRIVER=${APP_MAINTENANCE_DRIVER:-file}
-      # Database configuration
+      - APP_TIMEZONE=${APP_TIMEZONE:-UTC}
+      
+      # Database Configuration
       - DB_CONNECTION=mysql
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_DATABASE=${DB_DATABASE:-laravel}
       - DB_USERNAME=${DB_USERNAME:-laravel}
       - DB_PASSWORD=${SERVICE_PASSWORD_MYSQLROOT}
+      
       # Cache & Session
       - CACHE_STORE=${CACHE_STORE:-file}
       - SESSION_DRIVER=${SESSION_DRIVER:-file}
+      - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
       - FILESYSTEM_DISK=${FILESYSTEM_DISK:-public}
-      # Mail configuration
-      - MAIL_MAILER=${MAIL_MAILER:-log}
-      # Proxy/Trusted proxy settings for Coolify
+      
+      # Mail Configuration (SMTP)
+      - MAIL_MAILER=${MAIL_MAILER:-smtp}
+      - MAIL_HOST=${MAIL_HOST:-}
+      - MAIL_PORT=${MAIL_PORT:-587}
+      - MAIL_USERNAME=${MAIL_USERNAME:-}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
+      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME:-${APP_NAME}}
+      
+      # reCAPTCHA (Optional)
+      - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY:-}
+      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY:-}
+      
+      # Admin User Seeder
+      - ADMIN_NAME=${ADMIN_NAME:-}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      
+      # Proxy/Trusted Proxy Settings for Coolify
       - TRUSTED_PROXIES=*
       - TRUST_PROXY=true
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/up || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8000/ || pgrep unitd > /dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 90s
 
   mysql:
     image: mysql:8.0
@@ -59,10 +87,11 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${SERVICE_PASSWORD_MYSQLROOT}"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
 volumes:
   mysql_data:
