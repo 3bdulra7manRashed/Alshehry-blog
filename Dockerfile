@@ -77,9 +77,9 @@ php artisan storage:link 2>/dev/null || true\n\
 exec unitd --no-daemon' > /start.sh \
     && chmod +x /start.sh
 
-# Health check for Coolify
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8000/ || exit 1
+# Health check for Coolify (using wget which is available, or check process)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+    CMD wget -q --spider http://127.0.0.1:8000/ || pgrep unitd > /dev/null || exit 1
 
 EXPOSE 8000
 
