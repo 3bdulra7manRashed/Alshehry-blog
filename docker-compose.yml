@@ -1,6 +1,6 @@
 # ==============================================================================
-# Docker Compose for Local Development & Testing
-# For Coolify: Only the Dockerfile is needed, this is for local testing
+# Docker Compose for Coolify Deployment
+# Uses external MySQL database configured via environment variables
 # ==============================================================================
 version: '3.8'
 
@@ -13,75 +13,61 @@ services:
     container_name: laravel-blog
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8000"  # Let Coolify/Docker assign the host port
     environment:
-      - APP_ENV=production
-      - APP_DEBUG=false
-    env_file:
-      - .env
+      # App Configuration
+      - APP_ENV=${APP_ENV:-production}
+      - APP_DEBUG=${APP_DEBUG:-false}
+      - APP_KEY=${APP_KEY}
+      - APP_URL=${APP_URL}
+      
+      # Database (External MySQL)
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      
+      # Cache & Session
+      - CACHE_DRIVER=${CACHE_DRIVER:-file}
+      - SESSION_DRIVER=${SESSION_DRIVER:-file}
+      - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
+      
+      # Mail Configuration
+      - MAIL_MAILER=${MAIL_MAILER:-smtp}
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT:-587}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME}
+      
+      # reCAPTCHA (Optional)
+      - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY:-}
+      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY:-}
+      
+      # Admin User
+      - ADMIN_NAME=${ADMIN_NAME:-}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
     volumes:
-      # Mount storage for persistent data (optional for production)
+      # Persistent storage for uploaded files
       - storage_data:/var/www/html/storage/app/public
-    depends_on:
-      mysql:
-        condition: service_healthy
     networks:
-      - laravel-network
+      - coolify-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8000/"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
-
-  # MySQL Database
-  mysql:
-    image: mysql:8.0
-    container_name: laravel-mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
-      MYSQL_DATABASE: ${DB_DATABASE:-writer_blog}
-      MYSQL_USER: ${DB_USERNAME:-laravel}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
-    volumes:
-      - mysql_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    networks:
-      - laravel-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  # Redis (Optional - for caching & queues)
-  redis:
-    image: redis:7-alpine
-    container_name: laravel-redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - laravel-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      start_period: 90s
 
 volumes:
-  mysql_data:
-    driver: local
-  redis_data:
-    driver: local
   storage_data:
     driver: local
 
 networks:
-  laravel-network:
+  coolify-network:
     driver: bridge
