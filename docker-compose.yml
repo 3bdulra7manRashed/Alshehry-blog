@@ -1,0 +1,87 @@
+# ==============================================================================
+# Docker Compose for Local Development & Testing
+# For Coolify: Only the Dockerfile is needed, this is for local testing
+# ==============================================================================
+version: '3.8'
+
+services:
+  # Laravel Application (NGINX Unit)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-blog
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+    env_file:
+      - .env
+    volumes:
+      # Mount storage for persistent data (optional for production)
+      - storage_data:/var/www/html/storage/app/public
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - laravel-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: laravel-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_DATABASE: ${DB_DATABASE:-writer_blog}
+      MYSQL_USER: ${DB_USERNAME:-laravel}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - laravel-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Redis (Optional - for caching & queues)
+  redis:
+    image: redis:7-alpine
+    container_name: laravel-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - laravel-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  storage_data:
+    driver: local
+
+networks:
+  laravel-network:
+    driver: bridge
