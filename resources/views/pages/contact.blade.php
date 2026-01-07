@@ -112,6 +112,7 @@
         
         <!-- Optional: Simple footer for contact page -->
         <div class="mt-8 text-center text-gray-500 text-sm">
+            <p>يمكنك أيضاً التواصل معنا عبر البريد الإلكتروني المباشر: <a href="mailto:info@example.com" class="text-brand-accent hover:underline font-medium">info@example.com</a></p>
         </div>
     </div>
 </div>
