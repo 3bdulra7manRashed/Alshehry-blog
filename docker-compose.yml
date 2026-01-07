@@ -1,20 +1,21 @@
-# ==============================================================================
-# Docker Compose for Coolify Deployment
-# Uses external MySQL database configured via environment variables
-# ==============================================================================
 version: '3.8'
 
 services:
-  # Laravel Application (NGINX Unit)
   app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: laravel-blog
     restart: unless-stopped
-    ports:
-      - "8000"  # Let Coolify/Docker assign the host port
+    
+    # نستخدم expose بدلاً من ports لأن Coolify يدير الـ Proxy
+    expose:
+      - "80"
+      
     environment:
+      # Coolify Magic Variable: يوجه الدومين للمنفذ 80
+      - SERVICE_FQDN_APP_80
+      
       # App Configuration
       - APP_ENV=${APP_ENV:-production}
       - APP_DEBUG=${APP_DEBUG:-false}
@@ -44,7 +45,7 @@ services:
       - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
       - MAIL_FROM_NAME=${MAIL_FROM_NAME}
       
-      # reCAPTCHA (Optional)
+      # reCAPTCHA
       - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY:-}
       - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY:-}
       
@@ -52,22 +53,22 @@ services:
       - ADMIN_NAME=${ADMIN_NAME:-}
       - ADMIN_EMAIL=${ADMIN_EMAIL:-}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      
+      # Proxy Settings
+      - TRUSTED_PROXIES=*
+      - TRUST_PROXY=true
+
     volumes:
-      # Persistent storage for uploaded files
       - storage_data:/var/www/html/storage/app/public
-    networks:
-      - coolify-network
+      
+    # فحص الصحة على بورت 80 (الأفتراضي لـ Nginx Unit)
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8000/"]
+      test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 90s
+      start_period: 60s
 
 volumes:
   storage_data:
     driver: local
-
-networks:
-  coolify-network:
-    driver: bridge
