@@ -110,6 +110,9 @@
 
         </div>
         
+        <!-- Optional: Simple footer for contact page -->
+        <div class="mt-8 text-center text-gray-500 text-sm">
+        </div>
     </div>
 </div>
 @endsection
