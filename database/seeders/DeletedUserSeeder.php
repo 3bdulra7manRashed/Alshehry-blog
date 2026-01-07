@@ -14,7 +14,10 @@ class DeletedUserSeeder extends Seeder
         $email = env('DELETED_USER_EMAIL', 'deleted-user@local');
 
         // Check if placeholder exists (including soft-deleted)
-        $user = User::withTrashed()->firstWhere('email', $email);
+        // Use withoutGlobalScope to bypass the 'exclude_deleted_user' scope
+        $user = User::withoutGlobalScope('exclude_deleted_user')
+            ->withTrashed()
+            ->firstWhere('email', $email);
 
         if (!$user) {
             User::create([
