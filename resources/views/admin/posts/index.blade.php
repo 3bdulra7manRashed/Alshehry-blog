@@ -57,7 +57,7 @@ use Illuminate\Support\Str;
                                     {{ $post->title }}
                                 </a>
                                 <!-- Author Name (Mobile only) -->
-                                <div class="text-sm text-gray-900 md:hidden">{{ $post->author->name }}</div>
+                                <div class="text-sm text-gray-900 md:hidden">{{ $post->author?->name ?? 'مستخدم محذوف' }}</div>
                                 <!-- Status Badge (Mobile only) -->
                                 <div class="md:hidden">
                                     @if($post->is_draft)
@@ -77,7 +77,7 @@ use Illuminate\Support\Str;
                             </div>
                         </td>
                         <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center hidden md:table-cell">
-                            {{ $post->author->name }}
+                            {{ $post->author?->name ?? 'مستخدم محذوف' }}
                         </td>
                         <td class="px-4 md:px-6 py-4 whitespace-nowrap text-center hidden md:table-cell">
                             @if($post->is_draft)

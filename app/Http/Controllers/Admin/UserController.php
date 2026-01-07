@@ -23,8 +23,13 @@ class UserController extends Controller
     {
         Gate::authorize('manage-users');
         
-        // Show all users including soft-deleted for super-admins
-        $query = User::with('roles')->withTrashed();
+        // Get the deleted user placeholder email to exclude from listing
+        $deletedUserEmail = config('app.deleted_user_email', env('DELETED_USER_EMAIL', 'deleted-user@local'));
+        
+        // Show all users including soft-deleted for super-admins, but exclude the placeholder
+        $query = User::with('roles')
+            ->withTrashed()
+            ->where('email', '!=', $deletedUserEmail);
         
         // Filter by status if requested
         if ($request->has('status')) {

@@ -57,7 +57,7 @@
         "dateModified" => $post->updated_at->toIso8601String(),
         "author" => [
             "@type" => "Person",
-            "name" => $post->author->name
+            "name" => $post->author?->name ?? 'مستخدم محذوف'
         ],
         "publisher" => [
             "@type" => "Organization",
@@ -165,6 +165,7 @@
             
 
             <!-- Author Bio Card -->
+            @if($post->author)
             <div class="bg-gray-50 rounded-lg p-6">
                 <div class="flex flex-col sm:flex-row-reverse items-center sm:items-start gap-4">
                     
@@ -183,6 +184,7 @@
 
                 </div>
             </div>
+            @endif
         </div>
     </div>
 

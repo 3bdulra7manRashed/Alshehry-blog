@@ -165,7 +165,7 @@
                                     <!-- Post Title -->
                                     <div class="text-sm font-medium text-brand-primary">{{ $post->title }}</div>
                                     <!-- Author Name (Mobile only) -->
-                                    <div class="text-sm text-gray-900 md:hidden">{{ $post->author->name }}</div>
+                                    <div class="text-sm text-gray-900 md:hidden">{{ $post->author?->name ?? 'مستخدم محذوف' }}</div>
                                     <!-- Status Badge (Mobile only) -->
                                     <div class="md:hidden">
                                         @if($post->is_draft)
@@ -181,7 +181,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 hidden md:table-cell text-center">
-                                <div class="text-sm text-gray-900">{{ $post->author->name }}</div>
+                                <div class="text-sm text-gray-900">{{ $post->author?->name ?? 'مستخدم محذوف' }}</div>
                             </td>
                             <td class="px-6 py-4 hidden md:table-cell text-center">
                                 @if($post->is_draft)

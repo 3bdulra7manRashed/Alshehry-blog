@@ -18,18 +18,6 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
     /**
-     * The "booted" method of the model.
-     * Adds a global scope to exclude the deleted user placeholder from all queries.
-     */
-    protected static function booted(): void
-    {
-        static::addGlobalScope('exclude_deleted_user', function ($query) {
-            $deletedUserEmail = config('app.deleted_user_email', env('DELETED_USER_EMAIL', 'deleted-user@local'));
-            $query->where('email', '!=', $deletedUserEmail);
-        });
-    }
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>

@@ -18,7 +18,8 @@ class DashboardController extends Controller
         $totalPosts = Post::count();
         $totalPublished = Post::published()->count();
         $totalDrafts = Post::where('is_draft', true)->count();
-        $totalUsers = User::count();
+        $deletedUserEmail = config('app.deleted_user_email', env('DELETED_USER_EMAIL', 'deleted-user@local'));
+        $totalUsers = User::where('email', '!=', $deletedUserEmail)->count();
         $totalCategories = Category::count();
         $totalTags = Tag::count();
         $totalLikes = Post::sum('likes_count');
