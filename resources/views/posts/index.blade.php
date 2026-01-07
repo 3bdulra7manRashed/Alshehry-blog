@@ -1,6 +1,13 @@
 @extends('layouts.blog')
 
-@section('title', 'الرئيسية - ' . config('app.name'))
+{{-- Homepage SEO - Profile type for personal brand --}}
+@section('title', 'صالح الشهري | Saleh Alshehry - ريادة الأعمال والابتكار')
+
+@section('description', 'مدونة صالح الشهري - خبير ريادة الأعمال ومستشار في منشآت. مقالات متخصصة في تأسيس المشاريع الناشئة، التدريب والتطوير، والابتكار. اكتشف أسرار النجاح في عالم ريادة الأعمال.')
+
+@section('keywords', 'صالح الشهري, ريادة الأعمال, تأسيس مشاريع, منشآت, استشارات ريادية, جدة, تدريب وتطوير, مشاريع ناشئة, Saleh Alshehry, مستشار أعمال')
+
+@section('og_type', 'profile')
 
 @section('content')
 <div class="container mx-auto px-4 py-12 max-w-5xl">

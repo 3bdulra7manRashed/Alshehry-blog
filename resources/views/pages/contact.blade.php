@@ -1,6 +1,11 @@
 @extends('layouts.blog')
 
-@section('title', 'تواصل معي - ' . config('app.name'))
+{{-- Contact Page SEO --}}
+@section('title', 'تواصل مع صالح الشهري | استشارات ريادة الأعمال')
+
+@section('description', 'تواصل مع صالح الشهري للاستشارات في ريادة الأعمال، تأسيس المشاريع، التدريب والتطوير. خبرة واسعة في دعم رواد الأعمال وتحويل الأفكار إلى مشاريع ناجحة.')
+
+@section('keywords', 'تواصل صالح الشهري, استشارات ريادة الأعمال, استشارات أعمال جدة, تدريب رواد الأعمال, منشآت')
 
 @section('content')
 <div class="container mx-auto px-4 py-16" dir="rtl">

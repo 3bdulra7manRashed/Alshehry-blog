@@ -1,6 +1,13 @@
 @extends('layouts.blog')
 
-@section('title', 'عني - ' . config('app.name'))
+{{-- About Page SEO --}}
+@section('title', 'عن صالح الشهري | خبير ريادة الأعمال ومستشار منشآت')
+
+@section('description', 'تعرف على صالح الشهري - CEO وخبير ريادة الأعمال، حاصل على ماجستير ريادة الأعمال، مستشار معتمد في منشآت. متخصص في تأسيس المشاريع الناشئة، التدريب والتطوير، وتحويل الأفكار إلى مشاريع ناجحة.')
+
+@section('keywords', 'صالح الشهري, من هو صالح الشهري, خبير ريادة الأعمال, مستشار منشآت, ماجستير ريادة الأعمال, تأسيس المشاريع, جدة')
+
+@section('og_type', 'profile')
 
 @section('content')
 <div class="container mx-auto px-4 py-12" dir="rtl">

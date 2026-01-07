@@ -4,7 +4,11 @@ use App\Http\Controllers\Api\PostLikeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
+
+// SEO: Sitemap for Google indexing
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Public blog routes
 Route::get('/', [PostController::class, 'index'])->name('home');

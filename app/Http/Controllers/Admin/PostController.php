@@ -152,13 +152,14 @@ class PostController extends Controller
             }
         }
 
-        if (isset($data['featured_image'])) {
+        // Handle featured image upload - use $request->hasFile() because
+        // Laravel's validated() method doesn't include file objects in the returned array
+        if ($request->hasFile('featured_image')) {
             if ($post->featured_image_path) {
                 Storage::disk('public')->delete($post->featured_image_path);
             }
             $path = $request->file('featured_image')->store('posts', 'public');
             $data['featured_image_path'] = $path;
-            unset($data['featured_image']);
         }
 
         $post->update($data);

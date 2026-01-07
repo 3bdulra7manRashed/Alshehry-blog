@@ -37,7 +37,6 @@ class UpdatePostRequest extends FormRequest
             'categories.*' => ['exists:categories,id'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['exists:tags,id'],
-            'meta' => ['nullable', 'array'],
         ];
     }
 
