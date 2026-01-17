@@ -83,6 +83,9 @@
         gtag('config', 'G-XXXXXXXXXX');
     </script>
     --}}
+
+    {{-- Page-specific styles --}}
+    @stack('styles')
 </head>
 <body class="font-sans antialiased bg-white text-brand-primary flex flex-col min-h-screen">
     {{-- Skip to Content Link (Accessibility) --}}

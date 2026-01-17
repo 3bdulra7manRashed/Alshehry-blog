@@ -17,6 +17,7 @@ class ContactFormRequest extends FormRequest
         $this->merge([
             'name' => trim($this->name),
             'email' => trim(strtolower($this->email)),
+            'phone' => $this->phone ? preg_replace('/[^0-9+]/', '', trim($this->phone)) : null,
             'message' => trim($this->message),
         ]);
     }
@@ -43,6 +44,12 @@ class ContactFormRequest extends FormRequest
                 'string',
                 'min:10',
                 'max:2000',
+            ],
+            'phone' => [
+                'nullable',
+                'string',
+                'max:20',
+                'regex:/^(\+[1-9]\d{6,14}|05[0-9]{8}|5[0-9]{8})$/', // E.164 international format OR Saudi local
             ],
             'g-recaptcha-response' => [
                 'required',
@@ -71,6 +78,10 @@ class ContactFormRequest extends FormRequest
             'message.min' => 'الرسالة يجب أن تحتوي على 10 أحرف على الأقل',
             'message.max' => 'الرسالة يجب أن لا تتجاوز 2000 حرف',
             
+            // Phone validation messages
+            'phone.max' => 'رقم الهاتف يجب أن لا يتجاوز 20 رقم',
+            'phone.regex' => 'صيغة رقم الهاتف غير صحيحة (مثال: 05xxxxxxxx)',
+            
             // reCAPTCHA validation message
             'g-recaptcha-response.required' => 'يرجى إكمال التحقق من reCAPTCHA',
         ];
@@ -81,6 +92,7 @@ class ContactFormRequest extends FormRequest
         return [
             'name' => 'الاسم',
             'email' => 'البريد الإلكتروني',
+            'phone' => 'رقم الهاتف',
             'message' => 'الرسالة',
         ];
     }

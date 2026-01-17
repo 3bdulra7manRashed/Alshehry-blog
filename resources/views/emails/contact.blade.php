@@ -114,6 +114,18 @@
                 </div>
             </div>
 
+            <!-- Sender Phone -->
+            <div class="info-row">
+                <span class="info-label">📞 رقم الهاتف</span>
+                <div class="info-value">
+                    @if($senderPhone)
+                        <a href="tel:{{ $senderPhone }}" dir="ltr">{{ $senderPhone }}</a>
+                    @else
+                        <span style="color: #888;">غير متوفر</span>
+                    @endif
+                </div>
+            </div>
+
             <!-- Message -->
             <div class="info-row">
                 <span class="info-label">💬 نص الرسالة</span>

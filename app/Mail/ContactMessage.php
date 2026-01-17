@@ -47,6 +47,7 @@ class ContactMessage extends Mailable
             with: [
                 'senderName' => $this->data['name'],
                 'senderEmail' => $this->data['email'],
+                'senderPhone' => $this->data['phone'] ?? null,
                 'senderMessage' => $this->data['message'],
             ],
         );
