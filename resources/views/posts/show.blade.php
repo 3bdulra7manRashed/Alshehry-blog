@@ -1,26 +1,14 @@
 @extends('layouts.blog')
 
-{{-- Enhanced Title Format: Post Title + Brand --}}
-@section('title', $post->title . ' | صالح الشهري - ريادة الأعمال')
+@section('title', $post->title . ' - ' . config('app.name'))
 
-{{-- Enhanced Description with fallback --}}
-@php
-    $postDescription = $post->excerpt 
-        ?? $post->meta['description'] 
-        ?? Str::limit(strip_tags($post->content), 155) . ' | صالح الشهري - خبير ريادة الأعمال';
-@endphp
-@section('description', $postDescription)
+@section('description', $post->excerpt ?? $post->meta['description'] ?? Str::limit(strip_tags($post->content), 160))
 
-{{-- Enhanced Keywords with entrepreneurship focus --}}
-@php
-    $postKeywords = $post->meta['keywords'] 
-        ?? 'صالح الشهري, ريادة الأعمال, ' . $post->tags->pluck('name')->implode(', ') . ', تأسيس مشاريع, منشآت, استشارات ريادية';
-@endphp
-@section('keywords', $postKeywords)
+@section('keywords', $post->meta['keywords'] ?? '')
 
 @section('og_type', 'article')
 
-@section('og_image', $post->featured_image_url ?? asset('images/saleh-alshehry-og.jpg'))
+@section('og_image', $post->featured_image_url ?? asset('images/default-share.jpg'))
 
 @push('styles')
 <style>
@@ -36,15 +24,14 @@
 </style>
 @endpush
 
-{{-- Additional meta tags for articles --}}
+{{-- Additional meta tags can still be added via @push('meta') if needed --}}
 @push('meta')
 @if($post->published_at)
 <meta property="article:published_time" content="{{ $post->published_at->toIso8601String() }}">
 @endif
-@if($post->updated_at)
-<meta property="article:modified_time" content="{{ $post->updated_at->toIso8601String() }}">
+@if($post->author)
+<meta property="article:author" content="{{ $post->author->name }}">
 @endif
-<meta property="article:author" content="صالح الشهري">
 @if($post->categories->count() > 0)
 @foreach($post->categories as $category)
 <meta property="article:section" content="{{ $category->name }}">
@@ -57,81 +44,43 @@
 @endif
 @endpush
 
-{{-- Enhanced Article Schema with proper author/publisher references --}}
+{{-- Structured Data (Schema.org JSON-LD) for Article --}}
 @section('schema')
 @php
-    $articleSchema = [
+    $schema = [
         "@context" => "https://schema.org",
         "@type" => "Article",
-        "@id" => url()->current() . "#article",
         "headline" => $post->title,
-        "description" => $post->excerpt ?? Str::limit(strip_tags($post->content), 160),
+        // نستخدم دالة الهروب لضمان عدم وجود أكواد HTML تكسر الجيسون
+        "description" => $post->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($post->content), 160),
         "datePublished" => $post->published_at?->toIso8601String() ?? $post->created_at->toIso8601String(),
         "dateModified" => $post->updated_at->toIso8601String(),
-        "wordCount" => str_word_count(strip_tags($post->content)),
-        "inLanguage" => "ar",
         "author" => [
-            "@id" => url('/') . "/#person"
+            "@type" => "Person",
+            "name" => $post->author->name
         ],
         "publisher" => [
-            "@type" => "Person",
-            "@id" => url('/') . "/#person",
-            "name" => "صالح الشهري",
-            "url" => url('/')
+            "@type" => "Organization",
+            "name" => config('app.name', 'مدونة تجريبية'),
+            "logo" => [
+                "@type" => "ImageObject",
+                "url" => asset('images/default-share.jpg')
+            ]
         ],
         "mainEntityOfPage" => [
             "@type" => "WebPage",
             "@id" => url()->current()
-        ],
-        "keywords" => $post->tags->pluck('name')->implode(', ') . ', ريادة الأعمال, صالح الشهري'
+        ]
     ];
 
-    // Add image if exists
+    // إضافة الصورة شرطياً بطريقة برمجية نظيفة
     if ($post->featured_image_url) {
-        $articleSchema['image'] = [
-            "@type" => "ImageObject",
-            "url" => $post->featured_image_url,
-            "width" => 1200,
-            "height" => 630
-        ];
-    }
-
-    // Add categories as article sections
-    if ($post->categories->count() > 0) {
-        $articleSchema['articleSection'] = $post->categories->pluck('name')->first();
+        $schema['image'] = $post->featured_image_url;
     }
 @endphp
 
 <script type="application/ld+json">
-    {!! json_encode($articleSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-</script>
-
-{{-- BreadcrumbList Schema for better navigation in search results --}}
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-        {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "الرئيسية",
-            "item": "{{ url('/') }}"
-        },
-        {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "المقالات",
-            "item": "{{ route('home') }}"
-        },
-        {
-            "@type": "ListItem",
-            "position": 3,
-            "name": "{{ $post->title }}",
-            "item": "{{ url()->current() }}"
-        }
-    ]
-}
+    {!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
 </script>
 @endsection
 
@@ -216,7 +165,6 @@
             
 
             <!-- Author Bio Card -->
-            @if($post->author)
             <div class="bg-gray-50 rounded-lg p-6">
                 <div class="flex flex-col sm:flex-row-reverse items-center sm:items-start gap-4">
                     
@@ -235,7 +183,6 @@
 
                 </div>
             </div>
-            @endif
         </div>
     </div>
 
