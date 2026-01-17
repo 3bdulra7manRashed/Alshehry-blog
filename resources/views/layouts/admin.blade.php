@@ -136,6 +136,14 @@
                     @endcan
                 
                     <div class="pt-4 border-t border-gray-200 mt-4">
+                        {{-- Profile Link - visible to all authenticated users --}}
+                        <a href="{{ route('profile.edit') }}"
+                           class="flex items-center px-4 py-2 rounded-md transition-colors {{ request()->routeIs('profile.edit') ? 'bg-brand-accent text-white hover:text-white hover:bg-amber-700' : 'text-gray-700 hover:bg-gray-100' }}">
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            الملف الشخصي
+                        </a>
                         <a href="{{ route('home') }}" class="flex items-center px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors">
                             <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
