@@ -49,17 +49,28 @@ class PageController extends Controller
         $validated = $request->validated();
 
         try {
+            // Save message to database first
+            $contactMessage = \App\Models\ContactMessage::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'] ?? null,
+                'message' => $validated['message'],
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             // Send email to the site owner
             Mail::to(config('mail.from.address'))->send(new ContactMessage($validated));
 
-            Log::info('Contact form submitted', [
+            Log::info('Contact form submitted and saved', [
+                'id' => $contactMessage->id,
                 'from' => $validated['email'],
                 'name' => $validated['name'],
             ]);
 
             return back()->with('success', 'شكراً لرسالتك. سيتم الرد عليك قريباً!');
         } catch (\Exception $e) {
-            Log::error('Failed to send contact email', [
+            Log::error('Failed to process contact form', [
                 'error' => $e->getMessage(),
                 'from' => $validated['email'],
             ]);

@@ -51,6 +51,14 @@ Route::prefix('admin')->middleware(['auth', 'role:admin|moderator'])->name('admi
     Route::resource('media', \App\Http\Controllers\Admin\MediaController::class)->except(['show', 'edit', 'update']);
     Route::post('media/upload', [\App\Http\Controllers\Admin\MediaController::class, 'store'])->name('media.upload');
     Route::post('upload-image', [\App\Http\Controllers\Admin\MediaController::class, 'upload'])->name('upload.image');
+    
+    // Contact Messages Management
+    Route::get('messages', [\App\Http\Controllers\Admin\MessageController::class, 'index'])->name('messages.index');
+    Route::get('messages/{message}', [\App\Http\Controllers\Admin\MessageController::class, 'show'])->name('messages.show');
+    Route::delete('messages/{message}', [\App\Http\Controllers\Admin\MessageController::class, 'destroy'])->name('messages.destroy');
+    Route::patch('messages/{message}/toggle-read', [\App\Http\Controllers\Admin\MessageController::class, 'toggleRead'])->name('messages.toggle-read');
+    Route::post('messages/mark-all-read', [\App\Http\Controllers\Admin\MessageController::class, 'markAllRead'])->name('messages.mark-all-read');
+    Route::delete('messages/delete-read', [\App\Http\Controllers\Admin\MessageController::class, 'deleteRead'])->name('messages.delete-read');
 });
 
 // User management routes - Only Super Admin (مدير النظام) can access
