@@ -19,9 +19,9 @@
         // Detect if we're on a single post page (error-proof check)
         $isPostPage = isset($post) && Route::currentRouteName() === 'post.show';
         
-        // Site defaults
+        // Site defaults - FORCE HTTPS for WhatsApp/Social sharing
         $siteName = 'صالح الشهري | Saleh Alshehry';
-        $defaultImage = asset('images/saleh-alshehry-og.jpg');
+        $defaultImage = secure_asset('images/saleh-alshehry-og.jpg');
         $defaultTitle = 'صالح الشهري | استشارات ريادة الأعمال وبناء المشاريع الناشئة';
         $defaultDescription = 'حوّل فكرتك إلى مشروع ريادي ناجح. مدونة صالح الشهري تقدم تحليلات عملية، استشارات للمنشآت الصغيرة، ونماذج عمل مبتكرة للنمو والاستدامة وفق رؤية المملكة 2030.';
         $defaultKeywords = 'ريادة الأعمال, صالح الشهري, استشارات مشاريع, المنشآت الصغيرة والمتوسطة, نموذج العمل التجاري, دراسة جدوى, تأسيس شركات, رؤية 2030, جدة, مركز النخبة للتدريب, نمو الأعمال';
@@ -33,11 +33,21 @@
             $seoDescription = $post->excerpt ?? Str::limit(strip_tags($post->content), 160);
             $seoKeywords = $post->tags->pluck('name')->implode(', ') ?: $defaultKeywords;
             
-            // Image: Use featured image URL (must be absolute for WhatsApp)
-            $seoImage = $post->featured_image_url ?? $defaultImage;
-            // Ensure absolute URL
-            if ($seoImage && !Str::startsWith($seoImage, ['http://', 'https://'])) {
-                $seoImage = url($seoImage);
+            // Image: FORCE HTTPS for WhatsApp compatibility
+            $rawImage = $post->featured_image_url ?? null;
+            
+            if ($rawImage) {
+                // Check if already an absolute URL
+                if (Str::startsWith($rawImage, ['http://', 'https://'])) {
+                    // Force HTTPS even if it came as HTTP
+                    $seoImage = Str::replaceFirst('http://', 'https://', $rawImage);
+                } else {
+                    // Relative path - use secure_url
+                    $seoImage = secure_url($rawImage);
+                }
+            } else {
+                // No featured image - use default
+                $seoImage = $defaultImage;
             }
             
             $ogType = 'article';
@@ -58,9 +68,12 @@
             $twitterDescription = 'آراء وتحليلات عملية حول بناء المشاريع وازدهارها. اكتشف كيف تصنع قيمة حقيقية لعميلك وتتخذ قرارات تُحدث فرقاً في رحلة التأسيس.';
         }
         
-        $currentUrl = url()->current();
+        // Force HTTPS on current URL as well
+        $currentUrl = secure_url(request()->path());
     @endphp
 
+    <!-- DEBUG OG:IMAGE URL: {{ $seoImage }} -->
+    
     <title>@yield('title', $seoTitle)</title>
     <meta name="title" content="@yield('title', $seoTitle)">
     <meta name="description" content="@yield('description', $seoDescription)">
@@ -76,6 +89,8 @@
     <meta property="og:title" content="@yield('og_title', $ogTitle)">
     <meta property="og:description" content="@yield('og_description', $ogDescription)">
     <meta property="og:image" content="@yield('og_image', $seoImage)">
+    <meta property="og:image:secure_url" content="@yield('og_image', $seoImage)">
+    <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{{ $isPostPage ? $post->title : 'صالح الشهري - خبير ريادة الأعمال ونمو المنشآت' }}">
