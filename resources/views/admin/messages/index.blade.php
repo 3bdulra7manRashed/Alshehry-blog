@@ -62,18 +62,19 @@
                 <table class="w-full">
                     <thead class="bg-gray-50 border-b border-gray-100">
                         <tr>
-                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">الحالة</th>
-                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">المرسل</th>
-                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">الرسالة</th>
-                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">التاريخ</th>
-                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">الإجراءات</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">الحالة</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">المرسل</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">الرسالة</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">التاريخ</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach($messages as $message)
-                            <tr class="hover:bg-gray-50 transition-colors {{ !$message->is_read ? 'bg-blue-50/50' : '' }}">
+                            <tr class="cursor-pointer hover:bg-amber-50/50 transition-colors {{ !$message->is_read ? 'bg-blue-50/50' : '' }}"
+                                onclick="window.location='{{ route('admin.messages.show', $message) }}'">
                                 {{-- Status --}}
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
                                     @if(!$message->is_read)
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                             <span class="w-2 h-2 ml-1.5 bg-blue-500 rounded-full animate-pulse"></span>
@@ -87,8 +88,8 @@
                                 </td>
                                 
                                 {{-- Sender Info --}}
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center">
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex items-center justify-center">
                                         <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-brand-accent to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
                                             {{ mb_substr($message->name, 0, 1) }}
                                         </div>
@@ -102,14 +103,14 @@
                                 </td>
                                 
                                 {{-- Message Snippet --}}
-                                <td class="px-6 py-4 hidden md:table-cell">
-                                    <p class="text-sm text-gray-600 truncate max-w-xs {{ !$message->is_read ? 'font-medium' : '' }}">
+                                <td class="px-6 py-4 hidden md:table-cell text-center">
+                                    <p class="text-sm text-gray-600 truncate max-w-xs mx-auto {{ !$message->is_read ? 'font-medium' : '' }}">
                                         {{ $message->snippet }}
                                     </p>
                                 </td>
                                 
                                 {{-- Date --}}
-                                <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                                <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell text-center">
                                     <div class="text-sm text-gray-500">
                                         {{ $message->created_at->diffForHumans() }}
                                     </div>
@@ -118,18 +119,9 @@
                                     </div>
                                 </td>
                                 
-                                {{-- Actions --}}
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center gap-2">
-                                        <a href="{{ route('admin.messages.show', $message) }}" 
-                                           class="inline-flex items-center px-3 py-1.5 bg-brand-accent text-white text-xs font-medium rounded-lg hover:bg-opacity-90 transition-colors hover:text-white hover:bg-amber-700 ">
-                                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                            </svg>
-                                            عرض
-                                        </a>
-                                        
+                                {{-- Actions (with stopPropagation to prevent row click) --}}
+                                <td class="px-6 py-4 whitespace-nowrap text-center" onclick="event.stopPropagation()">
+                                    <div class="flex items-center justify-center gap-2">
                                         <form action="{{ route('admin.messages.destroy', $message) }}" method="POST" 
                                               onsubmit="return confirm('هل أنت متأكد من حذف هذه الرسالة؟')">
                                             @csrf
