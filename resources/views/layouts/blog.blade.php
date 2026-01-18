@@ -9,33 +9,73 @@
     <meta name="theme-color" content="#c37c54">
     <meta name="googlebot" content="index, follow">
 
-    {{-- Primary Meta Tags - Optimized for Saleh Alshehry Brand --}}
+    {{-- Smart SEO Meta Tags - Auto-detect Post Pages for Social Sharing --}}
     @php
-        $defaultTitle = 'صالح الشهري | Saleh Alshehry - ريادة الأعمال والابتكار';
-        $defaultDescription = 'صالح الشهري - خبير ريادة الأعمال، مستشار في منشآت، ماجستير في ريادة الأعمال. متخصص في تأسيس المشاريع الناشئة، التدريب والتطوير، وتحويل الأفكار إلى واقع ناجح. جدة - المملكة العربية السعودية.';
-        $defaultKeywords = 'صالح الشهري, ريادة الأعمال, تأسيس مشاريع, منشآت, استشارات ريادية, جدة, تدريب وتطوير, مشاريع ناشئة, startup, entrepreneurship, Saleh Alshehry, مستشار أعمال, تطوير الأعمال';
-        $defaultImage = asset('images/saleh-alshehry-og.jpg');
+        use Illuminate\Support\Str;
+        
+        // Detect if we're on a single post page (error-proof check)
+        $isPostPage = isset($post) && Route::currentRouteName() === 'post.show';
+        
+        // Site defaults
         $siteName = 'صالح الشهري | Saleh Alshehry';
+        $defaultImage = asset('images/saleh-alshehry-og.jpg');
+        $defaultTitle = 'صالح الشهري | استشارات ريادة الأعمال وبناء المشاريع الناشئة';
+        $defaultDescription = 'حوّل فكرتك إلى مشروع ريادي ناجح. مدونة صالح الشهري تقدم تحليلات عملية، استشارات للمنشآت الصغيرة، ونماذج عمل مبتكرة للنمو والاستدامة وفق رؤية المملكة 2030.';
+        $defaultKeywords = 'ريادة الأعمال, صالح الشهري, استشارات مشاريع, المنشآت الصغيرة والمتوسطة, نموذج العمل التجاري, دراسة جدوى, تأسيس شركات, رؤية 2030, جدة, مركز النخبة للتدريب, نمو الأعمال';
+        
+        // Dynamic SEO values based on page type
+        if ($isPostPage) {
+            // Single Post Page - Use post data
+            $seoTitle = $post->title . ' | صالح الشهري';
+            $seoDescription = $post->excerpt ?? Str::limit(strip_tags($post->content), 160);
+            $seoKeywords = $post->tags->pluck('name')->implode(', ') ?: $defaultKeywords;
+            
+            // Image: Use featured image URL (must be absolute for WhatsApp)
+            $seoImage = $post->featured_image_url ?? $defaultImage;
+            // Ensure absolute URL
+            if ($seoImage && !Str::startsWith($seoImage, ['http://', 'https://'])) {
+                $seoImage = url($seoImage);
+            }
+            
+            $ogType = 'article';
+            $ogTitle = $post->title;
+            $ogDescription = $post->excerpt ?? Str::limit(strip_tags($post->content), 200);
+            $twitterTitle = $post->title . ' | صالح الشهري';
+            $twitterDescription = $post->excerpt ?? Str::limit(strip_tags($post->content), 200);
+        } else {
+            // Non-Post Pages - Use defaults (can be overridden via @section)
+            $seoTitle = $defaultTitle;
+            $seoDescription = $defaultDescription;
+            $seoKeywords = $defaultKeywords;
+            $seoImage = $defaultImage;
+            $ogType = 'website';
+            $ogTitle = 'صالح الشهري - دليلك العملي لتحويل الأفكار إلى مشاريع';
+            $ogDescription = 'كيف تبني مشروعاً يزدهر ويصنع قيمة؟ أشاركك هنا خلاصة خبرتي في تحويل الأفكار إلى مشاريع ريادية قابلة للنمو، مع استشارات متخصصة لدعم المحتوى المحلي والاقتصاد الوطني.';
+            $twitterTitle = 'صالح الشهري | خبير ريادة الأعمال ونمو المنشآت';
+            $twitterDescription = 'آراء وتحليلات عملية حول بناء المشاريع وازدهارها. اكتشف كيف تصنع قيمة حقيقية لعميلك وتتخذ قرارات تُحدث فرقاً في رحلة التأسيس.';
+        }
+        
+        $currentUrl = url()->current();
     @endphp
 
-    <title>@yield('title', $defaultTitle)</title>
-    <meta name="title" content="@yield('title', $defaultTitle)">
-    <meta name="description" content="@yield('description', $defaultDescription)">
-    <meta name="keywords" content="@yield('keywords', $defaultKeywords)">
-    <meta name="author" content="صالح الشهري - Saleh Alshehry">
+    <title>@yield('title', $seoTitle)</title>
+    <meta name="title" content="@yield('title', $seoTitle)">
+    <meta name="description" content="@yield('description', $seoDescription)">
+    <meta name="keywords" content="@yield('keywords', $seoKeywords)">
+    <meta name="author" content="صالح حمدان الشهري">
 
     {{-- Canonical URL (Prevents Duplicate Content) --}}
-    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="canonical" href="{{ $currentUrl }}">
 
     {{-- Open Graph / Facebook / LinkedIn / WhatsApp --}}
-    <meta property="og:type" content="@yield('og_type', 'website')">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="@yield('title', $defaultTitle)">
-    <meta property="og:description" content="@yield('description', $defaultDescription)">
-    <meta property="og:image" content="@yield('og_image', $defaultImage)">
+    <meta property="og:type" content="@yield('og_type', $ogType)">
+    <meta property="og:url" content="{{ $currentUrl }}">
+    <meta property="og:title" content="@yield('og_title', $ogTitle)">
+    <meta property="og:description" content="@yield('og_description', $ogDescription)">
+    <meta property="og:image" content="@yield('og_image', $seoImage)">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="صالح الشهري - خبير ريادة الأعمال">
+    <meta property="og:image:alt" content="{{ $isPostPage ? $post->title : 'صالح الشهري - خبير ريادة الأعمال ونمو المنشآت' }}">
     <meta property="og:site_name" content="{{ $siteName }}">
     <meta property="og:locale" content="ar_SA">
     <meta property="og:locale:alternate" content="ar_AR">
@@ -44,11 +84,11 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@alshehrysaleh">
     <meta name="twitter:creator" content="@alshehrysaleh">
-    <meta name="twitter:url" content="{{ url()->current() }}">
-    <meta name="twitter:title" content="@yield('title', $defaultTitle)">
-    <meta name="twitter:description" content="@yield('description', $defaultDescription)">
-    <meta name="twitter:image" content="@yield('og_image', $defaultImage)">
-    <meta name="twitter:image:alt" content="صالح الشهري - خبير ريادة الأعمال">
+    <meta name="twitter:url" content="{{ $currentUrl }}">
+    <meta name="twitter:title" content="@yield('twitter_title', $twitterTitle)">
+    <meta name="twitter:description" content="@yield('twitter_description', $twitterDescription)">
+    <meta name="twitter:image" content="@yield('og_image', $seoImage)">
+    <meta name="twitter:image:alt" content="{{ $isPostPage ? $post->title : 'صالح الشهري - خبير ريادة الأعمال ونمو المنشآت' }}">
 
     {{-- Additional Meta Tags (Allow pages to override via @push('meta')) --}}
     @stack('meta')
