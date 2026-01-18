@@ -66,18 +66,22 @@ class Post extends Model
             return null;
         }
         
-        // If it's already a full URL, return as is
+        // If it's already a full URL, force HTTPS and return
         if (str_starts_with($this->featured_image_path, 'http')) {
-            return $this->featured_image_path;
+            // Force HTTPS for social sharing compatibility (WhatsApp, Facebook, etc.)
+            return str_replace('http://', 'https://', $this->featured_image_path);
         }
+        
+        // Get base URL from config (ensures HTTPS in production)
+        $baseUrl = config('app.url');
         
         // Check if path already has 'storage/' prefix to avoid double storage/storage
         if (str_starts_with($this->featured_image_path, 'storage/')) {
-             return asset($this->featured_image_path);
+            return $baseUrl . '/' . $this->featured_image_path;
         }
         
         // Otherwise, prepend storage path
-        return asset('storage/' . $this->featured_image_path);
+        return $baseUrl . '/storage/' . $this->featured_image_path;
     }
 
     /**
