@@ -102,6 +102,85 @@
         border-bottom: 1px solid #e5e7eb;
         margin: 4px 0;
     }
+
+    /* ============================================= */
+    /* === Mobile Specific Fixes for RTL Layout === */
+    /* === ROBUST FIX: Fixed Position Dropdown   === */
+    /* ============================================= */
+    @media (max-width: 640px) {
+        /* Force the dropdown to float in the center of the screen on mobile */
+        .iti__country-list {
+            position: fixed !important;
+            top: 15% !important;
+            left: 5% !important;
+            right: 5% !important;
+            width: 90% !important;
+            max-width: none !important;
+            max-height: 60vh !important;
+            overflow-y: auto !important;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.35) !important;
+            border-radius: 12px !important;
+            z-index: 99999 !important;
+            background: #fff !important;
+        }
+
+        /* Fix Flag Visibility - Use absolute positioning */
+        .iti__country {
+            position: relative !important;
+            padding-left: 50px !important; /* Make space for flag */
+            padding-right: 12px !important;
+            text-align: left !important;
+            direction: ltr !important;
+            min-height: 44px;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        /* Position Flag Box strictly on the left */
+        .iti__flag-box {
+            position: absolute !important;
+            left: 12px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            margin: 0 !important;
+            display: inline-block !important;
+        }
+        
+        /* Ensure Name text doesn't overlap */
+        .iti__country-name {
+            margin-left: 0 !important;
+            margin-right: 8px !important;
+            font-size: 14px !important;
+            flex: 1;
+        }
+        
+        .iti__dial-code {
+            font-size: 13px !important;
+            color: #6b7280;
+            flex-shrink: 0;
+        }
+        
+        /* Input field adjustments for mobile */
+        #phone {
+            padding-left: 95px !important;
+            font-size: 16px !important; /* Prevent iOS zoom on focus */
+        }
+        
+        .iti--separate-dial-code input {
+            padding-left: 95px !important;
+        }
+        
+        /* Add overlay effect when dropdown is open */
+        .iti--container {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: rgba(0,0,0,0.3) !important;
+            z-index: 99998 !important;
+        }
+    }
 </style>
 @endpush
 
