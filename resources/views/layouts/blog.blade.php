@@ -98,36 +98,10 @@
             <div class="flex items-center justify-between h-12">
                 <!-- Right: Navigation Links (RTL: Right side) -->
                 <nav class="hidden md:flex items-center space-x-6 space-x-reverse">
-                    <!-- المقالات Dropdown -->
-                    <div class="relative" x-data="{ open: false }" @click.away="open = false">
-                        <button @click="open = !open" class="flex items-center gap-1 text-m font-medium text-gray-800 hover:text-brand-accent transition-colors">
-                            <span>المقالات</span>
-                            <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        
-                        <!-- Dropdown Menu -->
-                        <div x-show="open" 
-                             x-transition:enter="transition ease-out duration-100"
-                             x-transition:enter-start="opacity-0 translate-y-1"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-75"
-                             x-transition:leave-start="opacity-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 translate-y-1"
-                             class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-100 py-1 z-50"
-                             style="display: none;">
-                            <a href="{{ route('home') }}" class="block px-4 py-2 text-ms text-gray-700 hover:bg-gray-50 hover:text-brand-accent transition-colors">
-                                المقالات الحديثة
-                            </a>
-                            <a href="{{ route('posts.most-liked') }}" class="block px-4 py-2 text-ms text-gray-700 hover:bg-gray-50 hover:text-brand-accent transition-colors">
-                                المقالات الأكثر إعجاباً
-                            </a>
-                            <a href="{{ route('posts.most-read') }}" class="block px-4 py-2 text-ms text-gray-700 hover:bg-gray-50 hover:text-brand-accent transition-colors">
-                                المقالات الأكثر قراءة
-                            </a>
-                        </div>
-                    </div>
+                    <!-- المقالات - Direct Link -->
+                    <a href="{{ route('home') }}" class="text-m font-medium text-gray-800 hover:text-brand-accent transition-colors">
+                        المقالات
+                    </a>
                     
                     <a href="{{ route('about') }}" class="text-m font-medium text-gray-800 hover:text-brand-accent transition-colors">
                         عني

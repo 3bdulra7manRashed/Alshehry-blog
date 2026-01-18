@@ -51,6 +51,55 @@
                     </ul>
                 </div>
             @endif
+
+            <!-- Most Liked Posts -->
+            @if(isset($mostLikedPosts) && $mostLikedPosts->count() > 0)
+                <div class="bg-brand-secondary p-6 rounded-lg">
+                    <h3 class="text-lg font-serif font-semibold mb-4">المقالات الأكثر إعجاباً</h3>
+                    <ul class="space-y-4">
+                        @foreach($mostLikedPosts as $likedPost)
+                            <li>
+                                <a href="{{ route('post.show', $likedPost->slug) }}" class="block group">
+                                    <h4 class="text-sm font-medium group-hover:text-brand-accent transition-colors mb-1">
+                                        {{ $likedPost->title }}
+                                    </h4>
+                                    <p class="text-xs text-brand-muted flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                        {{ $likedPost->likes_count ?? 0 }} إعجاب
+                                    </p>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <!-- Most Read Posts -->
+            @if(isset($mostReadPosts) && $mostReadPosts->count() > 0)
+                <div class="bg-brand-secondary p-6 rounded-lg">
+                    <h3 class="text-lg font-serif font-semibold mb-4">المقالات الأكثر قراءة</h3>
+                    <ul class="space-y-4">
+                        @foreach($mostReadPosts as $readPost)
+                            <li>
+                                <a href="{{ route('post.show', $readPost->slug) }}" class="block group">
+                                    <h4 class="text-sm font-medium group-hover:text-brand-accent transition-colors mb-1">
+                                        {{ $readPost->title }}
+                                    </h4>
+                                    <p class="text-xs text-brand-muted flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                        {{ $readPost->views ?? 0 }} مشاهدة
+                                    </p>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
         </div>
     </div>
 </aside>
