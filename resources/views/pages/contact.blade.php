@@ -189,7 +189,7 @@
     
     <!-- Header -->
     <div class="text-center mb-12">
-        <h1 class="text-4xl font-serif font-bold text-brand-primary mb-4">تواصل معي</h1>
+        <h1 class="text-3xl font-serif font-bold text-brand-accent mb-4">تواصل معي</h1>
         <p class="text-gray-500 text-lg max-w-2xl mx-auto">
             أسعد دائماً بالاستماع إلى آرائكم واقتراحاتكم. لا تتردد في مراسلتي في أي وقت.
         </p>

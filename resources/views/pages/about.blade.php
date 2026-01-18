@@ -14,8 +14,8 @@
     
     <!-- Hero Section -->
     <div class="text-center mb-16">
-        <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-primary mb-4">عن المدونة وكاتبها</h1>
-        <p class="text-gray-500 text-lg max-w-2xl mx-auto">رحلة في عالم الكتابة، التدوين، والإبداع.</p>
+        <h1 class="text-3xl font-serif font-bold text-brand-accent mb-4">عن المدونة وكاتبها</h1>
+        <p class="text-lg text-gray-600 font-normal mt-2 max-w-2xl mx-auto">رحلة في عالم الكتابة، التدوين، والإبداع.</p>
     </div>
 
     @if($user)
