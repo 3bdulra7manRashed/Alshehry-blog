@@ -208,27 +208,27 @@
 <div id="reading-progress-bar" class="fixed top-17 md:top-12 right-0 h-1.5 bg-brand-accent z-50 transition-all duration-100 ease-out" style="width: 0%;"></div>
 
 <article>
-    <!-- Post Header -->
-    <div class="container mx-auto px-4 py-12 max-w-5xl">
-        <header class="mb-10 text-center max-w-4xl mx-auto">
-            @if($post->categories->count() > 0)
-                <div class="flex items-center justify-center space-x-2 space-x-reverse mb-6">
-                    @foreach($post->categories as $category)
-                        <a href="{{ route('category.show', $category->slug) }}" class="text-sm font-bold text-brand-accent hover:text-brand-primary transition-colors">
-                            {{ $category->name }}
-                        </a>
-                        @if(!$loop->last)
-                            <span class="text-gray-300">/</span>
-                        @endif
-                    @endforeach
-                </div>
-            @endif
-
-            <h1 class="post-title text-4xl md:text-4xl font-serif font-bold text-brand-primary mb-6">
+    <!-- Post Header (Reduced spacing, Title-first layout) -->
+    <div class="container mx-auto px-4 pt-8 pb-6 max-w-5xl">
+        <header class="mb-8 text-center max-w-4xl mx-auto">
+            {{-- Title First --}}
+            <h1 class="post-title text-4xl md:text-4xl font-serif font-bold text-brand-accent mb-4">
                 {{ $post->title }}
             </h1>
 
-            <div class="flex items-center justify-center space-x-4 space-x-reverse text-sm text-gray-500 mb-8">
+            {{-- Metadata Row (Category + Date on same line) --}}
+            <div class="flex items-center justify-center gap-3 text-sm text-gray-500">
+                @if($post->categories->count() > 0)
+                    @foreach($post->categories as $category)
+                        <a href="{{ route('category.show', $category->slug) }}" class="text-gray-500 font-medium hover:text-brand-accent hover:underline transition-colors">
+                            {{ $category->name }}
+                        </a>
+                        @if(!$loop->last)
+                            <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                        @endif
+                    @endforeach
+                    <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                @endif
                 <span>{{ $post->published_at->format('Y/m/d') }}</span>
             </div>
         </header>
