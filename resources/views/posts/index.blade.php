@@ -13,11 +13,11 @@
 <div class="container mx-auto px-4 py-12 max-w-5xl">
     
     @if($posts->count() > 0)
-        <div class="space-y-20">
+        <div class="space-y-12">
             @foreach($posts as $post)
-                <article class="border-b border-gray-100 pb-16 last:border-0">
+                <article class="border-b border-gray-100 pb-12 last:border-0">
                     @if($post->featured_image_url)
-                        <a href="{{ route('post.show', $post->slug) }}" class="block mb-10">
+                        <a href="{{ route('post.show', $post->slug) }}" class="block mb-8">
                             <img src="{{ $post->featured_image_url }}" alt="{{ $post->featured_image_alt ?? $post->title }}" class="w-full aspect-video md:aspect-auto md:h-[450px] object-cover rounded-lg shadow-sm hover:shadow-md transition-shadow">
                         </a>
                     @endif

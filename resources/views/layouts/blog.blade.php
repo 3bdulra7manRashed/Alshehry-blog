@@ -234,62 +234,14 @@
             <!-- Navigation Items -->
             <nav class="py-4" @click.away="mobileMenuOpen = false">
                 <div class="flex flex-col">
-                    <!-- المقالات (Articles) - Accordion -->
-                    <div class="border-b border-gray-100">
-                        <button 
-                            @click="articlesOpen = !articlesOpen"
-                            class="w-full flex items-center justify-between px-4 py-3 text-right text-base font-medium text-gray-800 hover:bg-gray-50 hover:text-brand-accent transition-colors min-h-[3rem]"
-                            :aria-expanded="articlesOpen"
-                            aria-controls="articles-submenu"
-                        >
-                            <span>المقالات</span>
-                            <svg 
-                                class="w-5 h-5 transition-transform duration-200"
-                                :class="articlesOpen ? 'rotate-180' : ''"
-                                fill="none" 
-                                stroke="currentColor" 
-                                viewBox="0 0 24 24"
-                            >
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        
-                        <!-- Articles Submenu -->
-                        <div 
-                            id="articles-submenu"
-                            x-show="articlesOpen"
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 max-h-0"
-                            x-transition:enter-end="opacity-100 max-h-96"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 max-h-96"
-                            x-transition:leave-end="opacity-0 max-h-0"
-                            class="bg-gray-50 overflow-hidden"
-                            style="display: none;"
-                        >
-                            <a 
-                                href="{{ route('home') }}" 
-                                class="block px-4 py-3 pr-8 text-right text-sm text-gray-700 hover:bg-gray-100 hover:text-brand-accent transition-colors min-h-[3rem] flex items-center {{ request()->routeIs('home') ? 'text-brand-accent font-medium bg-gray-100' : '' }}"
-                                @click="mobileMenuOpen = false"
-                            >
-                                المقالات الحديثة
-                            </a>
-                            <a 
-                                href="{{ route('posts.most-liked') }}" 
-                                class="block px-4 py-3 pr-8 text-right text-sm text-gray-700 hover:bg-gray-100 hover:text-brand-accent transition-colors min-h-[3rem] flex items-center {{ request()->routeIs('posts.most-liked') ? 'text-brand-accent font-medium bg-gray-100' : '' }}"
-                                @click="mobileMenuOpen = false"
-                            >
-                                المقالات الأكثر إعجاباً
-                            </a>
-                            <a 
-                                href="{{ route('posts.most-read') }}" 
-                                class="block px-4 py-3 pr-8 text-right text-sm text-gray-700 hover:bg-gray-100 hover:text-brand-accent transition-colors min-h-[3rem] flex items-center {{ request()->routeIs('posts.most-read') ? 'text-brand-accent font-medium bg-gray-100' : '' }}"
-                                @click="mobileMenuOpen = false"
-                            >
-                                المقالات الأكثر قراءة
-                            </a>
-                        </div>
-                    </div>
+                    <!-- المقالات (Articles) - Direct Link -->
+                    <a 
+                        href="{{ route('home') }}" 
+                        class="block px-4 py-3 text-right text-base font-medium text-gray-800 hover:bg-gray-50 hover:text-brand-accent transition-colors min-h-[3rem] flex items-center border-b border-gray-100 {{ request()->routeIs('home') ? 'text-brand-accent bg-gray-50' : '' }}"
+                        @click="mobileMenuOpen = false"
+                    >
+                        المقالات
+                    </a>
 
                     <!-- عني (About) -->
                     <a 
@@ -363,6 +315,63 @@
                                                 </div>
                                                 <div class="text-xs text-gray-400">
                                                     {{ $recentPost->published_at->format('Y/m/d') }}
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <!-- Most Liked Posts -->
+                        @if(isset($mostLikedPosts) && $mostLikedPosts->count() > 0)
+                            <div class="bg-brand-secondary p-6 rounded-lg">
+                                <h4 class="text-base font-semibold mb-3 text-right">المقالات الأكثر إعجاباً</h4>
+                                <ul class="space-y-3 text-right">
+                                    @foreach($mostLikedPosts as $likedPost)
+                                        <li>
+                                            <a 
+                                                href="{{ route('post.show', $likedPost->slug) }}" 
+                                                class="block group"
+                                                @click="mobileMenuOpen = false"
+                                            >
+                                                <div class="text-sm font-medium group-hover:text-brand-accent transition-colors mb-1">
+                                                    {{ Str::limit($likedPost->title, 60) }}
+                                                </div>
+                                                <div class="text-xs text-gray-400 flex items-center gap-1 justify-end">
+                                                    <span>{{ $likedPost->likes_count ?? 0 }} إعجاب</span>
+                                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                                    </svg>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <!-- Most Read Posts -->
+                        @if(isset($mostReadPosts) && $mostReadPosts->count() > 0)
+                            <div class="bg-brand-secondary p-6 rounded-lg">
+                                <h4 class="text-base font-semibold mb-3 text-right">المقالات الأكثر قراءة</h4>
+                                <ul class="space-y-3 text-right">
+                                    @foreach($mostReadPosts as $readPost)
+                                        <li>
+                                            <a 
+                                                href="{{ route('post.show', $readPost->slug) }}" 
+                                                class="block group"
+                                                @click="mobileMenuOpen = false"
+                                            >
+                                                <div class="text-sm font-medium group-hover:text-brand-accent transition-colors mb-1">
+                                                    {{ Str::limit($readPost->title, 60) }}
+                                                </div>
+                                                <div class="text-xs text-gray-400 flex items-center gap-1 justify-end">
+                                                    <span>{{ $readPost->views ?? 0 }} مشاهدة</span>
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                    </svg>
                                                 </div>
                                             </a>
                                         </li>

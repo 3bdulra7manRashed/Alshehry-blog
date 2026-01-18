@@ -21,8 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Share sidebar data with the sidebar partial
-        View::composer('partials.sidebar', function ($view) {
+        // Share sidebar data with both sidebar partial and blog layout (for mobile menu)
+        View::composer(['partials.sidebar', 'layouts.blog'], function ($view) {
             $view->with([
                 'mostLikedPosts' => Post::published()
                     ->orderByDesc('likes_count')
