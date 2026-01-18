@@ -122,11 +122,11 @@
                                 {{-- Actions (with stopPropagation to prevent row click) --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-center" onclick="event.stopPropagation()">
                                     <div class="flex items-center justify-center gap-2">
-                                        <form action="{{ route('admin.messages.destroy', $message) }}" method="POST" 
-                                              onsubmit="return confirm('هل أنت متأكد من حذف هذه الرسالة؟')">
+                                        <form action="{{ route('admin.messages.destroy', $message) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 text-xs font-medium rounded-lg hover:bg-red-100 transition-colors">
+                                            <button type="submit" class="js-confirm inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 text-xs font-medium rounded-lg hover:bg-red-100 transition-colors"
+                                                    data-confirm-message="هل أنت متأكد من حذف هذه الرسالة؟">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
@@ -164,4 +164,91 @@
         @endif
     </div>
 </div>
+
+<!-- Delete Confirmation Modal (Matching Tags Page Style) -->
+<div id="deleteModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
+    <div class="bg-white rounded-lg shadow-xl max-w-sm w-full mx-4 transform transition-all">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900">تأكيد الإجراء</h3>
+            <button type="button" onclick="closeDeleteModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-5 py-4">
+            <p class="text-gray-600 text-center" id="deleteModalMessage">
+                <!-- Message will be set by JavaScript -->
+            </p>
+        </div>
+
+        <!-- Modal Footer (RTL: first button appears on right) -->
+        <div class="flex items-center justify-center gap-3 px-5 py-4 border-t border-gray-100">
+            <button type="button" onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 font-medium text-sm transition-colors">
+                تأكيد
+            </button>
+            <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 font-medium text-sm transition-colors">
+                إلغاء
+            </button>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+    let deleteFormToSubmit = null;
+
+    // Intercept all js-confirm buttons
+    document.querySelectorAll('.js-confirm').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const form = this.closest('form');
+            const message = this.getAttribute('data-confirm-message') || 'هل أنت متأكد؟';
+            showDeleteModal(form, message);
+        });
+    });
+
+    function showDeleteModal(form, message) {
+        deleteFormToSubmit = form;
+        document.getElementById('deleteModalMessage').textContent = message;
+        const modal = document.getElementById('deleteModal');
+        modal.style.display = 'flex';
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDeleteModal() {
+        deleteFormToSubmit = null;
+        const modal = document.getElementById('deleteModal');
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    function confirmDelete() {
+        if (deleteFormToSubmit) {
+            deleteFormToSubmit.submit();
+        }
+        closeDeleteModal();
+    }
+
+    // Close modal on ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeDeleteModal();
+        }
+    });
+
+    // Close modal on background click
+    document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeDeleteModal();
+        }
+    });
+</script>
+@endpush
