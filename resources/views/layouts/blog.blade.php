@@ -16,12 +16,17 @@
     @php
         use Illuminate\Support\Str;
         
+        // ============================================================
+        // HARDCODED DOMAIN FIX - Bypasses all proxy/asset helper issues
+        // ============================================================
+        $siteDomain = 'https://alshehrysaleh.com';
+        
         // Detect if we're on a single post page (error-proof check)
         $isPostPage = isset($post) && Route::currentRouteName() === 'post.show';
         
-        // Site defaults - FORCE HTTPS for WhatsApp/Social sharing
+        // Site defaults
         $siteName = 'صالح الشهري | Saleh Alshehry';
-        $defaultImage = config('app.url') . '/images/saleh-alshehry-og.jpg';
+        $defaultImage = $siteDomain . '/images/saleh-alshehry-og.jpg';
         $defaultTitle = 'صالح الشهري | استشارات ريادة الأعمال وبناء المشاريع الناشئة';
         $defaultDescription = 'حوّل فكرتك إلى مشروع ريادي ناجح. مدونة صالح الشهري تقدم تحليلات عملية، استشارات للمنشآت الصغيرة، ونماذج عمل مبتكرة للنمو والاستدامة وفق رؤية المملكة 2030.';
         $defaultKeywords = 'ريادة الأعمال, صالح الشهري, استشارات مشاريع, المنشآت الصغيرة والمتوسطة, نموذج العمل التجاري, دراسة جدوى, تأسيس شركات, رؤية 2030, جدة, مركز النخبة للتدريب, نمو الأعمال';
@@ -33,20 +38,15 @@
             $seoDescription = $post->excerpt ?? Str::limit(strip_tags($post->content), 160);
             $seoKeywords = $post->tags->pluck('name')->implode(', ') ?: $defaultKeywords;
             
-            // Image: FORCE HTTPS for WhatsApp compatibility
-            $rawImage = $post->featured_image_url ?? null;
-            
-            if ($rawImage) {
-                // Check if already an absolute URL
-                if (Str::startsWith($rawImage, ['http://', 'https://'])) {
-                    // Force HTTPS even if it came as HTTP
-                    $seoImage = Str::replaceFirst('http://', 'https://', $rawImage);
-                } else {
-                    // Relative path - use secure_url
-                    $seoImage = secure_url($rawImage);
-                }
+            // Image: HARDCODED DOMAIN for WhatsApp/Facebook compatibility
+            if ($post->featured_image_path) {
+                // Clean the path - remove leading slashes and 'storage/' prefix if exists
+                $cleanPath = ltrim($post->featured_image_path, '/');
+                $cleanPath = Str::startsWith($cleanPath, 'storage/') 
+                    ? $cleanPath 
+                    : 'storage/' . $cleanPath;
+                $seoImage = $siteDomain . '/' . $cleanPath;
             } else {
-                // No featured image - use default
                 $seoImage = $defaultImage;
             }
             
@@ -68,8 +68,8 @@
             $twitterDescription = 'آراء وتحليلات عملية حول بناء المشاريع وازدهارها. اكتشف كيف تصنع قيمة حقيقية لعميلك وتتخذ قرارات تُحدث فرقاً في رحلة التأسيس.';
         }
         
-        // Force HTTPS on current URL as well
-        $currentUrl = secure_url(request()->path());
+        // Current URL - also hardcoded domain
+        $currentUrl = $siteDomain . '/' . ltrim(request()->path(), '/');
     @endphp
 
     <!-- DEBUG OG:IMAGE URL: {{ $seoImage }} -->
