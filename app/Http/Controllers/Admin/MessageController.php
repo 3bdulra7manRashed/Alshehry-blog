@@ -64,12 +64,13 @@ class MessageController extends Controller
         if ($message->is_read) {
             $message->markAsUnread();
             $status = 'تم تحديد الرسالة كغير مقروءة';
+            // Redirect to index because show() auto-marks as read
+            return redirect()->route('admin.messages.index')->with('success', $status);
         } else {
             $message->markAsRead();
             $status = 'تم تحديد الرسالة كمقروءة';
+            return back()->with('success', $status);
         }
-
-        return back()->with('success', $status);
     }
 
     /**
