@@ -7,13 +7,15 @@ User-agent: *
 # Allow everything
 Allow: /
 
-# Block admin area
+# Block admin and authentication areas
 Disallow: /admin/
 Disallow: /login
 Disallow: /register
 Disallow: /password
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /nova
+Disallow: /telescope
 
 # Block API endpoints from indexing
 Disallow: /api/
@@ -27,4 +29,4 @@ Disallow: /_ignition/
 Crawl-delay: 1
 
 # Sitemap location
-Sitemap: https://salehalshehry.com/sitemap.xml
+Sitemap: https://alshehrysaleh.com/sitemap.xml
