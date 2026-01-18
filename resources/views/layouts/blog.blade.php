@@ -175,9 +175,14 @@
     <header class="bg-white sticky top-0 z-50 md:z-30 md:relative py-4 md:py-8 border-b border-gray-100 md:border-b-0" x-data="{ mobileMenuOpen: false, articlesOpen: false }" x-init="$watch('mobileMenuOpen', value => { if (value) { setTimeout(() => document.getElementById('mobile-menu-close')?.focus(), 100); } })">
         <div class="container mx-auto px-4 max-w-5xl">
             <div class="flex justify-between items-center">
-                <!-- Right: Logo -->
-                <a href="{{ route('home') }}" class="text-4xl md:text-4xl text-2xl font-serif font-bold text-brand-accent tracking-tight">
-                    {{ config('app.name', 'مدونة تجريبي') }}
+                <!-- Right: Logo (Dark Text + Orange Dot) -->
+                <a href="{{ route('home') }}" class="flex items-center gap-2 group">
+                    {{-- The Text (Dark) - FIRST --}}
+                    <span class="text-gray-900 font-serif font-bold text-2xl md:text-4xl tracking-tight">
+                        {{ config('app.name', 'مدونة صالح الشهري') }}
+                    </span>
+                    {{-- The Orange Dot - SECOND (appears on left in RTL) --}}
+                    <span class="w-3 h-3 bg-brand-accent rounded-full inline-block group-hover:scale-110 transition-transform"></span>
                 </a>
                 
                 <!-- Left: Menu Button (Desktop) -->

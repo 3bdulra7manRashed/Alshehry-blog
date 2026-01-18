@@ -61,8 +61,9 @@
 
     <!-- Mobile Menu Button (visible only on mobile) -->
     <div class="md:hidden fixed top-0 left-0 right-0 bg-white shadow-md z-40 px-4 py-3 flex items-center justify-between">
-        <a href="{{ route('admin.dashboard') }}" class="text-lg font-bold text-brand-accent hover:text-opacity-80 transition-colors">
-            {{ config('app.name') }}
+        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 group">
+            <span class="text-gray-900 font-bold text-lg">{{ config('app.name') }}</span>
+            <span class="w-2 h-2 bg-brand-accent rounded-full inline-block"></span>
         </a>
         <button id="mobile-menu-btn" class="p-2 rounded-md text-gray-600 hover:text-brand-primary hover:bg-gray-100">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,9 +79,13 @@
         <!-- Sidebar (Fixed - Triple-locked width: w-64 + min-w + max-w) -->
         <aside id="sidebar" class="fixed top-0 right-0 z-50 h-screen bg-white border-l border-gray-200 shadow-lg w-64 min-w-[16rem] max-w-[16rem] transform translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto">
             <div class="p-6 pt-6 md:pt-6">
-                <h2 class="text-xl font-serif font-bold text-brand-primary mb-6">
-                    <a href="{{ route('admin.dashboard') }}">{{ config('app.name') }}</a>
-                </h2>
+                {{-- Admin Logo (Dark Text + Orange Dot) --}}
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 group mb-6">
+                    <span class="text-gray-900 font-serif font-bold text-xl tracking-tight">
+                        {{ config('app.name') }}
+                    </span>
+                    <span class="w-2.5 h-2.5 bg-brand-accent rounded-full inline-block group-hover:scale-110 transition-transform"></span>
+                </a>
                 <nav class="space-y-2">
                     <a href="{{ route('admin.dashboard') }}"
                        class="flex items-center px-4 py-2 rounded-md transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-brand-accent  text-white hover:text-white hover:bg-amber-700' : 'text-gray-700 hover:bg-gray-100' }}">
