@@ -21,7 +21,7 @@
         
         // Site defaults - FORCE HTTPS for WhatsApp/Social sharing
         $siteName = 'صالح الشهري | Saleh Alshehry';
-        $defaultImage = secure_asset('images/saleh-alshehry-og.jpg');
+        $defaultImage = config('app.url') . '/images/saleh-alshehry-og.jpg';
         $defaultTitle = 'صالح الشهري | استشارات ريادة الأعمال وبناء المشاريع الناشئة';
         $defaultDescription = 'حوّل فكرتك إلى مشروع ريادي ناجح. مدونة صالح الشهري تقدم تحليلات عملية، استشارات للمنشآت الصغيرة، ونماذج عمل مبتكرة للنمو والاستدامة وفق رؤية المملكة 2030.';
         $defaultKeywords = 'ريادة الأعمال, صالح الشهري, استشارات مشاريع, المنشآت الصغيرة والمتوسطة, نموذج العمل التجاري, دراسة جدوى, تأسيس شركات, رؤية 2030, جدة, مركز النخبة للتدريب, نمو الأعمال';
