@@ -146,6 +146,15 @@
                         @endif
                     </a>
                 
+                    {{-- Newsletter Campaigns Menu Item --}}
+                    <a href="{{ route('admin.campaigns.index') }}"
+                       class="flex items-center px-4 py-2 rounded-md transition-colors {{ request()->routeIs('admin.campaigns.*') ? 'bg-brand-accent text-white hover:text-white hover:bg-amber-700' : 'text-gray-700 hover:bg-gray-100' }}">
+                        <svg class="w-5 h-5 ml-2 -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                        الحملات البريدية
+                    </a>
+                
                     @can('manage-users')
                     <div class="pt-4 border-t border-gray-200 mt-4">
                         <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">إدارة خاصة</p>
@@ -191,7 +200,7 @@
 
         <!-- Main Content (Margin must exactly match sidebar width: 16rem = 64 in Tailwind) -->
         <main class="min-h-screen mr-0 md:mr-64">
-            <div class="p-4 md:p-8 max-w-full overflow-x-auto">
+            <div class="p-4 md:p-8 max-w-full">
                 {{-- Flash Alert (Success/Error) - Auto-dismissing --}}
                 @if(session('success'))
                     <div id="flash-alert" class="mb-4 bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-sm flex items-center justify-between" role="alert" x-data="{ show: true }" x-show="show" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">

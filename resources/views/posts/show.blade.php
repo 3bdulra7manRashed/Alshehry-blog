@@ -303,6 +303,13 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Newsletter Subscription CTA (High-Conversion Position) -->
+            <div class="mt-12 pt-12 border-t border-gray-100">
+                <div class="bg-gradient-to-br from-brand-accent/5 to-brand-accent/10 rounded-2xl p-8 shadow-sm border border-brand-accent/20">
+                    <x-newsletter-form />
+                </div>
+            </div>
         </div>
     </div>
 

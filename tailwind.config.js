@@ -16,7 +16,9 @@ export default {
                 brand: {
                     primary: 'var(--writer-primary, #1f1f1f)',
                     secondary: 'var(--writer-secondary, #f5f0ea)',
-                    accent: 'var(--writer-accent, #c37c54)',
+                    accent: 'var(--brand-accent, #c37c54)',
+                    'accent-hover': 'var(--brand-accent-hover, #a86844)',
+                    'accent-soft': 'var(--brand-accent-soft, rgba(195, 124, 84, 0.1))',
                     muted: 'var(--writer-muted, #6f6f6f)',
                 },
             },

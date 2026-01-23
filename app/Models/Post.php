@@ -48,6 +48,14 @@ class Post extends Model
         return $this->belongsToMany(Tag::class)->withTimestamps();
     }
 
+    /**
+     * Get the newsletter campaigns that include this post.
+     */
+    public function campaigns(): BelongsToMany
+    {
+        return $this->belongsToMany(Campaign::class)->withTimestamps();
+    }
+
     public function scopePublished($query)
     {
         return $query->where('is_draft', false)

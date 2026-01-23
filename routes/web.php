@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\PostLikeController;
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -22,6 +23,10 @@ Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.send');
 
+// Newsletter routes (public - for unsubscribe links in emails)
+Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+
 // API routes for post likes (no authentication required for guests)
 Route::post('/api/posts/{post}/like', [PostLikeController::class, 'toggle'])->name('api.posts.like');
 Route::get('/api/posts/{post}/likes', [PostLikeController::class, 'count'])->name('api.posts.likes');
@@ -42,7 +47,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
 });
 
 // Admin routes - Protected by role:admin|moderator middleware
-// Both مدير النظام (admin) and مشرف (moderator) can access content management
+// Both admin and moderator can access content management
 Route::prefix('admin')->middleware(['auth', 'role:admin|moderator'])->name('admin.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('posts', \App\Http\Controllers\Admin\PostController::class);
@@ -51,6 +56,11 @@ Route::prefix('admin')->middleware(['auth', 'role:admin|moderator'])->name('admi
     Route::resource('media', \App\Http\Controllers\Admin\MediaController::class)->except(['show', 'edit', 'update']);
     Route::post('media/upload', [\App\Http\Controllers\Admin\MediaController::class, 'store'])->name('media.upload');
     Route::post('upload-image', [\App\Http\Controllers\Admin\MediaController::class, 'upload'])->name('upload.image');
+    
+    // Newsletter Campaigns Management
+    Route::resource('campaigns', \App\Http\Controllers\Admin\CampaignController::class);
+    Route::post('campaigns/{campaign}/send-test', [\App\Http\Controllers\Admin\CampaignController::class, 'sendTest'])->name('campaigns.send-test');
+    Route::post('campaigns/{campaign}/send', [\App\Http\Controllers\Admin\CampaignController::class, 'send'])->name('campaigns.send');
     
     // Contact Messages Management
     Route::get('messages', [\App\Http\Controllers\Admin\MessageController::class, 'index'])->name('messages.index');

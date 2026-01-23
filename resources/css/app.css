@@ -2,12 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   🎨 BRAND TOKEN SYSTEM
+   Single source of truth for all brand colors
+   ============================================================ */
 :root {
+    /* Core Brand Colors */
     --writer-primary: #1f1f1f;
     --writer-secondary: #f5f0ea;
     --writer-accent: #c37c54;
     --writer-muted: #6f6f6f;
     --writer-body: #ffffff;
+
+    /* Brand Accent Variants (derived from accent) */
+    --brand-accent: #c37c54;
+    --brand-accent-hover: #a86844;
+    --brand-accent-soft: rgba(195, 124, 84, 0.1);
+    --brand-accent-ring: rgba(195, 124, 84, 0.3);
+
+    /* Danger Colors (not brand - for destructive actions) */
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --danger-soft: rgba(220, 38, 38, 0.1);
 }
 
 @layer base {
@@ -22,12 +38,12 @@
 
     /* Custom text selection styles */
     body ::selection {
-        background-color: var(--writer-accent);
+        background-color: var(--brand-accent);
         color: #ffffff;
     }
 
     body ::-moz-selection {
-        background-color: var(--writer-accent);
+        background-color: var(--brand-accent);
         color: #ffffff;
     }
 
@@ -36,7 +52,138 @@
     }
 
     a:hover {
-        color: color-mix(in srgb, var(--writer-accent) 90%, #000000);
+        color: var(--brand-accent-hover);
+    }
+}
+
+/* ============================================================
+   🔘 BUTTON COMPONENTS
+   Reusable button styles with proper states
+   ============================================================ */
+@layer components {
+
+    /* Primary Brand Accent Button */
+    .btn-accent {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-white font-medium rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2;
+        background-color: var(--brand-accent);
+    }
+
+    .btn-accent:hover:not(:disabled) {
+        background-color: var(--brand-accent-hover);
+        @apply shadow-md;
+    }
+
+    .btn-accent:focus {
+        box-shadow: 0 0 0 3px var(--brand-accent-ring);
+    }
+
+    .btn-accent:disabled {
+        @apply opacity-50 cursor-not-allowed;
+    }
+
+    /* Accent Outline Button */
+    .btn-accent-outline {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 font-medium rounded-lg border-2 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2;
+        border-color: var(--brand-accent);
+        color: var(--brand-accent);
+        background-color: transparent;
+    }
+
+    .btn-accent-outline:hover:not(:disabled) {
+        background-color: var(--brand-accent-soft);
+    }
+
+    .btn-accent-outline:focus {
+        box-shadow: 0 0 0 3px var(--brand-accent-ring);
+    }
+
+    .btn-accent-outline:disabled {
+        @apply opacity-50 cursor-not-allowed;
+    }
+
+    /* Danger Button */
+    .btn-danger {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-white font-medium rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500;
+        background-color: var(--danger);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+        background-color: var(--danger-hover);
+        @apply shadow-md;
+    }
+
+    .btn-danger:disabled {
+        @apply opacity-50 cursor-not-allowed;
+    }
+
+    /* Large Button Variant */
+    .btn-lg {
+        @apply px-6 py-4 text-lg font-bold;
+    }
+
+    /* Small Button Variant */
+    .btn-sm {
+        @apply px-3 py-1.5 text-sm;
+    }
+
+    /* Brand Accent Dot */
+    .brand-dot {
+        @apply w-2.5 h-2.5 rounded-full inline-block;
+        background-color: var(--brand-accent);
+    }
+
+    /* Brand Accent Underline */
+    .brand-underline {
+        @apply relative;
+    }
+
+    .brand-underline::after {
+        content: '';
+        @apply absolute bottom-0 left-0 right-0 h-0.5;
+        background-color: var(--brand-accent);
+    }
+
+    /* ============================================================
+       📝 FORM INPUT COMPONENTS
+       Brand-consistent input styles with proper focus states
+       ============================================================ */
+
+    /* Brand-themed Input */
+    .input-brand {
+        @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 transition-all duration-200 ease-out;
+    }
+
+    .input-brand:focus {
+        @apply outline-none border-transparent;
+        border-color: var(--brand-accent);
+        box-shadow: 0 0 0 3px var(--brand-accent-ring);
+    }
+
+    .input-brand:disabled {
+        @apply opacity-50 cursor-not-allowed bg-gray-50;
+    }
+
+    /* RTL Input (for email fields) */
+    .input-brand-rtl {
+        @apply text-right;
+        direction: rtl;
+    }
+
+    .input-brand-rtl::placeholder {
+        text-align: right;
+    }
+
+    /* Override browser default focus colors for all form inputs */
+    input:focus,
+    textarea:focus,
+    select:focus {
+        --tw-ring-color: var(--brand-accent-ring);
+    }
+
+    /* Newsletter form specific styles */
+    .newsletter-form input[type="email"]:focus {
+        border-color: var(--brand-accent);
+        box-shadow: 0 0 0 3px var(--brand-accent-ring);
     }
 }
 
@@ -131,15 +278,15 @@
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    
+
     /* Hardware acceleration hints */
     -webkit-transform: translateZ(0);
     -moz-transform: translateZ(0);
     -ms-transform: translateZ(0);
-    
+
     /* Prevent unwanted repaints from adjacent elements */
     contain: layout style paint;
-    
+
     /* Remove any heavy effects that cause repaints during scroll */
     box-shadow: none !important;
     backdrop-filter: none !important;
