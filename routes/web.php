@@ -25,7 +25,9 @@ Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.s
 
 // Newsletter routes (public - for unsubscribe links in emails)
 Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
-Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
+    ->middleware('throttle:5,1') // Rate limit: 5 requests per minute per IP
+    ->name('newsletter.subscribe');
 
 // API routes for post likes (no authentication required for guests)
 Route::post('/api/posts/{post}/like', [PostLikeController::class, 'toggle'])->name('api.posts.like');

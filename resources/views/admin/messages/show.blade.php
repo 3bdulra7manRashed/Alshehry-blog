@@ -37,11 +37,12 @@
             </form>
             
             {{-- Delete --}}
-            <form action="{{ route('admin.messages.destroy', $message) }}" method="POST" 
-                  onsubmit="return confirm('هل أنت متأكد من حذف هذه الرسالة؟ لا يمكن التراجع عن هذا الإجراء.')">
+            <form action="{{ route('admin.messages.destroy', $message) }}" method="POST">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
+                <button type="submit" 
+                        class="js-confirm inline-flex items-center px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                        data-confirm-message="هل أنت متأكد من حذف هذه الرسالة؟ لا يمكن التراجع عن هذا الإجراء.">
                     <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                     </svg>
@@ -155,4 +156,6 @@
         </div>
     </div>
 </div>
+
+{{-- Delete confirmation is now handled globally via layouts.admin --}}
 @endsection

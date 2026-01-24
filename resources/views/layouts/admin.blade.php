@@ -239,6 +239,10 @@
         </main>
     </div>
     
+    {{-- Global Delete Confirmation Modal Component --}}
+    {{-- Available on all admin pages. Use class="js-confirm" and data-confirm-message="..." on delete buttons --}}
+    <x-delete-confirmation-modal />
+    
     @stack('scripts')
     
     <script>

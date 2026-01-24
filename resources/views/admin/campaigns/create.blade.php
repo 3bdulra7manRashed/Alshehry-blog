@@ -137,12 +137,21 @@
                 @else
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         @foreach($posts as $post)
+                            {{-- 
+                                Article Card with Selection State
+                                - Uses box-shadow for selection (respects border-radius)
+                                - No gap between card and selection indicator
+                                - Brand-accent color via CSS variable
+                            --}}
                             <div class="group relative cursor-pointer" 
-                                 @click="toggleSelection({{ $post->id }})"
-                                 :class="{ 'ring-2 ring-brand-accent': isSelected({{ $post->id }}) }">
+                                 @click="toggleSelection({{ $post->id }})">
                                 
-                                <div class="h-full bg-white border-2 rounded-xl overflow-hidden transition-all duration-200 hover:shadow-lg"
-                                     :class="isSelected({{ $post->id }}) ? 'border-brand-accent' : 'border-gray-200 hover:border-gray-300'">
+                                <div class="h-full bg-white rounded-xl overflow-hidden transition-all duration-200 
+                                            border-2"
+                                     :class="isSelected({{ $post->id }}) 
+                                         ? 'border-brand-accent shadow-[0_0_0_3px_rgba(195,124,84,0.25)]' 
+                                         : 'border-gray-200 hover:border-gray-300 hover:shadow-lg'"
+                                     :style="isSelected({{ $post->id }}) ? 'border-color: var(--brand-accent);' : ''">
                                     <!-- Thumbnail -->
                                     <div class="relative aspect-video bg-gray-100 overflow-hidden">
                                         @if($post->featured_image_url)
