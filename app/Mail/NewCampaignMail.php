@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Campaign;
+use App\Models\Subscriber;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -15,13 +16,22 @@ class NewCampaignMail extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     /**
+     * The unsubscribe link for this specific recipient.
+     */
+    public string $unsubscribeLink;
+
+    /**
      * Create a new message instance.
      */
     public function __construct(
-        public Campaign $campaign
+        public Campaign $campaign,
+        public Subscriber $subscriber
     ) {
         // Load the posts relationship
         $this->campaign->load('posts');
+        
+        // Generate the unsubscribe link for this specific subscriber
+        $this->unsubscribeLink = $this->subscriber->generateUnsubscribeLink();
     }
 
     /**

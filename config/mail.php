@@ -97,6 +97,27 @@ return [
             'retry_after' => 60,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Newsletter Mailer
+        |--------------------------------------------------------------------------
+        |
+        | Dedicated mailer for newsletter campaigns. This keeps newsletter
+        | sending separate from transactional emails, allowing different
+        | SMTP credentials, rate limits, and sender reputation management.
+        |
+        */
+        'newsletter' => [
+            'transport' => 'smtp',
+            'host' => env('NEWSLETTER_MAIL_HOST', env('MAIL_HOST', '127.0.0.1')),
+            'port' => env('NEWSLETTER_MAIL_PORT', env('MAIL_PORT', 587)),
+            'encryption' => env('NEWSLETTER_MAIL_ENCRYPTION', env('MAIL_ENCRYPTION', 'tls')),
+            'username' => env('NEWSLETTER_MAIL_USERNAME', env('MAIL_USERNAME')),
+            'password' => env('NEWSLETTER_MAIL_PASSWORD', env('MAIL_PASSWORD')),
+            'timeout' => null,
+            'local_domain' => env('NEWSLETTER_MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        ],
+
     ],
 
     /*

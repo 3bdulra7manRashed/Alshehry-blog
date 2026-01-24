@@ -61,8 +61,10 @@ class SendCampaignJob implements ShouldQueue
         Subscriber::active()->chunk(100, function ($subscribers) use (&$successCount, &$failedCount) {
             foreach ($subscribers as $subscriber) {
                 try {
-                    // Queue each email for sending
-                    Mail::to($subscriber->email)->queue(new NewCampaignMail($this->campaign));
+                    // Queue each email for sending via configured newsletter mailer
+                    Mail::mailer(config('newsletter.mailer'))
+                        ->to($subscriber->email)
+                        ->queue(new NewCampaignMail($this->campaign, $subscriber));
                     $successCount++;
                 } catch (\Exception $e) {
                     $failedCount++;

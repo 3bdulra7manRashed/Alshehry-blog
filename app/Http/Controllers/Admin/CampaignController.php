@@ -172,9 +172,24 @@ class CampaignController extends Controller
         ]);
 
         try {
-            // Load campaign posts and send test email immediately (not queued)
+            // Load campaign posts
             $campaign->load('posts');
-            Mail::to($validated['email'])->send(new NewCampaignMail($campaign));
+            
+            // Create a temporary subscriber for test email (generates valid unsubscribe link)
+            // We use firstOrCreate to handle repeated test sends to the same email
+            $testSubscriber = Subscriber::withTrashed()
+                ->firstOrCreate(
+                    ['email' => $validated['email']],
+                    ['is_active' => false] // Test subscribers are inactive by default
+                );
+            
+            // Ensure the test subscriber has an unsubscribe token
+            $testSubscriber->ensureUnsubscribeToken();
+            
+            // Send test email via newsletter mailer (not queued, immediate send)
+            Mail::mailer(config('newsletter.mailer'))
+                ->to($validated['email'])
+                ->send(new NewCampaignMail($campaign, $testSubscriber));
 
             return redirect()
                 ->route('admin.campaigns.show', $campaign)

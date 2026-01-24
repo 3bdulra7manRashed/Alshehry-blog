@@ -231,7 +231,7 @@
                                             تصلك هذه الرسالة لأنك مشترك في نشرتنا البريدية
                                         </p>
                                         <p style="margin: 0; color: #9ca3af; font-size: 13px;">
-                                            <a href="#" class="link-accent" style="color: #c37c54; text-decoration: none;">إلغاء الاشتراك</a>
+                                            <a href="{{ $unsubscribeLink ?? '#' }}" class="link-accent" style="color: #c37c54; text-decoration: none;">إلغاء الاشتراك</a>
                                             &nbsp;|&nbsp;
                                             <a href="{{ config('app.url') }}" class="link-accent" style="color: #c37c54; text-decoration: none;">زيارة الموقع</a>
                                         </p>

@@ -40,7 +40,7 @@
         </div>
 
         <!-- Pagination -->
-        <div class="mt-16" dir="ltr">
+        <div class="mt-16">
             {{ $posts->links() }}
         </div>
     @else
