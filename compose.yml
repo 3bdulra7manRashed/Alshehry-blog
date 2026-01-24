@@ -1,4 +1,7 @@
 services:
+  # =============================================================================
+  # WEB APPLICATION
+  # =============================================================================
   app:
     build:
       context: .
@@ -35,7 +38,9 @@ services:
       - CACHE_STORE=${CACHE_STORE:-file}
       - SESSION_DRIVER=${SESSION_DRIVER:-file}
       - FILESYSTEM_DISK=${FILESYSTEM_DISK:-public}
-      # Mail configuration
+      # Queue configuration
+      - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
+      # Mail configuration (System/Transactional)
       - MAIL_MAILER=${MAIL_MAILER:-smtp}
       - MAIL_HOST=${MAIL_HOST}
       - MAIL_PORT=${MAIL_PORT:-587}
@@ -44,17 +49,20 @@ services:
       - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
       - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
       - MAIL_FROM_NAME=${MAIL_FROM_NAME}
-
-
+      # Newsletter Mailer (Bulk Campaigns)
+      - NEWSLETTER_MAILER=${NEWSLETTER_MAILER:-newsletter}
+      - NEWSLETTER_MAIL_HOST=${NEWSLETTER_MAIL_HOST:-}
+      - NEWSLETTER_MAIL_PORT=${NEWSLETTER_MAIL_PORT:-587}
+      - NEWSLETTER_MAIL_USERNAME=${NEWSLETTER_MAIL_USERNAME:-}
+      - NEWSLETTER_MAIL_PASSWORD=${NEWSLETTER_MAIL_PASSWORD:-}
+      - NEWSLETTER_MAIL_ENCRYPTION=${NEWSLETTER_MAIL_ENCRYPTION:-tls}
       # reCAPTCHA
       - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY:-}
       - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY:-}
-      
       # Admin User
       - ADMIN_NAME=${ADMIN_NAME:-}
       - ADMIN_EMAIL=${ADMIN_EMAIL:-}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
-      
       # Proxy/Trusted proxy settings for Coolify
       - TRUSTED_PROXIES=*
       - TRUST_PROXY=true
@@ -65,6 +73,71 @@ services:
       retries: 3
       start_period: 40s
 
+  # =============================================================================
+  # QUEUE WORKER
+  # =============================================================================
+  # Processes background jobs: newsletter campaigns, notifications, etc.
+  # Uses the same image as the app but runs queue:work instead of web server
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${COMPOSE_PROJECT_NAME:-laravel-blog}-worker
+    restart: always
+    working_dir: /var/www/html
+    # Override the default command to run queue worker
+    command: php artisan queue:work database --tries=3 --timeout=90 --sleep=3 --max-jobs=1000 --max-time=3600
+    volumes:
+      # Share the same volumes as main app
+      - storage:/var/www/html/storage
+      - bootstrap_cache:/var/www/html/bootstrap/cache
+    depends_on:
+      mysql:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    environment:
+      # Same environment as app service
+      - SERVICE_FQDN_APP
+      - SERVICE_PASSWORD_MYSQLROOT
+      - APP_ENV=${APP_ENV:-production}
+      - APP_DEBUG=${APP_DEBUG:-false}
+      - APP_KEY=${APP_KEY:-}
+      - APP_NAME=${APP_NAME:-Laravel}
+      - APP_URL=https://${SERVICE_FQDN_APP}
+      # Database configuration
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE:-laravel}
+      - DB_USERNAME=${DB_USERNAME:-laravel}
+      - DB_PASSWORD=${SERVICE_PASSWORD_MYSQLROOT}
+      # Queue configuration (must be database)
+      - QUEUE_CONNECTION=database
+      # Cache & Session
+      - CACHE_STORE=${CACHE_STORE:-file}
+      - FILESYSTEM_DISK=${FILESYSTEM_DISK:-public}
+      # Mail configuration (System/Transactional)
+      - MAIL_MAILER=${MAIL_MAILER:-smtp}
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT:-587}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME}
+      # Newsletter Mailer (Bulk Campaigns)
+      - NEWSLETTER_MAILER=${NEWSLETTER_MAILER:-newsletter}
+      - NEWSLETTER_MAIL_HOST=${NEWSLETTER_MAIL_HOST:-}
+      - NEWSLETTER_MAIL_PORT=${NEWSLETTER_MAIL_PORT:-587}
+      - NEWSLETTER_MAIL_USERNAME=${NEWSLETTER_MAIL_USERNAME:-}
+      - NEWSLETTER_MAIL_PASSWORD=${NEWSLETTER_MAIL_PASSWORD:-}
+      - NEWSLETTER_MAIL_ENCRYPTION=${NEWSLETTER_MAIL_ENCRYPTION:-tls}
+    # No healthcheck needed for worker (it's a long-running process)
+
+  # =============================================================================
+  # MYSQL DATABASE
+  # =============================================================================
   mysql:
     image: mysql:8.0
     container_name: ${COMPOSE_PROJECT_NAME:-laravel-blog}-mysql
