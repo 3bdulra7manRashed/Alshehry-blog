@@ -397,7 +397,7 @@
                         <div>
                             <p class="font-bold text-lg text-green-800">تم إرسال الحملة بنجاح! 🎉</p>
                             <p class="text-sm text-green-700 mt-1">
-                                تم الإرسال في {{ $campaign->sent_at->translatedFormat('j M Y') }} الساعة {{ $campaign->sent_at->translatedFormat('H:i') }}
+                                تم الإرسال في {{ $campaign->sent_at?->translatedFormat('j M Y') ?? 'الآن' }} الساعة {{ $campaign->sent_at?->translatedFormat('H:i') ?? '--:--' }}
                             </p>
                         </div>
                     </div>
