@@ -218,13 +218,14 @@
             
             <!-- Final Action Section -->
             @if($campaign->isDraft())
-                <section class="mt-8">
+                <section class="mt-8" x-data="{ showModal: false, confirmed: false, isSending: false }">
                     <!-- Section Divider -->
                     <div class="border-t border-gray-200 mb-4"></div>
                     
                     <!-- Section Label -->
                     <p class="text-xs text-center text-gray-400 uppercase tracking-wider mb-4">إجراء نهائي</p>
                     
+                    <!-- Send Campaign Card -->
                     <div class="bg-white p-6 rounded-xl border-2 border-brand-accent/30 shadow-sm">
                         <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-brand-accent -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,7 +234,7 @@
                             إرسال الحملة
                         </h3>
                         
-                        <!-- Warning Box (Amber for caution, not red) -->
+                        <!-- Warning Alert -->
                         <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg mb-4">
                             <p class="text-sm text-amber-800">
                                 <strong>⚠️ إجراء نهائي:</strong> بعد الإرسال، لا يمكن التراجع أو التعديل.
@@ -245,29 +246,145 @@
                         
                         <!-- Confirmation Checkbox -->
                         <label class="flex items-start gap-3 mb-4 cursor-pointer group">
-                            <input type="checkbox" x-model="confirmed" 
+                            <input type="checkbox" 
+                                   x-model="confirmed"
                                    class="mt-0.5 w-5 h-5 rounded border-gray-300 text-brand-accent focus:ring-brand-accent transition-all">
                             <span class="text-sm text-gray-700 group-hover:text-gray-900">
                                 أؤكد أنني راجعت محتوى الرسالة وأريد إرسالها للجميع
                             </span>
                         </label>
                         
-                        <!-- Send Button (Brand Accent) -->
-                        <button type="button" 
-                                @click="showConfirmModal = true"
+                        <!-- Open Modal Button -->
+                        <button type="button"
+                                @click="showModal = true"
                                 :disabled="!confirmed || {{ $subscriberCount }} === 0"
                                 :class="{ 
                                     'opacity-50 cursor-not-allowed': !confirmed || {{ $subscriberCount }} === 0,
-                                    'hover:bg-brand-accent-hover hover:shadow-xl': confirmed && {{ $subscriberCount }} > 0
+                                    'hover:bg-brand-accent-hover hover:shadow-xl transform hover:-translate-y-0.5': confirmed && {{ $subscriberCount }} > 0
                                 }"
-                                class="w-full px-6 py-4 bg-brand-accent text-white rounded-xl transition-all font-bold text-lg shadow-lg flex items-center justify-center gap-3">
+                                class="w-full px-6 py-4 bg-brand-accent text-white rounded-xl transition-all duration-200 font-bold text-lg shadow-lg flex items-center justify-center gap-3">
                             <svg class="w-6 h-6 -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                             </svg>
                             إرسال للجميع ← {{ number_format($subscriberCount) }} مشترك
                         </button>
                     </div>
-                </div>
+                    
+                    <!-- Confirmation Modal -->
+                    <div x-show="showModal"
+                         x-cloak
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0"
+                         x-transition:enter-end="opacity-100"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                         @keydown.escape.window="showModal = false">
+                        
+                        <!-- Backdrop -->
+                        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+                             @click="showModal = false"></div>
+                        
+                        <!-- Modal Content -->
+                        <div x-show="showModal"
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform scale-90"
+                             x-transition:enter-end="opacity-100 transform scale-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100 transform scale-100"
+                             x-transition:leave-end="opacity-0 transform scale-90"
+                             class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden z-10">
+                            
+                            <!-- Modal Header (with accent bar) -->
+                            <div class="bg-gradient-to-r from-brand-accent to-amber-500 h-1.5"></div>
+                            
+                            <div class="p-6">
+                                <!-- Icon & Title -->
+                                <div class="text-center mb-6">
+                                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-900">هل أنت متأكد؟</h3>
+                                    <p class="text-gray-500 mt-2">
+                                        أنت على وشك إرسال هذه الحملة إلى 
+                                        <span class="font-bold text-brand-accent">{{ number_format($subscriberCount) }}</span>
+                                        مشترك.
+                                    </p>
+                                </div>
+                                
+                                <!-- Campaign Summary -->
+                                <div class="bg-gray-50 rounded-xl p-4 mb-6">
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-500">العنوان:</span>
+                                            <span class="font-medium text-gray-800 truncate max-w-[200px]">{{ $campaign->subject }}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-500">المقالات:</span>
+                                            <span class="font-medium text-gray-800">{{ $campaign->posts->count() }} مقالات</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-500">المستلمون:</span>
+                                            <span class="font-bold text-brand-accent">{{ number_format($subscriberCount) }} مشترك</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Warning -->
+                                <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+                                    <p class="text-sm text-red-700 text-center font-medium">
+                                        ⚠️ هذا الإجراء لا يمكن التراجع عنه
+                                    </p>
+                                </div>
+                                
+                                <!-- Actions -->
+                                <div class="grid grid-cols-2 gap-3 items-stretch">
+                                    <!-- Submit Form (Right side in RTL) -->
+                                    <form action="{{ route('admin.campaigns.send', $campaign) }}" 
+                                          method="POST"
+                                          class="h-full"
+                                          @submit="isSending = true">
+                                        @csrf
+                                        <button type="submit"
+                                                :disabled="isSending"
+                                                :class="{ 'opacity-75 cursor-wait': isSending }"
+                                                class="w-full h-full px-4 py-3 bg-brand-accent text-white rounded-xl hover:bg-brand-accent-hover transition-all font-bold flex items-center justify-center gap-2 disabled:hover:bg-brand-accent">
+                                            <!-- Loading Spinner -->
+                                            <svg x-show="isSending" 
+                                                 x-cloak
+                                                 class="animate-spin w-5 h-5" 
+                                                 fill="none" 
+                                                 viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            <!-- Send Icon (hidden when loading) -->
+                                            <svg x-show="!isSending" 
+                                                 class="w-5 h-5 -rotate-45" 
+                                                 fill="none" 
+                                                 stroke="currentColor" 
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                            </svg>
+                                            <span x-text="isSending ? 'جارٍ الإرسال...' : 'نعم، أرسل الآن'">نعم، أرسل الآن</span>
+                                        </button>
+                                    </form>
+                                    
+                                    <!-- Cancel Button (Left side in RTL) -->
+                                    <button type="button"
+                                            @click="showModal = false"
+                                            :disabled="isSending"
+                                            class="w-full h-full px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium disabled:opacity-50">
+                                        إلغاء
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             @else
                 <!-- Sent Success State -->
                 <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
@@ -289,94 +406,6 @@
             
         </div>
         
-    </div>
-    
-    <!-- Confirmation Modal -->
-    <div x-show="showConfirmModal" 
-         x-cloak
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showConfirmModal = false"></div>
-        
-        <!-- Modal Content -->
-        <div x-show="showConfirmModal"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 transform scale-95"
-             x-transition:enter-end="opacity-100 transform scale-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 transform scale-100"
-             x-transition:leave-end="opacity-0 transform scale-95"
-             class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 z-10">
-            
-            <!-- Modal Header -->
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-brand-accent/10 flex items-center justify-center">
-                    <svg class="w-8 h-8 text-brand-accent -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900">تأكيد إرسال الحملة</h3>
-                <p class="text-gray-500 mt-2">هل أنت متأكد من إرسال هذه الحملة؟</p>
-            </div>
-            
-            <!-- Campaign Summary -->
-            <div class="bg-gray-50 rounded-xl p-4 mb-6">
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">الحملة:</span>
-                        <span class="font-medium text-gray-800">{{ Str::limit($campaign->subject, 30) }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">المستلمون:</span>
-                        <span class="font-bold text-blue-600">{{ number_format($subscriberCount) }} مشترك</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">المقالات:</span>
-                        <span class="font-medium text-gray-800">{{ $campaign->posts->count() }} مقالات</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Warning (Amber for caution) -->
-            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6">
-                <p class="text-sm text-amber-800 text-center">
-                    ⚠️ هذا الإجراء لا يمكن التراجع عنه
-                </p>
-            </div>
-            
-            <!-- Actions -->
-            <div class="flex gap-3">
-                <button type="button"
-                        @click="showConfirmModal = false" 
-                        class="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium">
-                    إلغاء
-                </button>
-                <form action="{{ route('admin.campaigns.send', $campaign) }}" method="POST" class="flex-1" id="sendCampaignForm">
-                    @csrf
-                    <button type="submit" 
-                            @click="isSending = true"
-                            :disabled="isSending"
-                            :class="{ 'opacity-75 cursor-wait': isSending }"
-                            class="w-full px-4 py-3 bg-brand-accent text-white rounded-xl hover:bg-brand-accent-hover transition-colors font-bold flex items-center justify-center gap-2">
-                        <template x-if="isSending">
-                            <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        </template>
-                        <span x-text="isSending ? 'جارٍ الإرسال...' : 'نعم، أرسل الآن'"></span>
-                    </button>
-                </form>
-            </div>
-            
-        </div>
     </div>
 
 </div>
