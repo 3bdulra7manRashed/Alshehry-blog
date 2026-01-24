@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Alpine.js cloak - hides elements until Alpine initializes */
+[x-cloak] {
+    display: none !important;
+}
+
 /* ============================================================
    🎨 BRAND TOKEN SYSTEM
    Single source of truth for all brand colors

@@ -293,14 +293,14 @@
     
     <!-- Confirmation Modal -->
     <div x-show="showConfirmModal" 
+         x-cloak
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center p-4"
-         style="display: none;">
+         class="fixed inset-0 z-50 flex items-center justify-center p-4">
         
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showConfirmModal = false"></div>
@@ -353,15 +353,17 @@
             
             <!-- Actions -->
             <div class="flex gap-3">
-                <button @click="showConfirmModal = false" 
+                <button type="button"
+                        @click="showConfirmModal = false" 
                         class="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium">
                     إلغاء
                 </button>
-                <form action="{{ route('admin.campaigns.send', $campaign) }}" method="POST" class="flex-1" x-ref="sendForm">
+                <form action="{{ route('admin.campaigns.send', $campaign) }}" method="POST" class="flex-1" id="sendCampaignForm">
                     @csrf
                     <button type="submit" 
                             @click="isSending = true"
                             :disabled="isSending"
+                            :class="{ 'opacity-75 cursor-wait': isSending }"
                             class="w-full px-4 py-3 bg-brand-accent text-white rounded-xl hover:bg-brand-accent-hover transition-colors font-bold flex items-center justify-center gap-2">
                         <template x-if="isSending">
                             <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
