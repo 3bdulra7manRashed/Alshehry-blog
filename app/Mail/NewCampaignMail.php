@@ -7,6 +7,7 @@ use App\Models\Subscriber;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -40,6 +41,10 @@ class NewCampaignMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address(
+                env('NEWSLETTER_MAIL_FROM_ADDRESS', 'newsletter@alshehrysaleh.com'),
+                env('NEWSLETTER_MAIL_FROM_NAME', 'مدونة صالح الشهري')
+            ),
             subject: $this->campaign->subject,
         );
     }
