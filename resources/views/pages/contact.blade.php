@@ -319,15 +319,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!phoneInput) return;
     
-    // Error messages in Arabic
+    // Error messages in Arabic (intl-tel-input validation error codes)
+    // Reference: https://github.com/jackocnr/intl-tel-input#validationerror
     var errorMessages = {
-        0: 'رقم الهاتف صحيح', // IS_POSSIBLE
-        1: 'رمز الدولة غير صحيح',
-        2: 'رقم الهاتف قصير جداً',
-        3: 'رقم الهاتف طويل جداً',
-        4: 'رقم الهاتف غير صحيح',
-        5: 'طول الرقم غير صحيح',
-        '-99': 'رقم الهاتف غير صحيح'
+        0: 'رقم الهاتف غير صحيح', // IS_POSSIBLE - not fully validated
+        1: 'رمز الدولة غير صحيح', // INVALID_COUNTRY_CODE
+        2: 'رقم الهاتف قصير جداً', // TOO_SHORT
+        3: 'رقم الهاتف طويل جداً', // TOO_LONG
+        4: 'رقم الهاتف غير صحيح', // IS_NOT_A_NUMBER
+        5: 'طول الرقم غير صحيح', // INVALID_LENGTH
+        '-99': 'رقم الهاتف غير صحيح' // Default/Unknown error
     };
     
     // Initialize intl-tel-input v17.0.8 with strict validation
