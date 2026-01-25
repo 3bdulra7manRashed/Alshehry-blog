@@ -88,8 +88,16 @@ class CampaignController extends Controller
     /**
      * Display the specified campaign (Campaign Cockpit).
      */
-    public function show(Campaign $campaign): View
+    public function show(Campaign $campaign, Request $request)
     {
+        // Handle JSON poll request for real-time status updates
+        if ($request->wantsJson()) {
+            return response()->json([
+                'status' => $campaign->status,
+                'sent_at_formatted' => $campaign->sent_at?->format('h:i A'),
+            ]);
+        }
+
         $campaign->load('posts');
         $subscriberCount = Subscriber::active()->count();
 
@@ -256,6 +264,7 @@ class CampaignController extends Controller
             'id' => $campaign->id,
             'status' => $campaign->status,
             'sent_at' => $campaign->sent_at?->toISOString(),
+            'sent_at_formatted' => $campaign->sent_at?->format('h:i A'), // Format: 02:30 PM
         ]);
     }
 }

@@ -88,9 +88,66 @@
         </div>
         
         <!-- Left Column: Control Panel (Second in DOM = Left side in RTL) -->
-        <div class="w-full lg:w-1/3 lg:sticky lg:top-6 h-fit space-y-5">
+        <div class="w-full lg:w-1/3 lg:sticky lg:top-6 h-fit lg:self-start space-y-5"
+             x-data="{
+                status: '{{ $campaign->status }}',
+                sentTime: '{{ $campaign->sent_at?->format('h:i A') }}',
+                isSending: false,
+                statusMessage: '',
+                showModal: false,
+                pollInterval: null,
+                
+                init() {
+                    if (this.status === 'sending') {
+                        this.startPolling();
+                    }
+                },
+
+                startPolling() {
+                    this.statusMessage = 'جارٍ إرسال الحملة...';
+                    this.pollInterval = setInterval(() => { this.checkStatus(); }, 3000);
+                    setTimeout(() => { this.stopPolling(); }, 300000); // Stop after 5 mins
+                },
+
+                async checkStatus() {
+                    try {
+                        const response = await fetch('{{ route('admin.campaigns.show', $campaign) }}', {
+                            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.status = data.status;
+                            
+                            if (this.status === 'sent') {
+                                this.stopPolling();
+                                this.sentTime = data.sent_at_formatted;
+                                this.showModal = false;
+                                this.isSending = false;
+                            } else if (this.status === 'failed') {
+                                this.statusMessage = 'فشل الإرسال!';
+                                this.stopPolling();
+                                this.isSending = false;
+                            }
+                        }
+                    } catch (error) { console.error('Status check failed:', error); }
+                },
+
+                stopPolling() {
+                    if (this.pollInterval) {
+                        clearInterval(this.pollInterval);
+                        this.pollInterval = null;
+                    }
+                },
+
+                handleSubmit() {
+                    this.isSending = true;
+                    this.startPolling();
+                    return true;
+                }
+             }">
             
-            <!-- Progress Stepper -->
+            <!-- Reactive Progress Stepper -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="font-bold text-gray-800 mb-4 text-sm">خطوات الحملة</h3>
                 
@@ -98,7 +155,7 @@
                     <!-- Vertical Line -->
                     <div class="absolute right-[11px] top-6 bottom-6 w-0.5 bg-gray-200"></div>
                     
-                    <!-- Step 1: Content (Completed) -->
+                    <!-- Step 1: Content (Always Completed) -->
                     <div class="flex items-center gap-3 mb-5 relative">
                         <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 z-10 shadow-sm">
                             <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -111,23 +168,47 @@
                         </div>
                     </div>
                     
-                    <!-- Step 2: Preview (Active) -->
+                    <!-- Step 2: Preview (Reactive) -->
                     <div class="flex items-center gap-3 mb-5 relative">
-                        <div class="w-6 h-6 rounded-full bg-brand-accent flex items-center justify-center flex-shrink-0 z-10 shadow-sm">
+                        <!-- Green Check (Completed) -->
+                        <div x-show="status === 'sent' || status === 'sending'" class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 z-10 shadow-sm">
+                            <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div x-show="status === 'sent' || status === 'sending'">
+                            <p class="text-sm font-medium text-green-600">المعاينة</p>
+                            <p class="text-xs text-green-500">تم ✓</p>
+                        </div>
+
+                        <!-- Active State -->
+                        <div x-show="status !== 'sent' && status !== 'sending'" class="w-6 h-6 rounded-full bg-brand-accent flex items-center justify-center flex-shrink-0 z-10 shadow-sm">
                             <span class="text-white text-xs font-bold">2</span>
                         </div>
-                        <div>
+                        <div x-show="status !== 'sent' && status !== 'sending'">
                             <p class="text-sm font-bold text-gray-900">المعاينة</p>
                             <p class="text-xs text-brand-accent">الخطوة الحالية</p>
                         </div>
                     </div>
                     
-                    <!-- Step 3: Launch (Pending) -->
+                    <!-- Step 3: Launch (Reactive) -->
                     <div class="flex items-center gap-3 relative">
-                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center flex-shrink-0 z-10">
+                        <!-- Green Check (Completed) -->
+                        <div x-show="status === 'sent'" class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 z-10 shadow-sm">
+                            <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div x-show="status === 'sent'">
+                            <p class="text-sm font-medium text-green-600">الإرسال</p>
+                            <p class="text-xs text-green-500">تم الإرسال</p>
+                        </div>
+
+                        <!-- Pending/Active State -->
+                        <div x-show="status !== 'sent'" class="w-6 h-6 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center flex-shrink-0 z-10">
                             <span class="text-gray-400 text-xs font-bold">3</span>
                         </div>
-                        <div>
+                        <div x-show="status !== 'sent'">
                             <p class="text-sm font-medium text-gray-400">الإرسال</p>
                             <p class="text-xs text-gray-400">إرسال للمشتركين</p>
                         </div>
@@ -135,7 +216,7 @@
                 </div>
             </div>
             
-            <!-- Audience Summary Card -->
+            <!-- Audience Summary Card (Static) -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
@@ -148,7 +229,6 @@
                         <p class="text-sm text-gray-500">مشترك نشط</p>
                     </div>
                 </div>
-                
                 <div class="mt-4 pt-4 border-t border-gray-100">
                     <div class="flex items-center gap-2 text-sm text-gray-600">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -165,7 +245,7 @@
                 </div>
             </div>
             
-            <!-- Test Email Tool (Compact) -->
+            <!-- Test Email Tool (Static) -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="font-bold text-gray-700 mb-3 text-sm flex items-center gap-2">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,7 +253,6 @@
                     </svg>
                     إرسال نسخة تجريبية
                 </h3>
-                
                 <form action="{{ route('admin.campaigns.send-test', $campaign) }}" method="POST">
                     @csrf
                     <div class="flex gap-2">
@@ -193,238 +272,33 @@
                 </form>
             </div>
             
-            <!-- Launch Section -->
-            @if($campaign->isDraft())
-                <section x-data="{
-                    showModal: false,
-                    confirmed: false,
-                    isSending: false,
-                    pollInterval: null,
-                    statusMessage: '',
+            <!-- Launch / Success Section (Reactive) -->
+            <div>
+                <!-- Launch Card -->
+                <div x-show="status === 'draft' || status === 'sending'" class="bg-gradient-to-br from-brand-accent/5 to-amber-50 p-5 rounded-xl border border-brand-accent/20">
+                    <h3 class="font-bold text-gray-800 mb-3 text-sm flex items-center gap-2">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                        </svg>
+                        إطلاق الحملة
+                    </h3>
                     
-                    // Start polling for status changes
-                    startPolling() {
-                        this.statusMessage = 'جارٍ إرسال الحملة...';
-                        
-                        // Poll every 3 seconds
-                        this.pollInterval = setInterval(() => {
-                            this.checkStatus();
-                        }, 3000);
-                        
-                        // Safety: stop polling after 5 minutes max
-                        setTimeout(() => {
-                            this.stopPolling();
-                        }, 300000);
-                    },
+                    <button type="button"
+                            @click="showModal = true"
+                            :disabled="{{ $subscriberCount }} === 0"
+                            :class="{ 'opacity-50 cursor-not-allowed': {{ $subscriberCount }} === 0, 'hover:shadow-xl transform hover:-translate-y-0.5': {{ $subscriberCount }} > 0 }"
+                            class="w-full px-6 py-4 bg-brand-accent text-white rounded-xl transition-all duration-200 font-bold text-lg shadow-lg flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5 -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                        إرسال للجميع
+                    </button>
                     
-                    // Check campaign status via API
-                    async checkStatus() {
-                        try {
-                            const response = await fetch('{{ route('admin.campaigns.status', $campaign) }}', {
-                                headers: {
-                                    'Accept': 'application/json',
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                }
-                            });
-                            
-                            if (response.ok) {
-                                const data = await response.json();
-                                
-                                if (data.status === 'sent') {
-                                    this.statusMessage = 'تم الإرسال بنجاح! جارٍ التحديث...';
-                                    this.stopPolling();
-                                    // Reload page to show success state
-                                    setTimeout(() => window.location.reload(), 1000);
-                                } else if (data.status === 'sending') {
-                                    this.statusMessage = 'جارٍ الإرسال... (' + (data.progress || 0) + '%)';
-                                } else if (data.status === 'failed') {
-                                    this.statusMessage = 'فشل الإرسال!';
-                                    this.stopPolling();
-                                    setTimeout(() => window.location.reload(), 2000);
-                                }
-                            }
-                        } catch (error) {
-                            console.error('Status check failed:', error);
-                        }
-                    },
-                    
-                    // Stop polling
-                    stopPolling() {
-                        if (this.pollInterval) {
-                            clearInterval(this.pollInterval);
-                            this.pollInterval = null;
-                        }
-                    },
-                    
-                    // Handle form submit
-                    handleSubmit() {
-                        this.isSending = true;
-                        this.startPolling();
-                        return true; // Allow form to submit
-                    }
-                }">
-                    <!-- Launch Card -->
-                    <div class="bg-gradient-to-br from-brand-accent/5 to-amber-50 p-5 rounded-xl border border-brand-accent/20">
-                        <h3 class="font-bold text-gray-800 mb-3 text-sm flex items-center gap-2">
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
-                            </svg>
-                            إطلاق الحملة
-                        </h3>
-                        
-                        <!-- Launch Button -->
-                        <button type="button"
-                                @click="showModal = true"
-                                :disabled="{{ $subscriberCount }} === 0"
-                                :class="{ 
-                                    'opacity-50 cursor-not-allowed': {{ $subscriberCount }} === 0,
-                                    'hover:shadow-xl transform hover:-translate-y-0.5': {{ $subscriberCount }} > 0
-                                }"
-                                class="w-full px-6 py-4 bg-brand-accent text-white rounded-xl transition-all duration-200 font-bold text-lg shadow-lg flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5 -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                            </svg>
-                            إرسال للجميع
-                        </button>
-                        
-                        <!-- Helper Text -->
-                        <p class="text-xs text-gray-500 text-center mt-3">
-                            سيُطلب منك التأكيد قبل الإرسال
-                        </p>
-                    </div>
-                    
-                    <!-- Confirmation Modal -->
-                    <div x-show="showModal"
-                         x-cloak
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0"
-                         x-transition:enter-end="opacity-100"
-                         x-transition:leave="transition ease-in duration-200"
-                         x-transition:leave-start="opacity-100"
-                         x-transition:leave-end="opacity-0"
-                         class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                         @keydown.escape.window="showModal = false">
-                        
-                        <!-- Backdrop -->
-                        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" 
-                             @click="showModal = false"></div>
-                        
-                        <!-- Modal Content -->
-                        <div x-show="showModal"
-                             x-transition:enter="transition ease-out duration-300"
-                             x-transition:enter-start="opacity-0 transform scale-90"
-                             x-transition:enter-end="opacity-100 transform scale-100"
-                             x-transition:leave="transition ease-in duration-200"
-                             x-transition:leave-start="opacity-100 transform scale-100"
-                             x-transition:leave-end="opacity-0 transform scale-90"
-                             class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden z-10">
-                            
-                            <!-- Modal Header (with accent bar) -->
-                            <div class="bg-gradient-to-r from-brand-accent to-amber-500 h-1.5"></div>
-                            
-                            <div class="p-6">
-                                <!-- Icon & Title -->
-                                <div class="text-center mb-6">
-                                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
-                                        <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-xl font-bold text-gray-900">هل أنت متأكد؟</h3>
-                                    <p class="text-gray-500 mt-2">
-                                        أنت على وشك إرسال هذه الحملة إلى 
-                                        <span class="font-bold text-brand-accent">{{ number_format($subscriberCount) }}</span>
-                                        مشترك.
-                                    </p>
-                                </div>
-                                
-                                <!-- Campaign Summary -->
-                                <div class="bg-gray-50 rounded-xl p-4 mb-6">
-                                    <div class="space-y-2 text-sm">
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-500">العنوان:</span>
-                                            <span class="font-medium text-gray-800 truncate max-w-[200px]">{{ $campaign->subject }}</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-500">المقالات:</span>
-                                            <span class="font-medium text-gray-800">{{ $campaign->posts->count() }} مقالات</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-500">المستلمون:</span>
-                                            <span class="font-bold text-brand-accent">{{ number_format($subscriberCount) }} مشترك</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Warning -->
-                                <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
-                                    <p class="text-sm text-red-700 text-center font-medium">
-                                        ⚠️ هذا الإجراء لا يمكن التراجع عنه
-                                    </p>
-                                </div>
-                                
-                                <!-- Actions -->
-                                <div class="grid grid-cols-2 gap-3 items-stretch">
-                                    <!-- Submit Form (Right side in RTL) -->
-                                    <form action="{{ route('admin.campaigns.send', $campaign) }}" 
-                                          method="POST"
-                                          class="h-full"
-                                          @submit="handleSubmit()">
-                                        @csrf
-                                        <button type="submit"
-                                                :disabled="isSending"
-                                                :class="{ 'opacity-75 cursor-wait': isSending }"
-                                                class="w-full h-full px-4 py-3 bg-brand-accent text-white rounded-xl hover:bg-brand-accent-hover transition-all font-bold flex items-center justify-center gap-2 disabled:hover:bg-brand-accent">
-                                            <!-- Loading Spinner -->
-                                            <svg x-show="isSending" 
-                                                 x-cloak
-                                                 class="animate-spin w-5 h-5" 
-                                                 fill="none" 
-                                                 viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            <!-- Send Icon (hidden when loading) -->
-                                            <svg x-show="!isSending" 
-                                                 class="w-5 h-5 -rotate-45" 
-                                                 fill="none" 
-                                                 stroke="currentColor" 
-                                                 viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                            </svg>
-                                            <span x-text="isSending ? 'جارٍ الإرسال...' : 'نعم، أرسل الآن'">نعم، أرسل الآن</span>
-                                        </button>
-                                    </form>
-                                    
-                                    <!-- Cancel Button (Left side in RTL) -->
-                                    <button type="button"
-                                            @click="showModal = false"
-                                            :disabled="isSending"
-                                            class="w-full h-full px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium disabled:opacity-50">
-                                        إلغاء
-                                    </button>
-                                </div>
-                                
-                                <!-- Status Message (shown during polling) -->
-                                <div x-show="isSending && statusMessage" 
-                                     x-cloak
-                                     x-transition
-                                     class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-center">
-                                    <div class="flex items-center justify-center gap-2 text-blue-700">
-                                        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        <span x-text="statusMessage" class="text-sm font-medium"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            @else
-                <!-- Sent Success State -->
-                <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
+                    <p class="text-xs text-gray-500 text-center mt-3">سيُطلب منك التأكيد قبل الإرسال</p>
+                </div>
+
+                <!-- Success State -->
+                <div x-show="status === 'sent'" x-cloak class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
                     <div class="flex items-start gap-4">
                         <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                             <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -434,12 +308,38 @@
                         <div>
                             <p class="font-bold text-lg text-green-800">تم إرسال الحملة بنجاح! 🎉</p>
                             <p class="text-sm text-green-700 mt-1">
-                                تم الإرسال في {{ $campaign->sent_at?->translatedFormat('j M Y') ?? 'الآن' }} الساعة {{ $campaign->sent_at?->translatedFormat('H:i') ?? '--:--' }}
+                                تم الإرسال الآن الساعة <span x-text="sentTime"></span>
                             </p>
                         </div>
                     </div>
                 </div>
-            @endif
+                
+                <!-- Confirmation Modal -->
+                <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="showModal = false">
+                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="showModal = false"></div>
+                    <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden z-10">
+                        <div class="bg-gradient-to-r from-brand-accent to-amber-500 h-1.5"></div>
+                        <div class="p-6">
+                            <div class="text-center mb-6">
+                                <h3 class="text-xl font-bold text-gray-900">هل أنت متأكد؟</h3>
+                                <p class="text-gray-500 mt-2">أنت على وشك إرسال هذه الحملة إلى <span class="font-bold text-brand-accent">{{ number_format($subscriberCount) }}</span> مشترك.</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 items-stretch">
+                                <form action="{{ route('admin.campaigns.send', $campaign) }}" method="POST" class="h-full" @submit="handleSubmit()">
+                                    @csrf
+                                    <button type="submit" :disabled="isSending" class="w-full h-full px-4 py-3 bg-brand-accent text-white rounded-xl hover:bg-brand-accent-hover transition-all font-bold flex items-center justify-center gap-2">
+                                        <span x-text="isSending ? 'جارٍ الإرسال...' : 'نعم، أرسل الآن'">نعم، أرسل الآن</span>
+                                    </button>
+                                </form>
+                                <button type="button" @click="showModal = false" :disabled="isSending" class="w-full h-full px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium">إلغاء</button>
+                            </div>
+                            <div x-show="isSending && statusMessage" class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-center">
+                                <span x-text="statusMessage" class="text-sm font-medium text-blue-700"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
         </div>
         
