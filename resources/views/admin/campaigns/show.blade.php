@@ -218,7 +218,74 @@
             
             <!-- Final Action Section -->
             @if($campaign->isDraft())
-                <section class="mt-8" x-data="{ showModal: false, confirmed: false, isSending: false }">
+                <section class="mt-8" x-data="{
+                    showModal: false,
+                    confirmed: false,
+                    isSending: false,
+                    pollInterval: null,
+                    statusMessage: '',
+                    
+                    // Start polling for status changes
+                    startPolling() {
+                        this.statusMessage = 'جارٍ إرسال الحملة...';
+                        
+                        // Poll every 3 seconds
+                        this.pollInterval = setInterval(() => {
+                            this.checkStatus();
+                        }, 3000);
+                        
+                        // Safety: stop polling after 5 minutes max
+                        setTimeout(() => {
+                            this.stopPolling();
+                        }, 300000);
+                    },
+                    
+                    // Check campaign status via API
+                    async checkStatus() {
+                        try {
+                            const response = await fetch('{{ route('admin.campaigns.status', $campaign) }}', {
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            });
+                            
+                            if (response.ok) {
+                                const data = await response.json();
+                                
+                                if (data.status === 'sent') {
+                                    this.statusMessage = 'تم الإرسال بنجاح! جارٍ التحديث...';
+                                    this.stopPolling();
+                                    // Reload page to show success state
+                                    setTimeout(() => window.location.reload(), 1000);
+                                } else if (data.status === 'sending') {
+                                    this.statusMessage = 'جارٍ الإرسال... (' + (data.progress || 0) + '%)';
+                                } else if (data.status === 'failed') {
+                                    this.statusMessage = 'فشل الإرسال!';
+                                    this.stopPolling();
+                                    setTimeout(() => window.location.reload(), 2000);
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Status check failed:', error);
+                        }
+                    },
+                    
+                    // Stop polling
+                    stopPolling() {
+                        if (this.pollInterval) {
+                            clearInterval(this.pollInterval);
+                            this.pollInterval = null;
+                        }
+                    },
+                    
+                    // Handle form submit
+                    handleSubmit() {
+                        this.isSending = true;
+                        this.startPolling();
+                        return true; // Allow form to submit
+                    }
+                }">
                     <!-- Section Divider -->
                     <div class="border-t border-gray-200 mb-4"></div>
                     
@@ -346,7 +413,7 @@
                                     <form action="{{ route('admin.campaigns.send', $campaign) }}" 
                                           method="POST"
                                           class="h-full"
-                                          @submit="isSending = true">
+                                          @submit="handleSubmit()">
                                         @csrf
                                         <button type="submit"
                                                 :disabled="isSending"
@@ -380,6 +447,20 @@
                                             class="w-full h-full px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium disabled:opacity-50">
                                         إلغاء
                                     </button>
+                                </div>
+                                
+                                <!-- Status Message (shown during polling) -->
+                                <div x-show="isSending && statusMessage" 
+                                     x-cloak
+                                     x-transition
+                                     class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-center">
+                                    <div class="flex items-center justify-center gap-2 text-blue-700">
+                                        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <span x-text="statusMessage" class="text-sm font-medium"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

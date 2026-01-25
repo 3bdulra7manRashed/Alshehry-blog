@@ -231,4 +231,16 @@ class CampaignController extends Controller
             ->route('admin.campaigns.show', $campaign)
             ->with('success', 'بدأ إرسال الحملة البريدية في الخلفية. سيتم إعلامك عند الانتهاء.');
     }
+
+    /**
+     * Get campaign status (JSON endpoint for polling).
+     */
+    public function status(Campaign $campaign)
+    {
+        return response()->json([
+            'id' => $campaign->id,
+            'status' => $campaign->status,
+            'sent_at' => $campaign->sent_at?->toISOString(),
+        ]);
+    }
 }

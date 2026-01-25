@@ -63,6 +63,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin|moderator'])->name('admi
     Route::resource('campaigns', \App\Http\Controllers\Admin\CampaignController::class);
     Route::post('campaigns/{campaign}/send-test', [\App\Http\Controllers\Admin\CampaignController::class, 'sendTest'])->name('campaigns.send-test');
     Route::post('campaigns/{campaign}/send', [\App\Http\Controllers\Admin\CampaignController::class, 'send'])->name('campaigns.send');
+    Route::get('campaigns/{campaign}/status', [\App\Http\Controllers\Admin\CampaignController::class, 'status'])->name('campaigns.status');
     
     // Contact Messages Management
     Route::get('messages', [\App\Http\Controllers\Admin\MessageController::class, 'index'])->name('messages.index');
