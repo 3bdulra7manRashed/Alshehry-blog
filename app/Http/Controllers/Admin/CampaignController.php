@@ -72,9 +72,17 @@ class CampaignController extends Controller
         // Attach selected posts
         $campaign->posts()->attach($validated['posts']);
 
+        // Check if action is 'draft' (Save to Drafts & Exit)
+        if ($request->input('action') === 'draft') {
+            return redirect()
+                ->route('admin.campaigns.index')
+                ->with('success', 'تم حفظ المسودة بنجاح.');
+        }
+
+        // Default behavior: (Save & Continue)
         return redirect()
             ->route('admin.campaigns.show', $campaign)
-            ->with('success', 'تم إنشاء الحملة البريدية بنجاح. يمكنك الآن معاينتها وإرسالها.');
+            ->with('success', 'تم حفظ الحملة. يمكنك مراجعتها الآن.');
     }
 
     /**
@@ -140,6 +148,13 @@ class CampaignController extends Controller
 
         // Sync selected posts
         $campaign->posts()->sync($validated['posts']);
+
+        // Check if action is 'draft' (Save to Drafts & Exit)
+        if ($request->input('action') === 'draft') {
+            return redirect()
+                ->route('admin.campaigns.index')
+                ->with('success', 'تم تحديث المسودة بنجاح.');
+        }
 
         return redirect()
             ->route('admin.campaigns.show', $campaign)

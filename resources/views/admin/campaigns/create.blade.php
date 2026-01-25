@@ -199,65 +199,112 @@
         </div>
 
         <!-- Sidebar Column -->
-        <div class="w-full lg:w-1/3 space-y-6 lg:sticky lg:top-8 h-fit">
+        <div class="w-full lg:w-1/3 lg:sticky lg:top-6 h-fit space-y-5">
             
-            <!-- Publishing Actions -->
+            <!-- Progress Stepper -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="font-bold text-gray-800 mb-4 pb-3 border-b flex items-center gap-2">
-                    <svg class="w-5 h-5 text-brand-accent -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                    </svg>
-                    إجراءات النشر
-                </h3>
+                <h3 class="font-bold text-gray-800 mb-4 text-sm">خطوات الإنشاء</h3>
                 
-                <div class="space-y-3">
-                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                        <div class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                            </svg>
-                            <div>
-                                <p class="text-sm font-medium text-amber-800">ملاحظة</p>
-                                <p class="text-xs text-amber-700 mt-1">سيتم حفظ الحملة كمسودة. يمكنك إرسالها لاحقاً من صفحة إدارة الحملات.</p>
-                            </div>
+                <div class="relative">
+                    <!-- Vertical Line -->
+                    <div class="absolute right-[11px] top-6 bottom-6 w-0.5 bg-gray-200"></div>
+                    
+                    <!-- Step 1: Content (Active) -->
+                    <div class="flex items-center gap-3 mb-5 relative">
+                        <div class="w-6 h-6 rounded-full bg-brand-accent flex items-center justify-center flex-shrink-0 z-10 shadow-sm">
+                            <span class="text-white text-xs font-bold">1</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-gray-900">المحتوى</p>
+                            <p class="text-xs text-brand-accent">الخطوة الحالية</p>
                         </div>
                     </div>
                     
-                    <button type="submit" class="w-full px-6 py-3 bg-brand-accent text-white rounded-lg hover:bg-amber-700 transition-all text-sm font-medium shadow-sm flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- Step 2: Preview (Pending) -->
+                    <div class="flex items-center gap-3 mb-5 relative">
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center flex-shrink-0 z-10">
+                            <span class="text-gray-400 text-xs font-bold">2</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-400">المعاينة</p>
+                            <p class="text-xs text-gray-400">مراجعة الرسالة</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Sending (Pending) -->
+                    <div class="flex items-center gap-3 relative">
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center flex-shrink-0 z-10">
+                            <span class="text-gray-400 text-xs font-bold">3</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-400">الإرسال</p>
+                            <p class="text-xs text-gray-400">إرسال للمشتركين</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                <div class="space-y-3">
+                    <!-- Primary Button: Save & Continue -->
+                    <button type="submit" 
+                            name="action"
+                            value="continue"
+                            class="w-full px-6 py-3.5 bg-brand-accent text-white rounded-xl hover:bg-brand-accent-hover transition-all font-bold shadow-md hover:shadow-lg flex items-center justify-center gap-2 group">
+                        <span>حفظ ومتابعة</span>
+                        <svg class="w-5 h-5 transform rotate-180 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Secondary Button: Save as Draft -->
+                    <button type="submit" 
+                            name="action" 
+                            value="draft"
+                            class="w-full px-6 py-3 bg-white text-gray-600 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all font-medium flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
                         </svg>
-                        إنشاء المسودة
+                        <span>حفظ كمسودة وخروج</span>
                     </button>
                 </div>
+                
+                <!-- Helper Text -->
+                <p class="text-xs text-gray-400 text-center mt-3">
+                    سيتم حفظ المحتوى كمسودة يمكنك تعديلها لاحقاً
+                </p>
             </div>
 
             <!-- Tips Card -->
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-xl border border-blue-100">
-                <h3 class="font-bold text-blue-800 mb-3 flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    نصائح لنشرة ناجحة
+            <div class="bg-blue-50 p-5 rounded-xl">
+                <h3 class="font-bold text-slate-700 mb-3 text-sm flex items-center gap-2">
+                    💡 نصائح سريعة
                 </h3>
-                <ul class="space-y-2 text-sm text-blue-700">
+                <ul class="space-y-2.5">
                     <li class="flex items-start gap-2">
-                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                         </svg>
-                        <span>اختر عنوان بريد جذاب ومختصر</span>
+                        <span class="text-sm text-slate-600">اختر عنوان بريد جذاب ومختصر</span>
                     </li>
                     <li class="flex items-start gap-2">
-                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                         </svg>
-                        <span>3-5 مقالات هو العدد المثالي</span>
+                        <span class="text-sm text-slate-600">3-5 مقالات هو العدد المثالي</span>
                     </li>
                     <li class="flex items-start gap-2">
-                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                         </svg>
-                        <span>اكتب نص ترحيبي شخصي ودافئ</span>
+                        <span class="text-sm text-slate-600">اكتب نص ترحيبي شخصي وممميز</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-sm text-slate-600">راجع المعاينة قبل الإرسال</span>
                     </li>
                 </ul>
             </div>

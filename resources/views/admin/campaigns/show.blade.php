@@ -15,65 +15,39 @@
     {{-- Flash messages are handled globally by layouts.admin --}}
     {{-- No duplicate flash block needed here --}}
 
-    <!-- Breadcrumbs & Header -->
+    <!-- Header -->
     <div class="mb-6 flex items-center justify-between">
-        <div class="flex items-center gap-3 text-sm text-gray-500">
-            <a href="{{ route('admin.campaigns.index') }}" class="hover:text-brand-accent transition-colors flex items-center gap-1">
+        <!-- Page Title & Subtitle -->
+        <div>
+            <h1 class="text-3xl font-serif font-bold text-brand-primary">{{ $campaign->subject }}</h1>
+            <p class="text-gray-500 mt-2 flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
-                الحملات البريدية
-            </a>
-            <span class="text-gray-300">|</span>
-            <span class="text-gray-800 font-medium">{{ Str::limit($campaign->subject, 40) }}</span>
+                معاينة وإدارة الحملة البريدية
+            </p>
         </div>
-        
+
+        <!-- Actions -->
         <div class="flex items-center gap-3">
-            <!-- Status Badge in Header -->
-            @if($campaign->isSent())
-                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    تم الإرسال
-                </span>
-            @elseif($campaign->isSending())
-                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                    <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    جارٍ الإرسال...
-                </span>
-            @else
-                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                    </svg>
-                    مسودة
-                </span>
-            @endif
-            
+            <!-- Edit Button -->
             @if($campaign->isDraft())
                 <a href="{{ route('admin.campaigns.edit', $campaign) }}" class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors bg-white">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                     </svg>
-                    تعديل المحتوى
+                    تعديل
                 </a>
             @endif
-        </div>
-    </div>
 
-    <!-- Page Title -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-serif font-bold text-brand-primary">{{ $campaign->subject }}</h1>
-        <p class="text-gray-500 mt-2 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
-            معاينة وإدارة الحملة البريدية
-        </p>
+            <!-- Back Button -->
+            <a href="{{ route('admin.campaigns.index') }}" class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors bg-white">
+                عودة للقائمة
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+                </svg>
+            </a>
+        </div>
     </div>
 
     <!-- Main Content Grid (RTL: First child appears on Right) -->
@@ -102,7 +76,7 @@
             </div>
             
             <!-- Preview Container (Browser Frame Style) -->
-            <div class="bg-gray-100 border border-gray-200 rounded-b-xl p-6 shadow-inner overflow-hidden" style="max-height: 80vh; overflow-y: auto;">
+            <div class="bg-gray-100 border border-gray-200 rounded-b-xl p-6 shadow-inner overflow-hidden min-h-[850px]">
                 
                 <!-- Rendered Email -->
                 <div class="mx-auto" style="max-width: 600px;">
@@ -114,111 +88,114 @@
         </div>
         
         <!-- Left Column: Control Panel (Second in DOM = Left side in RTL) -->
-        <div class="w-full lg:w-1/3 space-y-6 lg:sticky lg:top-8 h-fit">
+        <div class="w-full lg:w-1/3 lg:sticky lg:top-6 h-fit space-y-5">
             
-            <!-- Campaign Summary Card (Consolidated) -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="font-bold text-gray-800 mb-4 pb-3 border-b flex items-center gap-2">
-                    <svg class="w-5 h-5 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    ملخص الحملة
-                </h3>
+            <!-- Progress Stepper -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="font-bold text-gray-800 mb-4 text-sm">خطوات الحملة</h3>
                 
-                <div class="space-y-4">
-                    <!-- Audience Highlight -->
-                    <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-                        <div class="flex items-center justify-between">
-                            <span class="text-blue-700 font-medium flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                المستلمون
-                            </span>
-                            <span class="text-2xl font-bold text-blue-700">{{ number_format($subscriberCount) }}</span>
-                        </div>
-                        <p class="text-xs text-blue-600 mt-2">
-                            @if($subscriberCount > 0)
-                                سيتم الإرسال لهؤلاء المشتركين النشطين
-                            @else
-                                لا يوجد مشتركين نشطين حالياً
-                            @endif
-                        </p>
-                    </div>
+                <div class="relative">
+                    <!-- Vertical Line -->
+                    <div class="absolute right-[11px] top-6 bottom-6 w-0.5 bg-gray-200"></div>
                     
-                    <!-- Stats Grid -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="p-3 bg-gray-50 rounded-lg text-center">
-                            <div class="text-lg font-bold text-gray-800">{{ $campaign->posts->count() }}</div>
-                            <div class="text-xs text-gray-500">مقالات</div>
+                    <!-- Step 1: Content (Completed) -->
+                    <div class="flex items-center gap-3 mb-5 relative">
+                        <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 z-10 shadow-sm">
+                            <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
                         </div>
-                        <div class="p-3 bg-gray-50 rounded-lg text-center">
-                            <div class="text-lg font-bold text-gray-800">{{ $campaign->created_at->translatedFormat('j M') }}</div>
-                            <div class="text-xs text-gray-500">تاريخ الإنشاء</div>
+                        <div>
+                            <p class="text-sm font-medium text-green-600">المحتوى</p>
+                            <p class="text-xs text-green-500">تم ✓</p>
                         </div>
                     </div>
                     
-                    @if($campaign->sent_at)
-                        <div class="p-3 bg-green-50 rounded-lg border border-green-100">
-                            <div class="flex items-center gap-2 text-green-700">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span class="text-sm font-medium">تم الإرسال: {{ $campaign->sent_at->translatedFormat('j M Y - H:i') }}</span>
-                            </div>
+                    <!-- Step 2: Preview (Active) -->
+                    <div class="flex items-center gap-3 mb-5 relative">
+                        <div class="w-6 h-6 rounded-full bg-brand-accent flex items-center justify-center flex-shrink-0 z-10 shadow-sm">
+                            <span class="text-white text-xs font-bold">2</span>
                         </div>
-                    @endif
+                        <div>
+                            <p class="text-sm font-bold text-gray-900">المعاينة</p>
+                            <p class="text-xs text-brand-accent">الخطوة الحالية</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Launch (Pending) -->
+                    <div class="flex items-center gap-3 relative">
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center flex-shrink-0 z-10">
+                            <span class="text-gray-400 text-xs font-bold">3</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-400">الإرسال</p>
+                            <p class="text-xs text-gray-400">إرسال للمشتركين</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Test Send Card -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="font-bold text-gray-800 mb-4 pb-3 border-b flex items-center gap-2">
-                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                    </svg>
-                    أرسل نسخة للمراجعة
-                </h3>
-                
-                <!-- Success Message -->
-                <div x-show="testSuccess" 
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0 transform -translate-y-2"
-                     x-transition:enter-end="opacity-100 transform translate-y-0"
-                     class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <div class="flex items-center gap-2 text-green-700">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            <!-- Audience Summary Card -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        <span class="text-sm font-medium">تم إرسال النسخة التجريبية بنجاح!</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-3xl font-bold text-gray-900">{{ number_format($subscriberCount) }}</p>
+                        <p class="text-sm text-gray-500">مشترك نشط</p>
                     </div>
                 </div>
                 
-                <form action="{{ route('admin.campaigns.send-test', $campaign) }}" method="POST" class="space-y-4">
-                    @csrf
-                    <div>
-                        <label class="text-xs text-gray-500 mb-1 block">البريد الإلكتروني للاختبار</label>
-                        <input type="email" name="email" x-model="testEmail" placeholder="example@email.com" required
-                               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent text-left" dir="ltr">
-                        @error('email')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <button type="submit" 
-                            :disabled="!testEmail"
-                            :class="{ 'opacity-50 cursor-not-allowed': !testEmail }"
-                            class="w-full px-4 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors font-medium flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5 -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <div class="flex items-center gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
-                        <span>إرسال نسخة تجريبية</span>
-                    </button>
+                        <span class="truncate" title="{{ $campaign->subject }}">{{ Str::limit($campaign->subject, 35) }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                        </svg>
+                        <span>{{ $campaign->posts->count() }} مقالات</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Test Email Tool (Compact) -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="font-bold text-gray-700 mb-3 text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                    إرسال نسخة تجريبية
+                </h3>
+                
+                <form action="{{ route('admin.campaigns.send-test', $campaign) }}" method="POST">
+                    @csrf
+                    <div class="flex gap-2">
+                        <input type="email" name="email" placeholder="example@email.com" required
+                               class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent" dir="ltr">
+                        <button type="submit" 
+                                class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition-colors flex items-center gap-1.5 text-sm font-medium flex-shrink-0">
+                            <svg class="w-4 h-4 -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                            </svg>
+                            <span>إرسال</span>
+                        </button>
+                    </div>
+                    @error('email')
+                        <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                    @enderror
                 </form>
             </div>
             
-            <!-- Final Action Section -->
+            <!-- Launch Section -->
             @if($campaign->isDraft())
-                <section class="mt-8" x-data="{
+                <section x-data="{
                     showModal: false,
                     confirmed: false,
                     isSending: false,
@@ -286,55 +263,34 @@
                         return true; // Allow form to submit
                     }
                 }">
-                    <!-- Section Divider -->
-                    <div class="border-t border-gray-200 mb-4"></div>
-                    
-                    <!-- Section Label -->
-                    <p class="text-xs text-center text-gray-400 uppercase tracking-wider mb-4">إجراء نهائي</p>
-                    
-                    <!-- Send Campaign Card -->
-                    <div class="bg-white p-6 rounded-xl border-2 border-brand-accent/30 shadow-sm">
-                        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-brand-accent -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    <!-- Launch Card -->
+                    <div class="bg-gradient-to-br from-brand-accent/5 to-amber-50 p-5 rounded-xl border border-brand-accent/20">
+                        <h3 class="font-bold text-gray-800 mb-3 text-sm flex items-center gap-2">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
                             </svg>
-                            إرسال الحملة
+                            إطلاق الحملة
                         </h3>
                         
-                        <!-- Warning Alert -->
-                        <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg mb-4">
-                            <p class="text-sm text-amber-800">
-                                <strong>⚠️ إجراء نهائي:</strong> بعد الإرسال، لا يمكن التراجع أو التعديل.
-                            </p>
-                            <p class="text-xs text-amber-700 mt-1">
-                                سيتم إرسال الرسالة إلى <strong>{{ number_format($subscriberCount) }}</strong> مشترك نشط.
-                            </p>
-                        </div>
-                        
-                        <!-- Confirmation Checkbox -->
-                        <label class="flex items-start gap-3 mb-4 cursor-pointer group">
-                            <input type="checkbox" 
-                                   x-model="confirmed"
-                                   class="mt-0.5 w-5 h-5 rounded border-gray-300 text-brand-accent focus:ring-brand-accent transition-all">
-                            <span class="text-sm text-gray-700 group-hover:text-gray-900">
-                                أؤكد أنني راجعت محتوى الرسالة وأريد إرسالها للجميع
-                            </span>
-                        </label>
-                        
-                        <!-- Open Modal Button -->
+                        <!-- Launch Button -->
                         <button type="button"
                                 @click="showModal = true"
-                                :disabled="!confirmed || {{ $subscriberCount }} === 0"
+                                :disabled="{{ $subscriberCount }} === 0"
                                 :class="{ 
-                                    'opacity-50 cursor-not-allowed': !confirmed || {{ $subscriberCount }} === 0,
-                                    'hover:bg-brand-accent-hover hover:shadow-xl transform hover:-translate-y-0.5': confirmed && {{ $subscriberCount }} > 0
+                                    'opacity-50 cursor-not-allowed': {{ $subscriberCount }} === 0,
+                                    'hover:shadow-xl transform hover:-translate-y-0.5': {{ $subscriberCount }} > 0
                                 }"
-                                class="w-full px-6 py-4 bg-brand-accent text-white rounded-xl transition-all duration-200 font-bold text-lg shadow-lg flex items-center justify-center gap-3">
-                            <svg class="w-6 h-6 -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="w-full px-6 py-4 bg-brand-accent text-white rounded-xl transition-all duration-200 font-bold text-lg shadow-lg flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5 -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                             </svg>
-                            إرسال للجميع ← {{ number_format($subscriberCount) }} مشترك
+                            إرسال للجميع
                         </button>
+                        
+                        <!-- Helper Text -->
+                        <p class="text-xs text-gray-500 text-center mt-3">
+                            سيُطلب منك التأكيد قبل الإرسال
+                        </p>
                     </div>
                     
                     <!-- Confirmation Modal -->

@@ -525,7 +525,7 @@
         {{-- Flash Messages Area --}}
         @if(session('success'))
             <div class="container mx-auto px-4 mt-6 max-w-5xl">
-                <div class="bg-green-50 border-r-4 border-green-500 text-green-700 p-4 rounded shadow-sm relative" role="alert" x-data="{ show: true }" x-show="show" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+                <div class="bg-green-50 border-r-4 border-green-500 text-green-700 p-4 rounded shadow-sm relative" role="alert" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" x-transition.duration.500ms>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             <svg class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20">
