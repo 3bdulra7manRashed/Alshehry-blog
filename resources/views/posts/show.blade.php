@@ -9,9 +9,7 @@
 
 @section('keywords')صالح حمدان الشهري, Saleh Hamdan Alshehry, مركز النخبة للتدريب, Elite Training Center, ريادة الأعمال, Entrepreneurship, منشآت, Monsha'at, جدة, Jeddah{{ $post->tags->count() > 0 ? ', ' . $post->tags->pluck('name')->implode(', ') : '' }}@endsection
 
-@section('og_type', 'article')
-
-@section('og_image'){{ $post->featured_image_url ?? asset('images/saleh-alshehry-og.jpg') }}@endsection
+{{-- og_type and og_image are handled by the layout logic safely --}}
 
 
 {{-- ============================================================ --}}
@@ -20,9 +18,7 @@
 {{-- ============================================================ --}}
 @push('meta')
 {{-- MANDATORY: Force WhatsApp/Facebook to render large image immediately --}}
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="{{ $post->title }} - صالح حمدان الشهري">
+{{-- Image dimensions/alt are handled by layout --}}
 
 {{-- Article-specific Open Graph tags --}}
 @if($post->published_at)

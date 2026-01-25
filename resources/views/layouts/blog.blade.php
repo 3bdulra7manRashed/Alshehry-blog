@@ -39,6 +39,8 @@
             $seoKeywords = $post->tags->pluck('name')->implode(', ') ?: $defaultKeywords;
             
             // Image: HARDCODED DOMAIN for WhatsApp/Facebook compatibility
+            $mimeType = 'image/jpeg'; // Default MIME type
+            
             if ($post->featured_image_path) {
                 // Clean the path - remove leading slashes and 'storage/' prefix if exists
                 $cleanPath = ltrim($post->featured_image_path, '/');
@@ -46,6 +48,11 @@
                     ? $cleanPath 
                     : 'storage/' . $cleanPath;
                 $seoImage = $siteDomain . '/' . $cleanPath;
+                
+                // Dynamic MIME Type Detection
+                $ext = strtolower(pathinfo($cleanPath, PATHINFO_EXTENSION));
+                if ($ext === 'png') $mimeType = 'image/png';
+                if ($ext === 'webp') $mimeType = 'image/webp';
             } else {
                 $seoImage = $defaultImage;
             }
@@ -61,6 +68,7 @@
             $seoDescription = $defaultDescription;
             $seoKeywords = $defaultKeywords;
             $seoImage = $defaultImage;
+            $mimeType = 'image/jpeg';
             $ogType = 'website';
             $ogTitle = 'صالح الشهري - دليلك العملي لتحويل الأفكار إلى مشاريع';
             $ogDescription = 'كيف تبني مشروعاً يزدهر ويصنع قيمة؟ أشاركك هنا خلاصة خبرتي في تحويل الأفكار إلى مشاريع ريادية قابلة للنمو، مع استشارات متخصصة لدعم المحتوى المحلي والاقتصاد الوطني.';
@@ -90,7 +98,7 @@
     <meta property="og:description" content="@yield('og_description', $ogDescription)">
     <meta property="og:image" content="@yield('og_image', $seoImage)">
     <meta property="og:image:secure_url" content="@yield('og_image', $seoImage)">
-    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:type" content="@yield('og_image_type', $mimeType)">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{{ $isPostPage ? $post->title : 'صالح الشهري - خبير ريادة الأعمال ونمو المنشآت' }}">
