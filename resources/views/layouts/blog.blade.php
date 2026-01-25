@@ -581,11 +581,13 @@
         <div class="container mx-auto px-4 max-w-5xl">
             
             <!-- Newsletter Section -->
+            @if(!$isPostPage)
             <div class="py-12 border-b border-gray-200">
                 <div class="max-w-2xl mx-auto">
                     <x-newsletter-form variant="compact" />
                 </div>
             </div>
+            @endif
             
             <!-- Footer Bottom -->
             <div class="py-8">
