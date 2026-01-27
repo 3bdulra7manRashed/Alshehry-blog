@@ -27,14 +27,14 @@
         // Site defaults
         $siteName = 'صالح الشهري | Saleh Alshehry';
         $defaultImage = $siteDomain . '/images/saleh-alshehry-og.jpg';
-        $defaultTitle = 'صالح الشهري | استشارات ريادة الأعمال وبناء المشاريع الناشئة';
+        $defaultTitle = 'صالح الشهري | مدونة في ريادة الأعمال';
         $defaultDescription = 'حوّل فكرتك إلى مشروع ريادي ناجح. مدونة صالح الشهري تقدم تحليلات عملية، استشارات للمنشآت الصغيرة، ونماذج عمل مبتكرة للنمو والاستدامة وفق رؤية المملكة 2030.';
         $defaultKeywords = 'ريادة الأعمال, صالح الشهري, استشارات مشاريع, المنشآت الصغيرة والمتوسطة, نموذج العمل التجاري, دراسة جدوى, تأسيس شركات, رؤية 2030, جدة, مركز النخبة للتدريب, نمو الأعمال';
         
         // Dynamic SEO values based on page type
         if ($isPostPage) {
             // Single Post Page - Use post data
-            $seoTitle = $post->title . ' | صالح الشهري';
+            $seoTitle = $post->title;
             $seoDescription = $post->excerpt ?? Str::limit(strip_tags($post->content), 160);
             $seoKeywords = $post->tags->pluck('name')->implode(', ') ?: $defaultKeywords;
             
@@ -82,7 +82,13 @@
 
     <!-- DEBUG OG:IMAGE URL: {{ $seoImage }} -->
     
-    <title>@yield('title', $seoTitle)</title>
+    <title>
+    @hasSection('title')
+        @yield('title') | صالح الشهري
+    @else
+        صالح الشهري | مدونة في ريادة الأعمال
+    @endif
+</title>
     <meta name="title" content="@yield('title', $seoTitle)">
     <meta name="description" content="@yield('description', $seoDescription)">
     <meta name="keywords" content="@yield('keywords', $seoKeywords)">

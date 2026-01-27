@@ -3,7 +3,7 @@
 {{-- ============================================================ --}}
 {{-- 📌 PAGE META SECTIONS (Short-form - SAFE)                    --}}
 {{-- ============================================================ --}}
-@section('title', $post->title . ' | صالح حمدان الشهري')
+@section('title', $post->title)
 
 @section('description'){{ $post->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($post->content), 155) }}@endsection
 

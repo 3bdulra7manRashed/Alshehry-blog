@@ -1,7 +1,7 @@
 @extends('layouts.blog')
 
 {{-- Homepage SEO - Profile type for personal brand --}}
-@section('title', 'صالح الشهري | Saleh Alshehry - ريادة الأعمال والابتكار')
+
 
 @section('description', 'مدونة صالح الشهري - خبير ريادة الأعمال ومستشار في منشآت. مقالات متخصصة في تأسيس المشاريع الناشئة، التدريب والتطوير، والابتكار. اكتشف أسرار النجاح في عالم ريادة الأعمال.')
 

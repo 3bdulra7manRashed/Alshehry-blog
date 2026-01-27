@@ -1,7 +1,7 @@
 @extends('layouts.blog')
 
 {{-- Contact Page SEO --}}
-@section('title', 'تواصل مع صالح الشهري | استشارات ريادة الأعمال')
+@section('title', 'تواصل مع صالح الشهري - استشارات ريادة الأعمال')
 @section('description', 'تواصل مع صالح الشهري للاستشارات في ريادة الأعمال، تأسيس المشاريع، التدريب والتطوير.')
 @section('keywords', 'تواصل صالح الشهري, استشارات ريادة الأعمال, استشارات أعمال جدة')
 
@@ -191,7 +191,7 @@
     <div class="text-center mb-12">
         <h1 class="text-3xl font-serif font-bold text-brand-accent mb-4">تواصل معي</h1>
         <p class="text-gray-500 text-lg max-w-2xl mx-auto">
-            أسعد دائماً بالاستماع إلى آرائكم واقتراحاتكم. لا تتردد في مراسلتي في أي وقت.
+            أسعد بتواصلكم في أي وقت.
         </p>
     </div>
 
