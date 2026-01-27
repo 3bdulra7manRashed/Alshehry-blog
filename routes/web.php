@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Public blog routes
+Route::get('d/{slug}', [\App\Http\Controllers\DownloadController::class, 'download'])->name('downloads.public');
 Route::get('/', [PostController::class, 'index'])->name('home');
 Route::get('/post/{slug}', [PostController::class, 'show'])->name('post.show');
 Route::get('/category/{slug}', [PostController::class, 'category'])->name('category.show');
@@ -58,6 +59,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin|moderator'])->name('admi
     Route::resource('media', \App\Http\Controllers\Admin\MediaController::class)->except(['show', 'edit', 'update']);
     Route::post('media/upload', [\App\Http\Controllers\Admin\MediaController::class, 'store'])->name('media.upload');
     Route::post('upload-image', [\App\Http\Controllers\Admin\MediaController::class, 'upload'])->name('upload.image');
+    
+    // Download Manager
+    Route::resource('downloads', \App\Http\Controllers\Admin\DownloadController::class)->only(['index', 'store', 'destroy']);
     
     // Newsletter Campaigns Management
     Route::resource('campaigns', \App\Http\Controllers\Admin\CampaignController::class);
