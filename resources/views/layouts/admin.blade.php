@@ -7,6 +7,10 @@
 
     <title>@yield('title', 'لوحة التحكم') - {{ config('app.name') }}</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('images/favicons/favicon.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/favicons/fav-192.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicons/fav-180.png') }}">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
