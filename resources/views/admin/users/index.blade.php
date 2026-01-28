@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'المستخدمين')
+@section('title', 'المديرين')
 
 @section('content')
 <div class="mb-6 flex items-center justify-between flex-wrap gap-4">
-    <h1 class="text-3xl font-serif font-bold text-brand-primary">المستخدمين</h1>
+    <h1 class="text-3xl font-serif font-bold text-brand-primary">المديرين</h1>
     
     <div class="flex items-center gap-3">
         <div class="flex items-center gap-2 bg-white rounded-md shadow-sm p-1">
@@ -26,7 +26,7 @@
             <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
-            <span>مستخدم جديد</span>
+            <span>إضافة مدير جديد</span>
         </a>
     </div>
 </div>
@@ -202,7 +202,7 @@
                 @empty
                     <tr>
                         <td colspan="6" class="px-4 md:px-6 py-8 text-center text-gray-500">
-                            لا يوجد مستخدمين
+                            لا يوجد مديرين
                         </td>
                     </tr>
                 @endforelse

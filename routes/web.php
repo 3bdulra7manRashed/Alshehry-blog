@@ -70,6 +70,10 @@ Route::prefix('admin')->middleware(['auth', 'role:admin|moderator'])->name('admi
     Route::post('campaigns/{campaign}/send', [\App\Http\Controllers\Admin\CampaignController::class, 'send'])->name('campaigns.send');
     Route::get('campaigns/{campaign}/status', [\App\Http\Controllers\Admin\CampaignController::class, 'status'])->name('campaigns.status');
     
+    // Newsletter Subscribers Management
+    Route::resource('subscribers', \App\Http\Controllers\Admin\SubscriberController::class)->only(['index', 'store', 'destroy']);
+    Route::patch('subscribers/{subscriber}/toggle', [\App\Http\Controllers\Admin\SubscriberController::class, 'toggleStatus'])->name('subscribers.toggle');
+    
     // Contact Messages Management
     Route::get('messages', [\App\Http\Controllers\Admin\MessageController::class, 'index'])->name('messages.index');
     Route::get('messages/{message}', [\App\Http\Controllers\Admin\MessageController::class, 'show'])->name('messages.show');

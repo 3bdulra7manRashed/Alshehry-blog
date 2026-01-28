@@ -18,6 +18,7 @@ class Subscriber extends Model
      */
     protected $fillable = [
         'email',
+        'name',
         'unsubscribe_token',
         'is_active',
     ];
