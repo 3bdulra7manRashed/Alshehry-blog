@@ -23,7 +23,7 @@
         
         <!-- Featured Image Section - Author Profile Photo -->
         <div class="mb-12 rounded-2xl overflow-hidden shadow-lg h-64 md:h-96 bg-gray-50 border border-gray-100">
-            <img src="{{ asset('images/about-me.jpg') }}" 
+            <img src="{{ asset('storage/about-page/about-me.jpg') }}" 
                  alt="{{ $user->name }}" 
                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-700">
         </div>
