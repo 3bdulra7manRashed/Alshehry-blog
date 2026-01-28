@@ -62,6 +62,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin|moderator'])->name('admi
     
     // Download Manager
     Route::resource('downloads', \App\Http\Controllers\Admin\DownloadController::class)->only(['index', 'store', 'destroy']);
+    Route::patch('downloads/{download}/toggle', [\App\Http\Controllers\Admin\DownloadController::class, 'toggle'])->name('downloads.toggle');
     
     // Newsletter Campaigns Management
     Route::resource('campaigns', \App\Http\Controllers\Admin\CampaignController::class);

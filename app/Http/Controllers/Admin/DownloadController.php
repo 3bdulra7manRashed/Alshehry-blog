@@ -20,6 +20,32 @@ class DownloadController extends Controller
     }
 
     /**
+     * Generate an Arabic-friendly slug.
+     * 
+     * @param string $title
+     * @return string
+     */
+    protected function generateArabicSlug(string $title): string
+    {
+        // Trim whitespace
+        $slug = trim($title);
+        
+        // Replace spaces with dashes
+        $slug = preg_replace('/\s+/', '-', $slug);
+        
+        // Remove special characters (keep Arabic, English, numbers, and dashes)
+        $slug = preg_replace('/[^\p{Arabic}a-zA-Z0-9\-]/u', '', $slug);
+        
+        // Remove multiple consecutive dashes
+        $slug = preg_replace('/-+/', '-', $slug);
+        
+        // Trim dashes from start and end
+        $slug = trim($slug, '-');
+        
+        return $slug;
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -31,24 +57,16 @@ class DownloadController extends Controller
 
         $file = $request->file('file');
         
-        // Upload file to public/uploads/files
-        // Using 'public' disk commonly points to storage/app/public, 
-        // to make it accessible via web if needed, or keeping it private.
-        // The prompt says "Upload the file to public/uploads/files (or storage)."
-        // We will use the 'uploads' directory in the public disk, or 'public' disk with 'uploads/files' path.
-        // Let's assume the 'public' disk is configured to link to public/storage.
-        // We'll store it in 'downloads' folder for better organization.
-        
+        // Upload file to storage/app/public/downloads
         $path = $file->store('downloads', 'public');
         $mimeType = $file->getClientMimeType();
         
-        // Generate unique slug
-        $slug = Str::slug($request->title);
-        $originalSlug = $slug;
-        $count = 1;
-        while (Download::where('slug', $slug)->exists()) {
-            $slug = $originalSlug . '-' . $count;
-            $count++;
+        // Generate Arabic-friendly unique slug
+        $slug = $this->generateArabicSlug($request->title);
+        
+        // Ensure uniqueness - append timestamp if exists
+        if (Download::where('slug', $slug)->exists()) {
+            $slug = $slug . '-' . time();
         }
 
         Download::create([
@@ -56,10 +74,25 @@ class DownloadController extends Controller
             'slug' => $slug,
             'file_path' => $path,
             'mime_type' => $mimeType,
+            'is_active' => true,
             'downloads_count' => 0,
         ]);
 
         return redirect()->back()->with('success', 'تم رفع الملف بنجاح');
+    }
+
+    /**
+     * Toggle the active status of the download.
+     */
+    public function toggle(Download $download)
+    {
+        $download->update([
+            'is_active' => !$download->is_active,
+        ]);
+
+        $status = $download->is_active ? 'مفعّل' : 'معطّل';
+        
+        return redirect()->back()->with('success', "تم تحديث حالة الملف إلى: {$status}");
     }
 
     /**

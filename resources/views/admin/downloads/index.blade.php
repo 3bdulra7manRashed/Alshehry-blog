@@ -94,6 +94,7 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">تفاصيل الملف</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
                             <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">تاريخ الرفع</th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">التحميلات</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
@@ -102,6 +103,7 @@
                     <tbody class="bg-white divide-y divide-gray-100">
                         @foreach($downloads as $download)
                             <tr class="group hover:bg-gray-50 transition-colors">
+                                {{-- File Details Column --}}
                                 <td class="px-6 py-4 whitespace-nowrap align-middle">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-brand-accent transition-colors">
@@ -115,28 +117,67 @@
                                         </div>
                                         <div class="mr-4">
                                             <div class="text-sm font-bold text-gray-900 group-hover:text-brand-primary transition-colors">{{ $download->title }}</div>
-                                            <div class="text-xs text-gray-400 font-mono dir-ltr text-right mt-0.5" title="{{ $download->public_url }}">{{ Str::limit($download->slug, 25) }}</div>
+                                            {{-- Arabic-friendly Slug Display --}}
+                                            <div class="text-xs text-gray-400 font-mono mt-0.5 text-right" dir="auto" title="{{ $download->public_url }}">
+                                                {{ Str::limit($download->slug, 30) }}
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
+
+                                {{-- Status Toggle Column --}}
+                                <td class="px-6 py-4 whitespace-nowrap align-middle text-center">
+                                    <form action="{{ route('admin.downloads.toggle', $download) }}" method="POST" class="inline-flex items-center justify-center">
+                                        @csrf
+                                        @method('PATCH')
+                                        <label class="relative inline-flex items-center cursor-pointer" title="{{ $download->is_active ? 'تعطيل التحميل' : 'تفعيل التحميل' }}">
+                                            <input type="checkbox" 
+                                                   class="sr-only peer" 
+                                                   {{ $download->is_active ? 'checked' : '' }}
+                                                   onchange="this.form.submit()">
+                                            {{-- Toggle Track --}}
+                                            <div class="w-11 h-6 bg-gray-200 rounded-full peer 
+                                                        peer-checked:bg-green-500
+                                                        peer-focus:ring-4 peer-focus:ring-green-100
+                                                        after:content-[''] after:absolute after:top-0.5 after:right-0.5
+                                                        after:bg-white after:border-gray-300 after:border after:rounded-full 
+                                                        after:h-5 after:w-5 after:transition-all after:shadow-sm
+                                                        peer-checked:after:translate-x-[-100%] peer-checked:after:border-white
+                                                        transition-colors duration-200"></div>
+                                            {{-- Status Label --}}
+                                            <span class="mr-2 text-xs font-medium {{ $download->is_active ? 'text-green-600' : 'text-gray-400' }}">
+                                                {{ $download->is_active ? 'مفعّل' : 'معطّل' }}
+                                            </span>
+                                        </label>
+                                    </form>
+                                </td>
+
+                                {{-- Date Column --}}
                                 <td class="px-6 py-4 whitespace-nowrap align-middle">
                                     <div class="text-sm text-gray-900">{{ $download->created_at->format('Y/m/d') }}</div>
                                     <div class="text-xs text-gray-500 mt-0.5">{{ $download->created_at->translatedFormat('h:i A') }}</div>
                                 </td>
+
+                                {{-- Downloads Count Column --}}
                                 <td class="px-6 py-4 whitespace-nowrap align-middle text-center">
                                     <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-50 text-blue-700">
                                         {{ $download->downloads_count }} تحميل
                                     </span>
                                 </td>
+
+                                {{-- Actions Column --}}
                                 <td class="px-6 py-4 whitespace-nowrap align-middle" x-data="{ copied: false }">
                                     <div class="flex items-center justify-end gap-2">
+                                        {{-- Copy Link Button --}}
                                         <button @click="
                                             navigator.clipboard.writeText('{{ $download->public_url }}');
                                             copied = true;
                                             setTimeout(() => copied = false, 2000);
                                         " 
-                                        class="flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-brand-accent hover:text-white text-gray-600 border border-gray-200 py-1.5 px-3 rounded transition-colors duration-200 text-xs font-medium group/btn shadow-sm"
-                                        :class="copied ? 'bg-green-50 text-green-600 border-green-200 hover:bg-green-50 hover:text-green-600' : ''"
+                                        class="flex items-center justify-center gap-1.5 py-1.5 px-3 rounded transition-all duration-200 text-xs font-medium shadow-sm"
+                                        :class="copied 
+                                            ? 'bg-green-50 text-green-600 border border-green-200' 
+                                            : 'bg-gray-50 hover:bg-brand-accent hover:text-white text-gray-600 border border-gray-200'"
                                         title="نسخ الرابط">
                                             <span class="icon-placeholder">
                                                 <template x-if="!copied">
@@ -145,12 +186,15 @@
                                                     </svg>
                                                 </template>
                                                 <template x-if="copied">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                    </svg>
                                                 </template>
                                             </span>
-                                            <span class="btn-text" x-text="copied ? 'تم النسخ' : 'نسخ'">نسخ</span>
+                                            <span class="btn-text" x-text="copied ? 'تم النسخ!' : 'نسخ'">نسخ</span>
                                         </button>
 
+                                        {{-- Delete Button --}}
                                         <form action="{{ route('admin.downloads.destroy', $download->id) }}" method="POST" class="inline-block"
                                               onsubmit="return confirm('هل أنت متأكد من حذف هذا الملف؟')">
                                             @csrf
