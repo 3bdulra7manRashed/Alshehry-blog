@@ -14,8 +14,7 @@
     
     <!-- Hero Section -->
     <div class="text-center mb-16">
-        <h1 class="text-3xl font-serif font-bold text-brand-accent mb-4">عن المدونة وكاتبها</h1>
-        <p class="text-lg text-gray-600 font-normal mt-2 max-w-2xl mx-auto">رحلة في عالم الكتابة، التدوين، والإبداع.</p>
+        <h1 class="text-3xl font-serif font-bold text-brand-accent mb-4">عني</h1>
     </div>
 
     @if($user)
@@ -24,7 +23,7 @@
         
         <!-- Featured Image Section - Author Profile Photo -->
         <div class="mb-12 rounded-2xl overflow-hidden shadow-lg h-64 md:h-96 bg-gray-50 border border-gray-100">
-            <img src="{{ $user->profile_photo_url }}" 
+            <img src="{{ asset('images/about-me.jpg') }}" 
                  alt="{{ $user->name }}" 
                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-700">
         </div>
