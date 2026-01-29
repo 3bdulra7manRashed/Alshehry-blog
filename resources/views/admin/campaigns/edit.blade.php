@@ -200,65 +200,113 @@
         </div>
 
         <!-- Sidebar Column -->
-        <div class="w-full lg:w-1/3 space-y-6 lg:sticky lg:top-8 h-fit">
+        <div class="w-full lg:w-1/3 lg:sticky lg:top-6 h-fit space-y-5">
             
-            <!-- Publishing Actions -->
+            <!-- Campaign Info Card -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="font-bold text-gray-800 mb-4 pb-3 border-b flex items-center gap-2">
-                    <svg class="w-5 h-5 text-brand-accent -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                    </svg>
-                    إجراءات الحفظ
-                </h3>
+                <h3 class="font-bold text-gray-800 mb-4 text-sm">معلومات الحملة</h3>
                 
                 <div class="space-y-3">
-                    <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <div class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                            </svg>
-                            <div>
-                                <p class="text-sm font-medium text-blue-800">معلومات الحملة</p>
-                                <p class="text-xs text-blue-700 mt-1">تاريخ الإنشاء: {{ $campaign->created_at->translatedFormat('j M Y - H:i') }}</p>
-                            </div>
-                        </div>
+                    <!-- Status Badge -->
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm text-gray-600">الحالة</span>
+                        @if($campaign->status === 'sent')
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                تم الإرسال
+                            </span>
+                        @elseif($campaign->status === 'sending')
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                <svg class="w-3 h-3 ml-1 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                جاري الإرسال
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                                </svg>
+                                مسودة
+                            </span>
+                        @endif
                     </div>
                     
-                    <button type="submit" class="w-full px-6 py-3 bg-brand-accent text-white rounded-lg hover:bg-amber-700 transition-all text-sm font-medium shadow-sm flex items-center justify-center gap-2">
+                    <!-- Created Date -->
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm text-gray-600">تاريخ الإنشاء</span>
+                        <span class="text-sm font-medium text-gray-900">{{ $campaign->created_at->translatedFormat('j M Y') }}</span>
+                    </div>
+                    
+                    <!-- Last Updated -->
+                    <div class="flex items-center justify-between py-2">
+                        <span class="text-sm text-gray-600">آخر تحديث</span>
+                        <span class="text-sm font-medium text-gray-900">{{ $campaign->updated_at->translatedFormat('j M Y - H:i') }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                <div class="space-y-3">
+                    <!-- Primary Button: Save Changes -->
+                    <button type="submit" 
+                            class="w-full px-6 py-3.5 bg-brand-accent text-white rounded-xl hover:bg-brand-accent-hover transition-all font-bold shadow-md hover:shadow-lg flex items-center justify-center gap-2 group">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
-                        حفظ التعديلات
+                        <span>حفظ التعديلات</span>
                     </button>
+                    
+                    <!-- Secondary Button: Preview -->
+                    <a href="{{ route('admin.campaigns.show', $campaign) }}" 
+                       class="w-full px-6 py-3 bg-white text-gray-600 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all font-medium flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        <span>معاينة الحملة</span>
+                    </a>
                 </div>
+                
+                <!-- Helper Text -->
+                <p class="text-xs text-gray-400 text-center mt-3">
+                    سيتم حفظ التعديلات على الحملة الحالية
+                </p>
             </div>
 
             <!-- Tips Card -->
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-xl border border-blue-100">
-                <h3 class="font-bold text-blue-800 mb-3 flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    نصائح لنشرة ناجحة
+            <div class="bg-blue-50 p-5 rounded-xl">
+                <h3 class="font-bold text-slate-700 mb-3 text-sm flex items-center gap-2">
+                    💡 نصائح سريعة
                 </h3>
-                <ul class="space-y-2 text-sm text-blue-700">
+                <ul class="space-y-2.5">
                     <li class="flex items-start gap-2">
-                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                         </svg>
-                        <span>اختر عنوان بريد جذاب ومختصر</span>
+                        <span class="text-sm text-slate-600">اختر عنوان بريد جذاب ومختصر</span>
                     </li>
                     <li class="flex items-start gap-2">
-                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                         </svg>
-                        <span>3-5 مقالات هو العدد المثالي</span>
+                        <span class="text-sm text-slate-600">3-5 مقالات هو العدد المثالي</span>
                     </li>
                     <li class="flex items-start gap-2">
-                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                         </svg>
-                        <span>اكتب نص ترحيبي شخصي ودافئ</span>
+                        <span class="text-sm text-slate-600">اكتب نص ترحيبي شخصي ومميز</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-sm text-slate-600">راجع المعاينة قبل الإرسال</span>
                     </li>
                 </ul>
             </div>
