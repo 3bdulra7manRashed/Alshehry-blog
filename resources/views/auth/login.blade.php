@@ -164,6 +164,16 @@
             margin-top: 0.35rem;
         }
 
+        .form-input.input-error {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .form-input.input-error:focus {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
         .session-status {
             background: #ecfdf5;
             color: #047857;
@@ -308,13 +318,13 @@
                     <div class="session-status">{{ session('status') }}</div>
                 @endif
 
-                <form method="POST" action="{{ route('login') }}">
+                <form method="POST" action="{{ route('login') }}" novalidate>
                     @csrf
 
                     <div class="form-group">
                         <label for="email" class="form-label">البريد الإلكتروني</label>
-                        <input id="email" class="form-input" type="email" name="email" 
-                               value="{{ old('email') }}" required autofocus 
+                        <input id="email" class="form-input @error('email') input-error @enderror" type="email" name="email" 
+                               value="{{ old('email') }}" autofocus 
                                autocomplete="username" placeholder="example@email.com" dir="ltr">
                         @error('email')
                             <p class="form-error">{{ $message }}</p>
@@ -323,8 +333,8 @@
 
                     <div class="form-group">
                         <label for="password" class="form-label">كلمة المرور</label>
-                        <input id="password" class="form-input" type="password" name="password"
-                               required autocomplete="current-password" placeholder="••••••••" dir="ltr">
+                        <input id="password" class="form-input @error('password') input-error @enderror" type="password" name="password"
+                               autocomplete="current-password" placeholder="••••••••" dir="ltr">
                         @error('password')
                             <p class="form-error">{{ $message }}</p>
                         @enderror
