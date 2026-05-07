@@ -22,7 +22,9 @@ Route::get('/posts/most-liked', [PostController::class, 'mostLiked'])->name('pos
 Route::get('/posts/most-read', [PostController::class, 'mostRead'])->name('posts.most-read');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
-Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.send');
+Route::post('/contact', [PageController::class, 'sendContact'])
+    ->middleware('throttle:3,10') // Rate limit: 3 submissions per 10 minutes per IP
+    ->name('contact.send');
 
 // Newsletter routes (public - for unsubscribe links in emails)
 Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');

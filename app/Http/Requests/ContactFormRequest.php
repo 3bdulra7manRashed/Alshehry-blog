@@ -44,6 +44,8 @@ class ContactFormRequest extends FormRequest
                 'string',
                 'min:10',
                 'max:2000',
+                'not_regex:/https?:\/\//i', // Block http:// and https:// links
+                'not_regex:/www\./i',        // Block www. links
             ],
             'phone' => [
                 'nullable',
@@ -77,6 +79,7 @@ class ContactFormRequest extends FormRequest
             'message.required' => 'نص الرسالة مطلوب',
             'message.min' => 'الرسالة يجب أن تحتوي على 10 أحرف على الأقل',
             'message.max' => 'الرسالة يجب أن لا تتجاوز 2000 حرف',
+            'message.not_regex' => 'الرسالة لا يجب أن تحتوي على روابط',
             
             // Phone validation messages
             'phone.max' => 'رقم الهاتف يجب أن لا يتجاوز 20 رقم',

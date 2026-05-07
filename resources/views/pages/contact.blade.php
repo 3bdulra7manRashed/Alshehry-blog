@@ -263,26 +263,17 @@
                         @enderror
                     </div>
 
-                    {{-- 5. reCAPTCHA --}}
-                    <div class="space-y-2">
-                        <label class="block text-sm font-bold text-gray-700">التحقق الأمني</label>
-                        <div class="@error('g-recaptcha-response') border-2 border-red-500 rounded-lg p-2 @enderror" style="display: inline-block;">
-                            @if(config('services.recaptcha.site_key'))
-                                <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
-                            @else
-                                <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm">
-                                    ⚠️ reCAPTCHA غير مفعّل
-                                </div>
-                            @endif
-                        </div>
-                        @error('g-recaptcha-response')
+                    {{-- 5. reCAPTCHA v3 (Invisible) --}}
+                    <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                    @error('g-recaptcha-response')
+                        <div class="space-y-2">
                             <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                        </div>
+                    @enderror
 
                     {{-- 6. SUBMIT --}}
                     <div class="pt-4 text-right">
-                        <button type="submit" 
+                        <button type="submit" id="contact-submit-btn"
                                 class="inline-flex items-center justify-center px-8 py-3.5 text-white font-bold rounded-xl transition-all transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent bg-brand-accent hover:bg-opacity-90">
                             <span>إرسال الرسالة</span>
                             <svg class="w-5 h-5 mr-2 -ml-1 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -444,6 +435,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
 @if(config('services.recaptcha.site_key'))
 @push('scripts')
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('contact-form');
+    if (!form) return;
+
+    form.addEventListener('submit', function(e) {
+        // If we already have a fresh token, allow submission
+        if (document.getElementById('g-recaptcha-response').value) {
+            return true;
+        }
+
+        e.preventDefault();
+
+        var submitBtn = document.getElementById('contact-submit-btn');
+        var originalHTML = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>جاري التحقق...</span>';
+
+        grecaptcha.ready(function() {
+            grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', { action: 'contact_form' })
+                .then(function(token) {
+                    document.getElementById('g-recaptcha-response').value = token;
+                    form.submit();
+                })
+                .catch(function(err) {
+                    console.error('reCAPTCHA error:', err);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalHTML;
+                    alert('فشل التحقق الأمني. يرجى تحديث الصفحة والمحاولة مرة أخرى.');
+                });
+        });
+    });
+});
+</script>
 @endpush
 @endif
