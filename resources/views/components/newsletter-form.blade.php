@@ -118,7 +118,7 @@
         {{-- ===================== --}}
         {{-- FORM ELEMENT          --}}
         {{-- ===================== --}}
-        <form @submit.prevent="submit" 
+        <form @submit.prevent="submit" novalidate
               class="{{ $variant === 'horizontal' ? 'lg:flex lg:items-start lg:gap-4 lg:flex-1' : 'mt-5' }}">
             
             {{-- Input Container --}}
@@ -133,14 +133,14 @@
                         name="email"
                         x-model="email"
                         placeholder="أدخل بريدك الإلكتروني"
-                        required
                         autocomplete="email"
                         :disabled="loading"
+                        :class="error ? 'border-red-500 focus:border-red-500 focus:ring-red-500/25' : 'border-gray-200 focus:border-brand-accent focus:ring-brand-accent/25'"
                         class="w-full h-12 px-4 pr-11 
-                               bg-white border border-gray-200 rounded-xl
+                               bg-white border rounded-xl
                                text-gray-900 text-right placeholder:text-gray-400 placeholder:text-right
                                transition-all duration-200
-                               focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/25
+                               focus:outline-none focus:ring-2
                                disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50"
                         dir="rtl"
                     >
@@ -158,7 +158,7 @@
                    x-transition:enter-start="opacity-0 -translate-y-1"
                    x-transition:enter-end="opacity-100 translate-y-0"
                    x-text="error"
-                   class="mt-2 text-sm text-red-600 text-right flex items-center justify-end gap-1.5"
+                   class="mt-2 text-sm text-red-600 text-right w-full"
                    role="alert">
                 </p>
             </div>
@@ -173,7 +173,7 @@
                 :disabled="loading || !email"
                 class="w-full h-12 {{ $variant === 'horizontal' ? 'lg:w-auto lg:px-8' : '' }} 
                        px-6 bg-brand-accent text-white rounded-xl font-medium
-                       flex items-center justify-center gap-2
+                       flex items-center justify-end gap-2
                        transition-all duration-200 ease-out
                        shadow-lg shadow-brand-accent/20
                        hover:bg-brand-accent-hover hover:shadow-xl hover:shadow-brand-accent/30
