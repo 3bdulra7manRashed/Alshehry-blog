@@ -28,7 +28,6 @@ RUN npm ci --prefer-offline --no-audit
 # Copy only files needed for the Vite build
 COPY vite.config.js postcss.config.js tailwind.config.js ./
 COPY resources/ resources/
-COPY modules/ modules/
 
 # Tailwind content config also scans these paths for CSS class detection:
 #   - vendor/laravel/framework/.../Pagination views (pagination CSS classes)
