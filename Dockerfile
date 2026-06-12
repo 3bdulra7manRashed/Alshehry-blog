@@ -43,7 +43,7 @@ RUN npm run build
 # =============================================================================
 # Stage 3: Production runtime
 # =============================================================================
-FROM unit:1.34.1-php8.3 AS runtime
+FROM unit:php8.2 AS runtime
 
 # Install PHP extensions and required libraries
 RUN apt-get update \
