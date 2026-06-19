@@ -28,6 +28,7 @@ RUN npm ci --prefer-offline --no-audit
 # Copy only files needed for the Vite build
 COPY vite.config.js postcss.config.js tailwind.config.js ./
 COPY resources/ resources/
+COPY modules/ modules/
 
 # Tailwind content config also scans these paths for CSS class detection:
 #   - vendor/laravel/framework/.../Pagination views (pagination CSS classes)
@@ -46,18 +47,16 @@ RUN npm run build
 FROM unit:php8.2 AS runtime
 
 # Install PHP extensions and required libraries
-ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-
-# Force sequential execution: wait for node-builder to finish building assets before starting extension install.
-# This prevents parallel compilation CPU/RAM spikes that can crash low-spec VMs (OOM / exit code 255).
-COPY --from=node-builder /build/package.json /tmp/node-builder-trigger
-
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
-    && install-php-extensions pcntl pdo_mysql intl zip gd exif ftp bcmath redis \
-    && docker-php-ext-enable opcache \
+    && apt-get install -y --no-install-recommends \
+       curl \
+       libicu-dev libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libssl-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) pcntl opcache pdo pdo_mysql intl zip gd exif ftp bcmath \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /tmp/node-builder-trigger
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # OPCache configuration — production-optimized, no JIT
 # JIT is removed because:
@@ -106,10 +105,10 @@ RUN chown -R unit:unit storage bootstrap/cache . \
 
 # Copy Nginx Unit configuration and entrypoint
 COPY unit.json /docker-entrypoint.d/unit.json
-COPY docker-entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 8000
 
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["unitd", "--no-daemon", "--control", "unix:/var/run/control.unit.sock"]
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["unitd", "--no-daemon"]
