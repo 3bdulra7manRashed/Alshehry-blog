@@ -18,4 +18,9 @@ return [
 
     'mailer' => env('NEWSLETTER_MAILER', 'newsletter'),
 
+    'from' => [
+        'address' => env('NEWSLETTER_MAIL_FROM_ADDRESS', env('MAIL_FROM_ADDRESS', 'newsletter@alshehrysaleh.com')),
+        'name' => env('NEWSLETTER_MAIL_FROM_NAME', env('MAIL_FROM_NAME', 'مدونة صالح الشهري')),
+    ],
+
 ];

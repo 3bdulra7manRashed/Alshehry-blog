@@ -1,167 +1,110 @@
 services:
   # =============================================================================
-  # WEB APPLICATION
+  # WEB APPLICATION (NGINX Unit + PHP 8.2)
   # =============================================================================
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ${COMPOSE_PROJECT_NAME:-laravel-blog}:latest
-    container_name: ${COMPOSE_PROJECT_NAME:-laravel-blog}-app
+    image: ${COMPOSE_PROJECT_NAME:-alshehri-blog}:latest
+    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-app
     restart: unless-stopped
     working_dir: /var/www/html
+    ports:
+      - "${APP_PORT:-8000}:8000"
     volumes:
       - storage:/var/www/html/storage
-      - bootstrap_cache:/var/www/html/bootstrap/cache
     depends_on:
       mysql:
         condition: service_healthy
 
     environment:
-      # Coolify
+      # Coolify integration
       - SERVICE_FQDN_APP
       - SERVICE_PASSWORD_MYSQLROOT
 
-      # Application
-      - APP_NAME=${APP_NAME:-Blog Core}
+      # Application Configuration
+      - APP_NAME=${APP_NAME:-مدونة صالح الشهري}
       - APP_ENV=${APP_ENV:-production}
       - APP_DEBUG=${APP_DEBUG:-false}
       - APP_KEY=${APP_KEY}
-      - APP_URL=https://${SERVICE_FQDN_APP}
-      - FRONTEND_URL=https://${SERVICE_FQDN_APP}
-      - APP_TIMEZONE=${APP_TIMEZONE:-UTC}
+      - APP_URL=${APP_URL:-https://${SERVICE_FQDN_APP:-localhost}}
+      - FRONTEND_URL=${FRONTEND_URL:-${APP_URL:-https://${SERVICE_FQDN_APP:-localhost}}}
+      - APP_TIMEZONE=${APP_TIMEZONE:-Asia/Riyadh}
       - APP_LOCALE=${APP_LOCALE:-ar}
       - APP_FALLBACK_LOCALE=${APP_FALLBACK_LOCALE:-en}
-
-      # Themes
-      - ACTIVE_THEME=${ACTIVE_THEME:-classic}
-      - ACTIVE_THEME_ADMIN=${ACTIVE_THEME_ADMIN:-classic}
-
-      # Branding & Identity
-      - BRANDING_SITE_NAME=${BRANDING_SITE_NAME}
-      - BRANDING_TAGLINE=${BRANDING_TAGLINE}
-      - BRANDING_SITE_DESCRIPTION=${BRANDING_SITE_DESCRIPTION}
-      - BRANDING_SITE_DOMAIN=${BRANDING_SITE_DOMAIN}
-      - BRANDING_AUTHOR_NAME=${BRANDING_AUTHOR_NAME}
-      - BRANDING_AUTHOR_NAME_EN=${BRANDING_AUTHOR_NAME_EN}
-      - BRANDING_AUTHOR_TITLE=${BRANDING_AUTHOR_TITLE}
-      - BRANDING_AUTHOR_BIO=${BRANDING_AUTHOR_BIO}
-      - BRANDING_AUTHOR_AVATAR=${BRANDING_AUTHOR_AVATAR}
-      - BRANDING_SOCIAL_TWITTER=${BRANDING_SOCIAL_TWITTER}
-      - BRANDING_SOCIAL_TWITTER_HANDLE=${BRANDING_SOCIAL_TWITTER_HANDLE}
-      - BRANDING_SOCIAL_LINKEDIN=${BRANDING_SOCIAL_LINKEDIN}
-      - BRANDING_SOCIAL_FACEBOOK=${BRANDING_SOCIAL_FACEBOOK}
-      - BRANDING_SOCIAL_INSTAGRAM=${BRANDING_SOCIAL_INSTAGRAM}
-      - BRANDING_DEFAULT_KEYWORDS=${BRANDING_DEFAULT_KEYWORDS}
-      - BRANDING_DEFAULT_OG_IMAGE=${BRANDING_DEFAULT_OG_IMAGE}
-
-      # Blog Settings
-      - BLOG_IDENTITY_MODE=${BLOG_IDENTITY_MODE:-single}
+      - DELETED_USER_EMAIL=${DELETED_USER_EMAIL:-deleted-user@local}
 
       # Logging
       - LOG_CHANNEL=${LOG_CHANNEL:-stack}
       - LOG_LEVEL=${LOG_LEVEL:-warning}
 
-      # Database (unchanged)
-      - DB_CONNECTION=mysql
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_DATABASE=${DB_DATABASE:-laravel}
+      # Database
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=${DB_HOST:-mysql}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-alshehri_blog}
       - DB_USERNAME=${DB_USERNAME:-laravel}
-      - DB_PASSWORD=${SERVICE_PASSWORD_MYSQLROOT}
+      - DB_PASSWORD=${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
 
-      # Cache / Session / Queue
+      # Cache, Session, Queue & Filesystem
       - CACHE_DRIVER=${CACHE_DRIVER:-file}
       - SESSION_DRIVER=${SESSION_DRIVER:-file}
       - SESSION_LIFETIME=${SESSION_LIFETIME:-120}
       - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
       - FILESYSTEM_DISK=${FILESYSTEM_DISK:-public}
 
-      # Mail (System)
+      # Redis (Optional)
+      - REDIS_HOST=${REDIS_HOST:-}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+
+      # System Mail (Transactional: Password reset, contact notifications)
       - MAIL_MAILER=${MAIL_MAILER:-smtp}
-      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_HOST=${MAIL_HOST:-}
       - MAIL_PORT=${MAIL_PORT:-587}
-      - MAIL_USERNAME=${MAIL_USERNAME}
-      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_USERNAME=${MAIL_USERNAME:-}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
       - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
-      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
-      - MAIL_FROM_NAME=${MAIL_FROM_NAME}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-no-reply@alshehrysaleh.com}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME:-${APP_NAME:-مدونة صالح الشهري}}
 
-      # Newsletter Mail
+      # Newsletter Mail (Bulk campaigns)
       - NEWSLETTER_MAILER=${NEWSLETTER_MAILER:-newsletter}
-      - NEWSLETTER_MAIL_HOST=${NEWSLETTER_MAIL_HOST}
+      - NEWSLETTER_MAIL_HOST=${NEWSLETTER_MAIL_HOST:-}
       - NEWSLETTER_MAIL_PORT=${NEWSLETTER_MAIL_PORT:-587}
-      - NEWSLETTER_MAIL_USERNAME=${NEWSLETTER_MAIL_USERNAME}
-      - NEWSLETTER_MAIL_PASSWORD=${NEWSLETTER_MAIL_PASSWORD}
+      - NEWSLETTER_MAIL_USERNAME=${NEWSLETTER_MAIL_USERNAME:-}
+      - NEWSLETTER_MAIL_PASSWORD=${NEWSLETTER_MAIL_PASSWORD:-}
       - NEWSLETTER_MAIL_ENCRYPTION=${NEWSLETTER_MAIL_ENCRYPTION:-tls}
-      - NEWSLETTER_MAIL_FROM_ADDRESS=${NEWSLETTER_MAIL_FROM_ADDRESS}
-      - NEWSLETTER_MAIL_FROM_NAME=${NEWSLETTER_MAIL_FROM_NAME}
+      - NEWSLETTER_MAIL_FROM_ADDRESS=${NEWSLETTER_MAIL_FROM_ADDRESS:-newsletter@alshehrysaleh.com}
+      - NEWSLETTER_MAIL_FROM_NAME=${NEWSLETTER_MAIL_FROM_NAME:-${APP_NAME:-مدونة صالح الشهري}}
 
-      # AWS S3
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      # AWS S3 (Optional cloud media storage)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
-      - AWS_BUCKET=${AWS_BUCKET}
+      - AWS_BUCKET=${AWS_BUCKET:-}
+      - AWS_URL=${AWS_URL:-}
+      - AWS_ENDPOINT=${AWS_ENDPOINT:-}
       - AWS_USE_PATH_STYLE_ENDPOINT=${AWS_USE_PATH_STYLE_ENDPOINT:-false}
 
-      # Admin Seeder
-      - ADMIN_NAME=${ADMIN_NAME}
-      - ADMIN_EMAIL=${ADMIN_EMAIL}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-
-      # Plan System
-      - USE_PLAN_SYSTEM=${USE_PLAN_SYSTEM:-true}
-      - CLIENT_PLAN=${CLIENT_PLAN:-basic}
-
-      # ==========================================
-      # FEATURE FLAGS
-      # ==========================================
-
-      # --- Core Features ---
-      - FEATURE_SEO=${FEATURE_SEO:-true}
-      - FEATURE_MEDIA=${FEATURE_MEDIA:-true}
-
-      # --- Content Modules ---
-      - FEATURE_THOUGHTS=${FEATURE_THOUGHTS}
-      - FEATURE_BOOKS=${FEATURE_BOOKS}
-      - FEATURE_KHUTAB=${FEATURE_KHUTAB}
-      - FEATURE_ABOUT=${FEATURE_ABOUT}
-
-      # --- Media & VOD Modules ---
-      - FEATURE_MEDIA_PAGES=${FEATURE_MEDIA_PAGES}
-      - FEATURE_VOD_VIDEO=${FEATURE_VOD_VIDEO}
-      - FEATURE_VOD_AUDIO=${FEATURE_VOD_AUDIO}
-      - FEATURE_VOD_PLAYLISTS=${FEATURE_VOD_PLAYLISTS}
-
-      # --- Marketing & Engagement Modules ---
-      - FEATURE_NEWSLETTER=${FEATURE_NEWSLETTER}
-      - FEATURE_CONTACT=${FEATURE_CONTACT}
-      - FEATURE_LANDING=${FEATURE_LANDING}
-      - FEATURE_DOWNLOAD=${FEATURE_DOWNLOAD}
-
-      # --- Administrative & System Modules ---
-      - FEATURE_MANAGE_ADMINS=${FEATURE_MANAGE_ADMINS}
-      - FEATURE_ADVANCED_SEO=${FEATURE_ADVANCED_SEO}
-      - FEATURE_GENERAL_SETTINGS=${FEATURE_GENERAL_SETTINGS}
-
-      # reCAPTCHA
-      - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY}
-      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY}
+      # Google reCAPTCHA v2/v3
+      - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY:-}
+      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY:-}
       - RECAPTCHA_THRESHOLD=${RECAPTCHA_THRESHOLD:-0.5}
 
-      # Deleted user fallback
-      - DELETED_USER_EMAIL=${DELETED_USER_EMAIL:-deleted-user@local}
+      # Initial Admin User Seeder (Used when RUN_SEEDER=true)
+      - ADMIN_NAME=${ADMIN_NAME:-Saleh Alshehri}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@alshehri.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
 
-      # Proxy
+      # Reverse Proxy & SSL Detection
       - TRUSTED_PROXIES=*
       - TRUST_PROXY=true
 
-      # Entrypoint Controls
+      # Container Lifecycle & Migration Controls
       - RUN_MIGRATIONS=${RUN_MIGRATIONS:-true}
       - RUN_SEEDER=${RUN_SEEDER:-false}
-
-    # ports:
-    #   - "8000:8000"
 
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/up || exit 1"]
@@ -171,83 +114,131 @@ services:
       start_period: 60s
 
   # =============================================================================
-  # QUEUE WORKER
+  # QUEUE WORKER (Background Jobs & Newsletter Dispatch)
   # =============================================================================
   worker:
-    image: ${COMPOSE_PROJECT_NAME:-laravel-blog}:latest
-    container_name: ${COMPOSE_PROJECT_NAME:-laravel-blog}-worker
+    image: ${COMPOSE_PROJECT_NAME:-alshehri-blog}:latest
+    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-worker
     restart: unless-stopped
     working_dir: /var/www/html
     command: php artisan queue:work --tries=3 --timeout=90 --sleep=3 --max-jobs=1000 --max-time=3600
     volumes:
       - storage:/var/www/html/storage
-      - bootstrap_cache:/var/www/html/bootstrap/cache
     depends_on:
       mysql:
         condition: service_healthy
+      app:
+        condition: service_healthy
 
     environment:
-      - APP_NAME=${APP_NAME:-Blog Core}
+      - APP_NAME=${APP_NAME:-مدونة صالح الشهري}
       - APP_ENV=${APP_ENV:-production}
       - APP_KEY=${APP_KEY}
-      - DB_CONNECTION=mysql
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_DATABASE=${DB_DATABASE:-laravel}
+      - APP_URL=${APP_URL:-https://${SERVICE_FQDN_APP:-localhost}}
+      - APP_TIMEZONE=${APP_TIMEZONE:-Asia/Riyadh}
+      - DELETED_USER_EMAIL=${DELETED_USER_EMAIL:-deleted-user@local}
+
+      # Database
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=${DB_HOST:-mysql}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-alshehri_blog}
       - DB_USERNAME=${DB_USERNAME:-laravel}
-      - DB_PASSWORD=${SERVICE_PASSWORD_MYSQLROOT}
+      - DB_PASSWORD=${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
+
+      # Queue & Cache
       - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
       - CACHE_DRIVER=${CACHE_DRIVER:-file}
       - FILESYSTEM_DISK=${FILESYSTEM_DISK:-public}
 
-      # Themes
-      - ACTIVE_THEME=${ACTIVE_THEME:-classic}
+      # Redis (Optional)
+      - REDIS_HOST=${REDIS_HOST:-}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - REDIS_PORT=${REDIS_PORT:-6379}
 
-      # Branding & Identity (Crucial for background emails)
-      - BRANDING_SITE_NAME=${BRANDING_SITE_NAME}
-      - BRANDING_SITE_DOMAIN=${BRANDING_SITE_DOMAIN}
-      - BRANDING_AUTHOR_NAME=${BRANDING_AUTHOR_NAME}
-      - BRANDING_SOCIAL_TWITTER=${BRANDING_SOCIAL_TWITTER}
-      - BRANDING_SOCIAL_FACEBOOK=${BRANDING_SOCIAL_FACEBOOK}
-      - BRANDING_SOCIAL_INSTAGRAM=${BRANDING_SOCIAL_INSTAGRAM}
-
-      # Mail
+      # System Mail
       - MAIL_MAILER=${MAIL_MAILER:-smtp}
-      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_HOST=${MAIL_HOST:-}
       - MAIL_PORT=${MAIL_PORT:-587}
-      - MAIL_USERNAME=${MAIL_USERNAME}
-      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_USERNAME=${MAIL_USERNAME:-}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
       - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-no-reply@alshehrysaleh.com}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME:-${APP_NAME:-مدونة صالح الشهري}}
 
       # Newsletter Mail
       - NEWSLETTER_MAILER=${NEWSLETTER_MAILER:-newsletter}
-      - NEWSLETTER_MAIL_HOST=${NEWSLETTER_MAIL_HOST}
+      - NEWSLETTER_MAIL_HOST=${NEWSLETTER_MAIL_HOST:-}
       - NEWSLETTER_MAIL_PORT=${NEWSLETTER_MAIL_PORT:-587}
-      - NEWSLETTER_MAIL_USERNAME=${NEWSLETTER_MAIL_USERNAME}
-      - NEWSLETTER_MAIL_PASSWORD=${NEWSLETTER_MAIL_PASSWORD}
+      - NEWSLETTER_MAIL_USERNAME=${NEWSLETTER_MAIL_USERNAME:-}
+      - NEWSLETTER_MAIL_PASSWORD=${NEWSLETTER_MAIL_PASSWORD:-}
       - NEWSLETTER_MAIL_ENCRYPTION=${NEWSLETTER_MAIL_ENCRYPTION:-tls}
-      - NEWSLETTER_MAIL_FROM_ADDRESS=${NEWSLETTER_MAIL_FROM_ADDRESS}
-      - NEWSLETTER_MAIL_FROM_NAME=${NEWSLETTER_MAIL_FROM_NAME}
+      - NEWSLETTER_MAIL_FROM_ADDRESS=${NEWSLETTER_MAIL_FROM_ADDRESS:-newsletter@alshehrysaleh.com}
+      - NEWSLETTER_MAIL_FROM_NAME=${NEWSLETTER_MAIL_FROM_NAME:-${APP_NAME:-مدونة صالح الشهري}}
 
-      # AWS S3 (Crucial for processing media in background jobs)
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      # AWS S3 (Media processing in background)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
-      - AWS_BUCKET=${AWS_BUCKET}
+      - AWS_BUCKET=${AWS_BUCKET:-}
+      - AWS_URL=${AWS_URL:-}
+      - AWS_ENDPOINT=${AWS_ENDPOINT:-}
       - AWS_USE_PATH_STYLE_ENDPOINT=${AWS_USE_PATH_STYLE_ENDPOINT:-false}
 
   # =============================================================================
-  # MYSQL DATABASE (UNCHANGED)
+  # SCHEDULER (Laravel Scheduled Tasks: Daily Sitemap, Maintenance)
+  # =============================================================================
+  scheduler:
+    image: ${COMPOSE_PROJECT_NAME:-alshehri-blog}:latest
+    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-scheduler
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan schedule:work
+    volumes:
+      - storage:/var/www/html/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+
+    environment:
+      - APP_NAME=${APP_NAME:-مدونة صالح الشهري}
+      - APP_ENV=${APP_ENV:-production}
+      - APP_KEY=${APP_KEY}
+      - APP_URL=${APP_URL:-https://${SERVICE_FQDN_APP:-localhost}}
+      - APP_TIMEZONE=${APP_TIMEZONE:-Asia/Riyadh}
+      - DELETED_USER_EMAIL=${DELETED_USER_EMAIL:-deleted-user@local}
+
+      # Database
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=${DB_HOST:-mysql}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-alshehri_blog}
+      - DB_USERNAME=${DB_USERNAME:-laravel}
+      - DB_PASSWORD=${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
+
+      # Cache & Queue
+      - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
+      - CACHE_DRIVER=${CACHE_DRIVER:-file}
+      - FILESYSTEM_DISK=${FILESYSTEM_DISK:-public}
+
+  # =============================================================================
+  # MYSQL DATABASE
   # =============================================================================
   mysql:
     image: mysql:8.0
-    container_name: ${COMPOSE_PROJECT_NAME:-laravel-blog}-mysql
+    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-mysql
     restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-laravel}
-      MYSQL_ROOT_PASSWORD: ${SERVICE_PASSWORD_MYSQLROOT}
+      MYSQL_DATABASE: ${DB_DATABASE:-alshehri_blog}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
       MYSQL_USER: ${DB_USERNAME:-laravel}
-      MYSQL_PASSWORD: ${SERVICE_PASSWORD_MYSQLROOT}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -260,7 +251,7 @@ services:
           "127.0.0.1",
           "-u",
           "root",
-          "-p$$MYSQL_ROOT_PASSWORD",
+          "-p$${MYSQL_ROOT_PASSWORD}",
         ]
       interval: 10s
       timeout: 5s
@@ -270,6 +261,4 @@ volumes:
   mysql_data:
     driver: local
   storage:
-    driver: local
-  bootstrap_cache:
     driver: local

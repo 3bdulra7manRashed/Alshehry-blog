@@ -63,6 +63,8 @@ vite.config.js.timestamp-*
 corrupted_*.txt
 fix_*.cjs
 encoding_repair_backup
+Docker Update
+docker
 
 # =============================================================================
 # Storage Caches (rebuilt at runtime)

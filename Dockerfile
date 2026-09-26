@@ -41,30 +41,26 @@ RUN npm run build
 
 
 # =============================================================================
-# Stage 3: Production runtime
+# Stage 3: PHP extensions (isolated from Coolify ARG injection)
 # =============================================================================
-FROM unit:php8.2 AS runtime
+FROM unit:php8.2 AS php-extensions
 
-# Install PHP extensions and required libraries
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-# Force sequential execution: wait for node-builder to finish building assets before starting extension install.
-# This prevents parallel compilation CPU/RAM spikes that can crash low-spec VMs (OOM / exit code 255).
-COPY --from=node-builder /build/package.json /tmp/node-builder-trigger
-
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
+    && apt-get install -y --no-install-recommends curl gosu \
     && install-php-extensions pcntl pdo_mysql intl zip gd exif ftp bcmath redis \
     && docker-php-ext-enable opcache \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /tmp/node-builder-trigger
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# OPCache configuration — production-optimized, no JIT
-# JIT is removed because:
-#   - Laravel is I/O-bound (DB, HTTP, templates), not CPU-bound
-#   - JIT reserves large memory buffers per worker process (was 256M each)
-#   - JIT adds startup overhead with no measurable benefit for web frameworks
-#   - validate_timestamps=0 is safe in containers (code doesn't change at runtime)
+
+# =============================================================================
+# Stage 4: Production runtime
+# =============================================================================
+FROM php-extensions AS runtime
+
+# OPCache configuration — production-optimized
 RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/opcache.ini \
     && echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/opcache.ini \
     && echo "opcache.interned_strings_buffer=16" >> /usr/local/etc/php/conf.d/opcache.ini \
@@ -81,8 +77,12 @@ RUN echo "memory_limit=512M" > /usr/local/etc/php/conf.d/php-runtime.ini \
 WORKDIR /var/www/html
 
 # Create storage directories with correct permissions
-RUN mkdir -p storage/app/public storage/framework/cache storage/framework/sessions \
-             storage/framework/views storage/logs bootstrap/cache \
+RUN mkdir -p storage/app/public \
+             storage/framework/cache/data \
+             storage/framework/sessions \
+             storage/framework/views \
+             storage/logs \
+             bootstrap/cache \
     && chown -R unit:unit storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
@@ -108,6 +108,9 @@ RUN chown -R unit:unit storage bootstrap/cache . \
 COPY unit.json /docker-entrypoint.d/unit.json
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+HEALTHCHECK --interval=30s --timeout=10s --retries=5 --start-period=60s \
+    CMD curl -f http://127.0.0.1:8000/up || exit 1
 
 EXPOSE 8000
 

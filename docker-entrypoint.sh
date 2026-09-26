@@ -1,11 +1,30 @@
 #!/bin/sh
 set -e
 
+# Ensure all files and directories created by processes are group-writable (775/664)
+umask 0002
+
 # Function to wait for database connection
+# Uses a dedicated PHP script to avoid shell-escaping issues with passwords
 wait_for_db() {
-    if [ "$DB_CONNECTION" = "mysql" ]; then
-        echo "Waiting for MySQL ($DB_HOST)..."
-        until php -r "try { new PDO('mysql:host=$DB_HOST;port=$DB_PORT;dbname=$DB_DATABASE', '$DB_USERNAME', '$DB_PASSWORD'); exit(0); } catch (Exception \$e) { exit(1); }"; do
+    if [ "${DB_CONNECTION:-mysql}" = "mysql" ]; then
+        echo "Waiting for MySQL (${DB_HOST:-mysql}:${DB_PORT:-3306})..."
+        until php -r '
+            $host = getenv("DB_HOST") ?: "mysql";
+            $port = getenv("DB_PORT") ?: "3306";
+            $db   = getenv("DB_DATABASE") ?: "alshehri_blog";
+            $user = getenv("DB_USERNAME") ?: "laravel";
+            $pass = getenv("DB_PASSWORD") ?: "";
+            try {
+                new PDO("mysql:host={$host};port={$port};dbname={$db}", $user, $pass, [
+                    PDO::ATTR_TIMEOUT => 3,
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+                ]);
+                exit(0);
+            } catch (Exception $e) {
+                exit(1);
+            }
+        '; do
             echo "MySQL is unavailable - sleeping..."
             sleep 2
         done
@@ -13,68 +32,127 @@ wait_for_db() {
     fi
 }
 
+# Function for background workers to wait until database migrations are ready
+wait_for_migrations() {
+    if [ "${DB_CONNECTION:-mysql}" = "mysql" ]; then
+        echo "Waiting for database migrations to be applied..."
+        until php -r '
+            $host = getenv("DB_HOST") ?: "mysql";
+            $port = getenv("DB_PORT") ?: "3306";
+            $db   = getenv("DB_DATABASE") ?: "alshehri_blog";
+            $user = getenv("DB_USERNAME") ?: "laravel";
+            $pass = getenv("DB_PASSWORD") ?: "";
+            try {
+                $pdo = new PDO("mysql:host={$host};port={$port};dbname={$db}", $user, $pass, [
+                    PDO::ATTR_TIMEOUT => 3,
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+                ]);
+                $stmt = $pdo->query("SHOW TABLES LIKE \"migrations\"");
+                if ($stmt && $stmt->fetch()) {
+                    exit(0);
+                }
+                exit(1);
+            } catch (Exception $e) {
+                exit(1);
+            }
+        '; do
+            echo "Migrations not ready yet - sleeping..."
+            sleep 2
+        done
+        echo "Migrations are ready!"
+    fi
+}
+
 # 1. Ensure .env exists for Artisan CLI consistency
 if [ ! -f ".env" ]; then
-    echo "Creating .env from .env.example..."
-    cp .env.example .env
+    if [ -f ".env.example" ]; then
+        echo "Creating .env from .env.example..."
+        cp .env.example .env
+    else
+        echo "WARNING: No .env or .env.example found, creating empty .env"
+        touch .env
+    fi
 fi
 
-# 2. Fix permissions for storage and cache (Crucial for volumes)
-echo "Fixing permissions..."
+# 2. Fix permissions for storage and cache (Crucial for Docker volumes)
+echo "Ensuring storage and cache directories exist with correct permissions..."
 mkdir -p storage/app/public \
-         storage/framework/cache \
+         storage/framework/cache/data \
          storage/framework/sessions \
          storage/framework/views \
          storage/logs \
          bootstrap/cache
 
-# If running as root (which we are at start), fix ownership
 if [ "$(id -u)" = "0" ]; then
     chown -R unit:unit storage bootstrap/cache
     chmod -R 775 storage bootstrap/cache
 fi
 
-# 3. Handle Queue Worker mode
-if [ "$1" = "php" ] && [ "$2" = "artisan" ] && [ "$3" = "queue:work" ]; then
-    echo "Running as Queue Worker..."
-    wait_for_db
-    exec "$@"
+# 3. Create storage symlink for uploaded public media if it doesn't exist
+if [ ! -L "public/storage" ]; then
+    echo "Creating public storage symlink..."
+    php artisan storage:link --force || true
 fi
 
-# 4. Web Application specific tasks
-if [ "$1" = "unitd" ]; then
-    echo "Running as Web Application..."
+# 4. Generate APP_KEY if missing (Safe for production as it won't overwrite existing key)
+if [ -z "$APP_KEY" ] && ! grep -q "^APP_KEY=base64:" .env; then
+    echo "Generating application key..."
+    php artisan key:generate --force
+fi
 
+# 5. Handle Queue Worker & Scheduler modes (CLI commands)
+if [ "$1" = "php" ] && [ "$2" = "artisan" ]; then
+    echo "Starting artisan command: $@"
+    wait_for_db
+    wait_for_migrations
+
+    # If running as root, switch to unit user so generated logs/cache remain writable by web app
+    if [ "$(id -u)" = "0" ] && command -v gosu >/dev/null 2>&1; then
+        exec gosu unit "$@"
+    else
+        exec "$@"
+    fi
+fi
+
+# 6. Web Application specific tasks (NGINX Unit)
+if [ "$1" = "unitd" ]; then
+    echo "Starting Web Application initialization..."
     wait_for_db
 
-    # Generate APP_KEY if missing (Safe for production as it won't overwrite existing key)
-    if [ -z "$APP_KEY" ] && ! grep -q "APP_KEY=base64:" .env; then
-        echo "Generating application key..."
-        php artisan key:generate --force
-    fi
-
-    # Run migrations
+    # Run database migrations
     if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
-        echo "Running migrations..."
+        echo "Running database migrations..."
         php artisan migrate --force
     fi
 
-    # Run Seeder if requested (or if it's a fresh install)
+    # Run essential seeders if requested (Roles, Super Admin, Deleted User Placeholder)
     if [ "${RUN_SEEDER:-false}" = "true" ]; then
-        echo "Running seeders..."
-        php artisan db:seed --class=AdminUserSeeder --force
+        echo "Running initial seeders..."
+        php artisan db:seed --class=RolesAndPermissionsSeeder --force || true
+        php artisan db:seed --class=AdminUserSeeder --force || true
+        php artisan db:seed --class=DeletedUserSeeder --force || true
     fi
 
     # Optimize for production
     if [ "${APP_ENV:-production}" = "production" ]; then
-        echo "Caching configuration and routes..."
-        # We use --force or similar if needed, but standard commands work
+        echo "Caching configuration, routes, and views for production..."
+        php artisan optimize:clear
         php artisan config:cache
         php artisan route:cache
         php artisan view:cache
         php artisan event:cache
     fi
+
+    # Re-verify permissions for unit user after caching
+    if [ "$(id -u)" = "0" ]; then
+        chown -R unit:unit storage bootstrap/cache
+        chmod -R 775 storage bootstrap/cache
+    fi
 fi
 
-echo "Starting: $@"
-exec /usr/local/bin/docker-entrypoint.sh "$@"
+echo "Starting process: $@"
+if [ -x "/usr/local/bin/docker-entrypoint.sh" ]; then
+    exec /usr/local/bin/docker-entrypoint.sh "$@"
+else
+    exec "$@"
+fi

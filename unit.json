@@ -27,8 +27,12 @@
         "laravel": {
             "type": "php",
             "root": "/var/www/html/public/",
-            "script": "index.php"
+            "script": "index.php",
+            "processes": {
+                "max": 10,
+                "spare": 2,
+                "idle": 20
+            }
         }
     }
 }
-
