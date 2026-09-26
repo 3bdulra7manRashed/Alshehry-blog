@@ -22,10 +22,11 @@ wait_for_db() {
                 ]);
                 exit(0);
             } catch (Exception $e) {
+                fwrite(STDERR, "MySQL Connection error: " . $e->getMessage() . "\n");
                 exit(1);
             }
         '; do
-            echo "MySQL is unavailable - sleeping..."
+            echo "MySQL is unavailable - sleeping 2s..."
             sleep 2
         done
         echo "MySQL is up!"
@@ -51,12 +52,14 @@ wait_for_migrations() {
                 if ($stmt && $stmt->fetch()) {
                     exit(0);
                 }
+                fwrite(STDERR, "Migrations table not yet created\n");
                 exit(1);
             } catch (Exception $e) {
+                fwrite(STDERR, "Migration check error: " . $e->getMessage() . "\n");
                 exit(1);
             }
         '; do
-            echo "Migrations not ready yet - sleeping..."
+            echo "Migrations not ready yet - sleeping 2s..."
             sleep 2
         done
         echo "Migrations are ready!"
