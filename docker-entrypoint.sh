@@ -114,13 +114,7 @@ if [ "$1" = "php" ] && [ "$2" = "artisan" ]; then
     echo "Starting artisan command: $@"
     wait_for_db
     wait_for_migrations
-
-    # If running as root, switch to unit user so generated logs/cache remain writable by web app
-    if [ "$(id -u)" = "0" ] && command -v gosu >/dev/null 2>&1; then
-        exec gosu unit "$@"
-    else
-        exec "$@"
-    fi
+    exec "$@"
 fi
 
 # 6. Web Application specific tasks (NGINX Unit)

@@ -6,8 +6,6 @@ services:
     image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
     restart: unless-stopped
     working_dir: /var/www/html
-    expose:
-      - 8000
     volumes:
       - storage:/var/www/html/storage
     depends_on:
@@ -187,43 +185,6 @@ services:
       # Sentry Error Monitoring (for background jobs)
       - SENTRY_LARAVEL_DSN=${SENTRY_LARAVEL_DSN:-https://d1f3276a2d07c1398870f7050b5df419@o4512150994681856.ingest.de.sentry.io/4512151049076816}
       - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-1.0}
-
-  # =============================================================================
-  # SCHEDULER (Laravel Scheduled Tasks: Daily Sitemap, Maintenance)
-  # =============================================================================
-  scheduler:
-    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
-    restart: unless-stopped
-    working_dir: /var/www/html
-    command: php artisan schedule:work
-    volumes:
-      - storage:/var/www/html/storage
-    depends_on:
-      mysql:
-        condition: service_healthy
-      app:
-        condition: service_healthy
-
-    environment:
-      - APP_NAME=${APP_NAME:-مدونة صالح الشهري}
-      - APP_ENV=${APP_ENV:-production}
-      - APP_KEY=${APP_KEY}
-      - APP_URL=${APP_URL:-https://${SERVICE_FQDN_APP:-localhost}}
-      - APP_TIMEZONE=${APP_TIMEZONE:-Asia/Riyadh}
-      - DELETED_USER_EMAIL=${DELETED_USER_EMAIL:-deleted-user@local}
-
-      # Database
-      - DB_CONNECTION=mysql
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_DATABASE=${DB_DATABASE:-alshehri_blog}
-      - DB_USERNAME=${DB_USERNAME:-laravel}
-      - DB_PASSWORD=${SERVICE_PASSWORD_MYSQLROOT}
-
-      # Cache & Queue
-      - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
-      - CACHE_DRIVER=${CACHE_DRIVER:-file}
-      - FILESYSTEM_DISK=${FILESYSTEM_DISK:-public}
 
   # =============================================================================
   # MYSQL DATABASE

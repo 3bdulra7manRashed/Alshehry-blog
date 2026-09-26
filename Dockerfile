@@ -21,20 +21,29 @@ RUN if [ -n "$GITHUB_TOKEN" ]; then composer config --global github-oauth.github
 
 
 # =============================================================================
-# Stage 2: Production runtime (Nginx Unit + PHP 8.2)
-# Frontend assets are pre-built and tracked in git (zero Node overhead on server)
+# Stage 2: PHP extensions (isolated from Coolify ARG injection)
 # =============================================================================
-FROM unit:php8.2 AS runtime
+# This stage has NO COPY from other stages and NO application-specific inputs,
+# so its cache is only invalidated when the base image or extension list changes.
+# Coolify injects ARGs into every stage, but since none of them are referenced
+# here, BuildKit treats them as unused and does NOT bust the cache.
+FROM unit:php8.2 AS php-extensions
 
-# Install PHP extensions and required libraries
-ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.23/install-php-extensions /usr/local/bin/
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl gosu \
+    && apt-get install -y --no-install-recommends curl \
     && install-php-extensions pcntl pdo_mysql intl zip gd exif ftp bcmath redis \
     && docker-php-ext-enable opcache \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+# =============================================================================
+# Stage 3: Production runtime (Nginx Unit + PHP 8.2)
+# Frontend assets are pre-built and tracked in git (zero Node overhead on server)
+# =============================================================================
+FROM php-extensions AS runtime
 
 # OPCache configuration — production-optimized
 RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/opcache.ini \
