@@ -17,7 +17,7 @@ COPY composer.json composer.lock ./
 # Support optional GitHub token via build arg to bypass rate-limiting if provided
 ARG GITHUB_TOKEN=""
 RUN if [ -n "$GITHUB_TOKEN" ]; then composer config --global github-oauth.github.com "$GITHUB_TOKEN"; fi \
-    && composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts
+    && composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts --ignore-platform-reqs
 
 
 # =============================================================================
@@ -25,9 +25,6 @@ RUN if [ -n "$GITHUB_TOKEN" ]; then composer config --global github-oauth.github
 # Frontend assets are pre-built and tracked in git (zero Node overhead on server)
 # =============================================================================
 FROM unit:php8.2 AS runtime
-
-# Restrict compilation to a single thread to prevent memory spikes (OOM exit 255)
-ENV MAKEFLAGS="-j1"
 
 # Install PHP extensions and required libraries
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
@@ -73,7 +70,7 @@ COPY . .
 
 # Run Composer dump-autoload now that artisan and full source exist
 COPY --from=composer-builder /usr/bin/composer /usr/local/bin/composer
-RUN composer dump-autoload --optimize --no-dev --no-interaction \
+RUN composer dump-autoload --optimize --no-dev --no-interaction --ignore-platform-reqs \
     && rm -f /usr/local/bin/composer
 
 # Set final permissions
