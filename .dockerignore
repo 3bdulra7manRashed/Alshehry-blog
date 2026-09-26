@@ -15,7 +15,7 @@
 
 
 # =============================================================================
-# Dependencies (installed fresh inside build stages)
+# Dependencies (installed fresh inside build stage)
 # =============================================================================
 node_modules
 vendor

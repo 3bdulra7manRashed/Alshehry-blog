@@ -5,62 +5,36 @@ FROM composer:2.8 AS composer-builder
 
 WORKDIR /build
 
+# Prefer IPv4 to avoid IPv6 DNS resolution timeouts in containerized networks
+RUN echo "precedence ::ffff:0:0/96 100" >> /etc/gai.conf 2>/dev/null || true
+
+ENV COMPOSER_IPRESOLVE_V4=1
+ENV COMPOSER_PROCESS_TIMEOUT=600
+
 # Copy dependency files first for layer caching
 COPY composer.json composer.lock ./
 
-# Install production dependencies without scripts (artisan doesn't exist yet)
-RUN composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts
+# Support optional GitHub token via build arg to bypass rate-limiting if provided
+ARG GITHUB_TOKEN=""
+RUN if [ -n "$GITHUB_TOKEN" ]; then composer config --global github-oauth.github.com "$GITHUB_TOKEN"; fi \
+    && composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts
 
 
 # =============================================================================
-# Stage 2: Build frontend assets
-# =============================================================================
-FROM node:20-slim AS node-builder
-
-WORKDIR /build
-
-# Restrict Node memory to prevent OOM on lower-spec VPS during Vite build
-ENV NODE_OPTIONS="--max-old-space-size=512"
-
-# Copy dependency files first for layer caching
-COPY package.json package-lock.json ./
-
-# Install npm dependencies (cached unless package files change)
-RUN npm ci --prefer-offline --no-audit
-
-# Copy only files needed for the Vite build
-COPY vite.config.js postcss.config.js tailwind.config.js ./
-COPY resources/ resources/
-
-# Tailwind content config also scans these paths for CSS class detection:
-#   - vendor/laravel/framework/.../Pagination views (pagination CSS classes)
-#   - storage/framework/views (compiled Blade cache — empty at build time)
-COPY --from=composer-builder /build/vendor/laravel/framework/src/Illuminate/Pagination/resources/views/ \
-     vendor/laravel/framework/src/Illuminate/Pagination/resources/views/
-RUN mkdir -p storage/framework/views
-
-# Build production assets
-RUN npm run build
-
-
-# =============================================================================
-# Stage 3: Production runtime
+# Stage 2: Production runtime (Nginx Unit + PHP 8.2)
+# Frontend assets are pre-built and tracked in git (zero Node overhead on server)
 # =============================================================================
 FROM unit:php8.2 AS runtime
 
 # Install PHP extensions and required libraries
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-# Force sequential execution: wait for node-builder to finish building assets before starting extension install.
-# This prevents parallel compilation CPU/RAM spikes that crash low-spec VMs (OOM / exit code 255).
-COPY --from=node-builder /build/package.json /tmp/node-builder-trigger
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl gosu \
     && install-php-extensions pcntl pdo_mysql intl zip gd exif ftp bcmath redis \
     && docker-php-ext-enable opcache \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /tmp/node-builder-trigger
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # OPCache configuration — production-optimized
 RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/opcache.ini \
@@ -91,15 +65,12 @@ RUN mkdir -p storage/app/public \
 # Copy Composer dependencies from builder stage
 COPY --from=composer-builder /build/vendor/ vendor/
 
-# Copy application code
+# Copy application code (including pre-built public/build/ assets)
 COPY . .
-
-# Copy compiled frontend assets from Node builder stage
-COPY --from=node-builder /build/public/build/ public/build/
 
 # Run Composer dump-autoload now that artisan and full source exist
 COPY --from=composer-builder /usr/bin/composer /usr/local/bin/composer
-RUN composer dump-autoload --optimize --no-interaction \
+RUN composer dump-autoload --optimize --no-dev --no-interaction \
     && rm -f /usr/local/bin/composer
 
 # Set final permissions
