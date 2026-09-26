@@ -1,0 +1,661 @@
+2026-Sep-26 22:59:33.570982 Docker 27.0.3 with BuildKit and Buildx detected on deployment server (Rukn).
+2026-Sep-26 22:59:33.581289 Starting deployment of alshehry-blog to Rukn.
+2026-Sep-26 22:59:33.893793 Preparing container with helper image: ghcr.io/coollabsio/coolify-helper:1.0.14
+2026-Sep-26 22:59:34.022444 [CMD]: docker stop --time=30 uxdbvvr5vc5ua1psqjlkqzd9
+2026-Sep-26 22:59:34.022444 Error response from daemon: No such container: uxdbvvr5vc5ua1psqjlkqzd9
+2026-Sep-26 22:59:34.210610 [CMD]: docker run -d --network 'coolify' --name uxdbvvr5vc5ua1psqjlkqzd9 --rm -v /root/.docker/config.json:/root/.docker/config.json:ro -v /root/.docker/buildx:/root/.docker/buildx -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/coollabsio/coolify-helper:1.0.14
+2026-Sep-26 22:59:34.210610 6e446d673b6d3ea00759505ff0e3cb9fed1a770020fa464a61b282130e8d7393
+2026-Sep-26 22:59:35.353709 [CMD]: docker exec uxdbvvr5vc5ua1psqjlkqzd9 bash -c 'GIT_SSH_COMMAND="ssh -o ConnectTimeout=30 -p 22 -o Port=22 -o LogLevel=ERROR -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git ls-remote '\''https://github.com/ibrahim317/Alshehry-blog'\'' '\''refs/heads/main'\'''
+2026-Sep-26 22:59:35.353709 eff934fe3624f420f456a670956b04327f993aea refs/heads/main
+2026-Sep-26 22:59:35.377155 ----------------------------------------
+2026-Sep-26 22:59:35.384046 Importing ibrahim317/Alshehry-blog:main (commit sha eff934fe3624f420f456a670956b04327f993aea) to /artifacts/uxdbvvr5vc5ua1psqjlkqzd9.
+2026-Sep-26 22:59:35.557115 [CMD]: docker exec uxdbvvr5vc5ua1psqjlkqzd9 bash -c 'git -c http.version=HTTP/1.1 clone --depth=1 --recurse-submodules --shallow-submodules -b '\''main'\'' '\''https://github.com/ibrahim317/Alshehry-blog'\'' '\''/artifacts/uxdbvvr5vc5ua1psqjlkqzd9'\'' && cd '\''/artifacts/uxdbvvr5vc5ua1psqjlkqzd9'\'' && GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git -c http.version=HTTP/1.1 fetch --depth=1 origin '\''eff934fe3624f420f456a670956b04327f993aea'\'' && git -c http.version=HTTP/1.1 -c advice.detachedHead=false checkout '\''eff934fe3624f420f456a670956b04327f993aea'\'' >/dev/null 2>&1 && cd '\''/artifacts/uxdbvvr5vc5ua1psqjlkqzd9'\'' && if [ -f .gitmodules ]; then sed -i "s#git@\(.*\):#https://\1/#g" '\''/artifacts/uxdbvvr5vc5ua1psqjlkqzd9'\''/.gitmodules || true && git -c http.version=HTTP/1.1 submodule sync && GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git -c http.version=HTTP/1.1 submodule update --init --recursive --depth=1; fi && cd '\''/artifacts/uxdbvvr5vc5ua1psqjlkqzd9'\'' && GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git -c http.version=HTTP/1.1 lfs pull'
+2026-Sep-26 22:59:35.557115 Cloning into '/artifacts/uxdbvvr5vc5ua1psqjlkqzd9'...
+2026-Sep-26 22:59:36.932642 From https://github.com/ibrahim317/Alshehry-blog
+2026-Sep-26 22:59:36.932642 * branch eff934fe3624f420f456a670956b04327f993aea -> FETCH_HEAD
+2026-Sep-26 22:59:37.650216 [CMD]: docker exec uxdbvvr5vc5ua1psqjlkqzd9 bash -c 'cd /artifacts/uxdbvvr5vc5ua1psqjlkqzd9 && git log -1 '\''eff934fe3624f420f456a670956b04327f993aea'\'' --pretty=%B'
+2026-Sep-26 22:59:37.650216 build instade of use pre-built image
+2026-Sep-26 22:59:37.657884
+2026-Sep-26 22:59:38.326204 ----------------------------------------
+2026-Sep-26 22:59:38.333330 ⚠️ Build-time environment variable warning: APP_ENV=production
+2026-Sep-26 22:59:38.344228 Affects: Laravel/Symfony
+2026-Sep-26 22:59:38.354844 Issue: May affect dependency installation and build optimizations
+2026-Sep-26 22:59:38.367033 Recommendation: Consider using "local" or "development" for build
+2026-Sep-26 22:59:38.378215
+2026-Sep-26 22:59:38.389348 💡 Tips to resolve build issues:
+2026-Sep-26 22:59:38.408647 1. Set these variables as "Runtime only" in the environment variables settings
+2026-Sep-26 22:59:38.418141 2. Use different values for build-time (e.g., NODE_ENV=development for build)
+2026-Sep-26 22:59:38.425894 3. Consider using multi-stage Docker builds to separate build and runtime environments
+2026-Sep-26 22:59:40.763029 [CMD]: docker exec uxdbvvr5vc5ua1psqjlkqzd9 bash -c 'test -f /artifacts/uxdbvvr5vc5ua1psqjlkqzd9/Dockerfile && echo '\''exists'\'' || echo '\''not found'\'''
+2026-Sep-26 22:59:40.763029 exists
+2026-Sep-26 22:59:41.039415 [CMD]: docker exec uxdbvvr5vc5ua1psqjlkqzd9 bash -c 'cat /artifacts/uxdbvvr5vc5ua1psqjlkqzd9/Dockerfile'
+2026-Sep-26 22:59:41.039415 # =============================================================================
+2026-Sep-26 22:59:41.039415 # Stage 1: Install Composer dependencies
+2026-Sep-26 22:59:41.039415 # =============================================================================
+2026-Sep-26 22:59:41.039415 FROM composer:2.8 AS composer-builder
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 WORKDIR /build
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # Prefer IPv4 to avoid IPv6 DNS resolution timeouts in containerized networks
+2026-Sep-26 22:59:41.039415 RUN echo "precedence ::ffff:0:0/96 100" >> /etc/gai.conf 2>/dev/null || true
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 ENV COMPOSER_IPRESOLVE_V4=1
+2026-Sep-26 22:59:41.039415 ENV COMPOSER_PROCESS_TIMEOUT=600
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # Copy dependency files first for layer caching
+2026-Sep-26 22:59:41.039415 COPY composer.json composer.lock ./
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # Support optional GitHub token via build arg to bypass rate-limiting if provided
+2026-Sep-26 22:59:41.039415 ARG GITHUB_TOKEN=""
+2026-Sep-26 22:59:41.039415 RUN if [ -n "$GITHUB_TOKEN" ]; then composer config --global github-oauth.github.com "$GITHUB_TOKEN"; fi \
+2026-Sep-26 22:59:41.039415 && composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts --ignore-platform-reqs
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # =============================================================================
+2026-Sep-26 22:59:41.039415 # Stage 2: PHP extensions (isolated from Coolify ARG injection)
+2026-Sep-26 22:59:41.039415 # =============================================================================
+2026-Sep-26 22:59:41.039415 # This stage has NO COPY from other stages and NO application-specific inputs,
+2026-Sep-26 22:59:41.039415 # so its cache is only invalidated when the base image or extension list changes.
+2026-Sep-26 22:59:41.039415 # Coolify injects ARGs into every stage, but since none of them are referenced
+2026-Sep-26 22:59:41.039415 # here, BuildKit treats them as unused and does NOT bust the cache.
+2026-Sep-26 22:59:41.039415 FROM unit:php8.2 AS php-extensions
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.23/install-php-extensions /usr/local/bin/
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 RUN apt-get update \
+2026-Sep-26 22:59:41.039415 && apt-get install -y --no-install-recommends curl \
+2026-Sep-26 22:59:41.039415 && install-php-extensions pcntl pdo_mysql intl zip gd exif ftp bcmath redis \
+2026-Sep-26 22:59:41.039415 && docker-php-ext-enable opcache \
+2026-Sep-26 22:59:41.039415 && apt-get clean \
+2026-Sep-26 22:59:41.039415 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # =============================================================================
+2026-Sep-26 22:59:41.039415 # Stage 3: Production runtime (Nginx Unit + PHP 8.2)
+2026-Sep-26 22:59:41.039415 # Frontend assets are pre-built and tracked in git (zero Node overhead on server)
+2026-Sep-26 22:59:41.039415 # =============================================================================
+2026-Sep-26 22:59:41.039415 FROM php-extensions AS runtime
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # OPCache configuration — production-optimized
+2026-Sep-26 22:59:41.039415 RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:41.039415 && echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:41.039415 && echo "opcache.interned_strings_buffer=16" >> /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:41.039415 && echo "opcache.max_accelerated_files=20000" >> /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:41.039415 && echo "opcache.validate_timestamps=0" >> /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:41.039415 && echo "opcache.save_comments=1" >> /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:41.039415 && echo "opcache.enable_file_override=1" >> /usr/local/etc/php/conf.d/opcache.ini
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # PHP runtime configuration
+2026-Sep-26 22:59:41.039415 RUN echo "memory_limit=512M" > /usr/local/etc/php/conf.d/php-runtime.ini \
+2026-Sep-26 22:59:41.039415 && echo "upload_max_filesize=64M" >> /usr/local/etc/php/conf.d/php-runtime.ini \
+2026-Sep-26 22:59:41.039415 && echo "post_max_size=64M" >> /usr/local/etc/php/conf.d/php-runtime.ini
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 WORKDIR /var/www/html
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # Create storage directories with correct permissions
+2026-Sep-26 22:59:41.039415 RUN mkdir -p storage/app/public \
+2026-Sep-26 22:59:41.039415 storage/framework/cache/data \
+2026-Sep-26 22:59:41.039415 storage/framework/sessions \
+2026-Sep-26 22:59:41.039415 storage/framework/views \
+2026-Sep-26 22:59:41.039415 storage/logs \
+2026-Sep-26 22:59:41.039415 bootstrap/cache \
+2026-Sep-26 22:59:41.039415 && chown -R unit:unit storage bootstrap/cache \
+2026-Sep-26 22:59:41.039415 && chmod -R 775 storage bootstrap/cache
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # Copy Composer dependencies from builder stage
+2026-Sep-26 22:59:41.039415 COPY --from=composer-builder /build/vendor/ vendor/
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # Copy application code (including pre-built public/build/ assets)
+2026-Sep-26 22:59:41.039415 COPY . .
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # Run Composer dump-autoload now that artisan and full source exist
+2026-Sep-26 22:59:41.039415 COPY --from=composer-builder /usr/bin/composer /usr/local/bin/composer
+2026-Sep-26 22:59:41.039415 RUN composer dump-autoload --optimize --no-dev --no-interaction --ignore-platform-reqs \
+2026-Sep-26 22:59:41.039415 && rm -f /usr/local/bin/composer
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # Set final permissions
+2026-Sep-26 22:59:41.039415 RUN chown -R unit:unit storage bootstrap/cache . \
+2026-Sep-26 22:59:41.039415 && chmod -R 775 storage bootstrap/cache
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 # Copy Nginx Unit configuration and entrypoint
+2026-Sep-26 22:59:41.039415 COPY unit.json /docker-entrypoint.d/unit.json
+2026-Sep-26 22:59:41.039415 COPY docker-entrypoint.sh /entrypoint.sh
+2026-Sep-26 22:59:41.039415 RUN chmod +x /entrypoint.sh
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 HEALTHCHECK --interval=30s --timeout=10s --retries=5 --start-period=60s \
+2026-Sep-26 22:59:41.039415 CMD curl -f http://127.0.0.1:8000/up || exit 1
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 EXPOSE 8000
+2026-Sep-26 22:59:41.039415
+2026-Sep-26 22:59:41.039415 ENTRYPOINT ["/entrypoint.sh"]
+2026-Sep-26 22:59:41.039415 CMD ["unitd", "--no-daemon", "--control", "unix:/var/run/control.unit.sock"]
+2026-Sep-26 22:59:41.378686 Added 306 ARG declarations to Dockerfile for service app (multi-stage build, added to 3 stages).
+2026-Sep-26 22:59:41.736214 [CMD]: docker exec uxdbvvr5vc5ua1psqjlkqzd9 bash -c 'test -f /artifacts/uxdbvvr5vc5ua1psqjlkqzd9/Dockerfile && echo '\''exists'\'' || echo '\''not found'\'''
+2026-Sep-26 22:59:41.736214 exists
+2026-Sep-26 22:59:42.045619 [CMD]: docker exec uxdbvvr5vc5ua1psqjlkqzd9 bash -c 'cat /artifacts/uxdbvvr5vc5ua1psqjlkqzd9/Dockerfile'
+2026-Sep-26 22:59:42.045619 # =============================================================================
+2026-Sep-26 22:59:42.045619 # Stage 1: Install Composer dependencies
+2026-Sep-26 22:59:42.045619 # =============================================================================
+2026-Sep-26 22:59:42.045619 FROM composer:2.8 AS composer-builder
+2026-Sep-26 22:59:42.045619 ARG COOLIFY_URL
+2026-Sep-26 22:59:42.045619 ARG COOLIFY_FQDN
+2026-Sep-26 22:59:42.045619 ARG APP_FALLBACK_LOCALE
+2026-Sep-26 22:59:42.045619 ARG ACTIVE_THEME
+2026-Sep-26 22:59:42.045619 ARG ACTIVE_THEME_ADMIN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_TAGLINE
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SITE_DOMAIN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_TITLE
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_AVATAR
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_TWITTER
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_LINKEDIN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_INSTAGRAM
+2026-Sep-26 22:59:42.045619 ARG BLOG_IDENTITY_MODE
+2026-Sep-26 22:59:42.045619 ARG LOG_CHANNEL
+2026-Sep-26 22:59:42.045619 ARG LOG_LEVEL
+2026-Sep-26 22:59:42.045619 ARG SESSION_LIFETIME
+2026-Sep-26 22:59:42.045619 ARG AWS_DEFAULT_REGION
+2026-Sep-26 22:59:42.045619 ARG AWS_BUCKET
+2026-Sep-26 22:59:42.045619 ARG AWS_USE_PATH_STYLE_ENDPOINT
+2026-Sep-26 22:59:42.045619 ARG USE_PLAN_SYSTEM
+2026-Sep-26 22:59:42.045619 ARG CLIENT_PLAN
+2026-Sep-26 22:59:42.045619 ARG FEATURE_SEO
+2026-Sep-26 22:59:42.045619 ARG FEATURE_MEDIA
+2026-Sep-26 22:59:42.045619 ARG FEATURE_BOOKS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_KHUTAB
+2026-Sep-26 22:59:42.045619 ARG FEATURE_VOD_VIDEO
+2026-Sep-26 22:59:42.045619 ARG FEATURE_VOD_PLAYLISTS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_CONTACT
+2026-Sep-26 22:59:42.045619 ARG FEATURE_DOWNLOAD
+2026-Sep-26 22:59:42.045619 ARG FEATURE_ADVANCED_SEO
+2026-Sep-26 22:59:42.045619 ARG RECAPTCHA_THRESHOLD
+2026-Sep-26 22:59:42.045619 ARG DELETED_USER_EMAIL
+2026-Sep-26 22:59:42.045619 ARG RUN_MIGRATIONS
+2026-Sep-26 22:59:42.045619 ARG RUN_SEEDER
+2026-Sep-26 22:59:42.045619 ARG FRONTEND_URL
+2026-Sep-26 22:59:42.045619 ARG REDIS_HOST
+2026-Sep-26 22:59:42.045619 ARG REDIS_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG REDIS_PORT
+2026-Sep-26 22:59:42.045619 ARG AWS_URL
+2026-Sep-26 22:59:42.045619 ARG AWS_ENDPOINT
+2026-Sep-26 22:59:42.045619 ARG SENTRY_LARAVEL_DSN
+2026-Sep-26 22:59:42.045619 ARG SENTRY_TRACES_SAMPLE_RATE
+2026-Sep-26 22:59:42.045619 ARG FEATURE_MANAGE_ADMINS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_GENERAL_SETTINGS
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SITE_NAME
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SITE_DESCRIPTION
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_NAME
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_NAME_EN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_BIO
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_FACEBOOK
+2026-Sep-26 22:59:42.045619 ARG BRANDING_DEFAULT_KEYWORDS
+2026-Sep-26 22:59:42.045619 ARG BRANDING_DEFAULT_OG_IMAGE
+2026-Sep-26 22:59:42.045619 ARG AWS_SECRET_ACCESS_KEY
+2026-Sep-26 22:59:42.045619 ARG FEATURE_THOUGHTS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_ABOUT
+2026-Sep-26 22:59:42.045619 ARG FEATURE_MEDIA_PAGES
+2026-Sep-26 22:59:42.045619 ARG FEATURE_VOD_AUDIO
+2026-Sep-26 22:59:42.045619 ARG RECAPTCHA_SECRET_KEY
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_FROM_ADDRESS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_NEWSLETTER
+2026-Sep-26 22:59:42.045619 ARG FEATURE_LANDING
+2026-Sep-26 22:59:42.045619 ARG APP_LOCALE
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_TWITTER_HANDLE
+2026-Sep-26 22:59:42.045619 ARG AWS_ACCESS_KEY_ID
+2026-Sep-26 22:59:42.045619 ARG DB_USERNAME
+2026-Sep-26 22:59:42.045619 ARG DB_PORT
+2026-Sep-26 22:59:42.045619 ARG APP_ENV
+2026-Sep-26 22:59:42.045619 ARG APP_URL
+2026-Sep-26 22:59:42.045619 ARG DB_DATABASE
+2026-Sep-26 22:59:42.045619 ARG APP_KEY
+2026-Sep-26 22:59:42.045619 ARG DB_HOST
+2026-Sep-26 22:59:42.045619 ARG APP_DEBUG
+2026-Sep-26 22:59:42.045619 ARG DB_CONNECTION
+2026-Sep-26 22:59:42.045619 ARG CACHE_DRIVER
+2026-Sep-26 22:59:42.045619 ARG SESSION_DRIVER
+2026-Sep-26 22:59:42.045619 ARG QUEUE_CONNECTION
+2026-Sep-26 22:59:42.045619 ARG MAIL_MAILER
+2026-Sep-26 22:59:42.045619 ARG MAIL_HOST
+2026-Sep-26 22:59:42.045619 ARG MAIL_PORT
+2026-Sep-26 22:59:42.045619 ARG MAIL_FROM_NAME
+2026-Sep-26 22:59:42.045619 ARG MAIL_FROM_ADDRESS
+2026-Sep-26 22:59:42.045619 ARG RECAPTCHA_SITE_KEY
+2026-Sep-26 22:59:42.045619 ARG ADMIN_NAME
+2026-Sep-26 22:59:42.045619 ARG ADMIN_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG MAIL_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG MAIL_USERNAME
+2026-Sep-26 22:59:42.045619 ARG MAIL_ENCRYPTION
+2026-Sep-26 22:59:42.045619 ARG CACHE_STORE
+2026-Sep-26 22:59:42.045619 ARG DB_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG FILESYSTEM_DISK
+2026-Sep-26 22:59:42.045619 ARG ADMIN_EMAIL
+2026-Sep-26 22:59:42.045619 ARG APP_MAINTENANCE_DRIVER
+2026-Sep-26 22:59:42.045619 ARG APP_NAME
+2026-Sep-26 22:59:42.045619 ARG APP_TIMEZONE
+2026-Sep-26 22:59:42.045619 ARG SERVICE_PASSWORD_MYSQLROOT
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_USERNAME
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_FROM_NAME
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_ENCRYPTION
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAILER
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_HOST
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_PORT
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 WORKDIR /build
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # Prefer IPv4 to avoid IPv6 DNS resolution timeouts in containerized networks
+2026-Sep-26 22:59:42.045619 RUN echo "precedence ::ffff:0:0/96 100" >> /etc/gai.conf 2>/dev/null || true
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 ENV COMPOSER_IPRESOLVE_V4=1
+2026-Sep-26 22:59:42.045619 ENV COMPOSER_PROCESS_TIMEOUT=600
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # Copy dependency files first for layer caching
+2026-Sep-26 22:59:42.045619 COPY composer.json composer.lock ./
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # Support optional GitHub token via build arg to bypass rate-limiting if provided
+2026-Sep-26 22:59:42.045619 ARG GITHUB_TOKEN=""
+2026-Sep-26 22:59:42.045619 RUN if [ -n "$GITHUB_TOKEN" ]; then composer config --global github-oauth.github.com "$GITHUB_TOKEN"; fi \
+2026-Sep-26 22:59:42.045619 && composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts --ignore-platform-reqs
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # =============================================================================
+2026-Sep-26 22:59:42.045619 # Stage 2: PHP extensions (isolated from Coolify ARG injection)
+2026-Sep-26 22:59:42.045619 # =============================================================================
+2026-Sep-26 22:59:42.045619 # This stage has NO COPY from other stages and NO application-specific inputs,
+2026-Sep-26 22:59:42.045619 # so its cache is only invalidated when the base image or extension list changes.
+2026-Sep-26 22:59:42.045619 # Coolify injects ARGs into every stage, but since none of them are referenced
+2026-Sep-26 22:59:42.045619 # here, BuildKit treats them as unused and does NOT bust the cache.
+2026-Sep-26 22:59:42.045619 FROM unit:php8.2 AS php-extensions
+2026-Sep-26 22:59:42.045619 ARG COOLIFY_URL
+2026-Sep-26 22:59:42.045619 ARG COOLIFY_FQDN
+2026-Sep-26 22:59:42.045619 ARG APP_FALLBACK_LOCALE
+2026-Sep-26 22:59:42.045619 ARG ACTIVE_THEME
+2026-Sep-26 22:59:42.045619 ARG ACTIVE_THEME_ADMIN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_TAGLINE
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SITE_DOMAIN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_TITLE
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_AVATAR
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_TWITTER
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_LINKEDIN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_INSTAGRAM
+2026-Sep-26 22:59:42.045619 ARG BLOG_IDENTITY_MODE
+2026-Sep-26 22:59:42.045619 ARG LOG_CHANNEL
+2026-Sep-26 22:59:42.045619 ARG LOG_LEVEL
+2026-Sep-26 22:59:42.045619 ARG SESSION_LIFETIME
+2026-Sep-26 22:59:42.045619 ARG AWS_DEFAULT_REGION
+2026-Sep-26 22:59:42.045619 ARG AWS_BUCKET
+2026-Sep-26 22:59:42.045619 ARG AWS_USE_PATH_STYLE_ENDPOINT
+2026-Sep-26 22:59:42.045619 ARG USE_PLAN_SYSTEM
+2026-Sep-26 22:59:42.045619 ARG CLIENT_PLAN
+2026-Sep-26 22:59:42.045619 ARG FEATURE_SEO
+2026-Sep-26 22:59:42.045619 ARG FEATURE_MEDIA
+2026-Sep-26 22:59:42.045619 ARG FEATURE_BOOKS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_KHUTAB
+2026-Sep-26 22:59:42.045619 ARG FEATURE_VOD_VIDEO
+2026-Sep-26 22:59:42.045619 ARG FEATURE_VOD_PLAYLISTS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_CONTACT
+2026-Sep-26 22:59:42.045619 ARG FEATURE_DOWNLOAD
+2026-Sep-26 22:59:42.045619 ARG FEATURE_ADVANCED_SEO
+2026-Sep-26 22:59:42.045619 ARG RECAPTCHA_THRESHOLD
+2026-Sep-26 22:59:42.045619 ARG DELETED_USER_EMAIL
+2026-Sep-26 22:59:42.045619 ARG RUN_MIGRATIONS
+2026-Sep-26 22:59:42.045619 ARG RUN_SEEDER
+2026-Sep-26 22:59:42.045619 ARG FRONTEND_URL
+2026-Sep-26 22:59:42.045619 ARG REDIS_HOST
+2026-Sep-26 22:59:42.045619 ARG REDIS_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG REDIS_PORT
+2026-Sep-26 22:59:42.045619 ARG AWS_URL
+2026-Sep-26 22:59:42.045619 ARG AWS_ENDPOINT
+2026-Sep-26 22:59:42.045619 ARG SENTRY_LARAVEL_DSN
+2026-Sep-26 22:59:42.045619 ARG SENTRY_TRACES_SAMPLE_RATE
+2026-Sep-26 22:59:42.045619 ARG FEATURE_MANAGE_ADMINS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_GENERAL_SETTINGS
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SITE_NAME
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SITE_DESCRIPTION
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_NAME
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_NAME_EN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_BIO
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_FACEBOOK
+2026-Sep-26 22:59:42.045619 ARG BRANDING_DEFAULT_KEYWORDS
+2026-Sep-26 22:59:42.045619 ARG BRANDING_DEFAULT_OG_IMAGE
+2026-Sep-26 22:59:42.045619 ARG AWS_SECRET_ACCESS_KEY
+2026-Sep-26 22:59:42.045619 ARG FEATURE_THOUGHTS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_ABOUT
+2026-Sep-26 22:59:42.045619 ARG FEATURE_MEDIA_PAGES
+2026-Sep-26 22:59:42.045619 ARG FEATURE_VOD_AUDIO
+2026-Sep-26 22:59:42.045619 ARG RECAPTCHA_SECRET_KEY
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_FROM_ADDRESS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_NEWSLETTER
+2026-Sep-26 22:59:42.045619 ARG FEATURE_LANDING
+2026-Sep-26 22:59:42.045619 ARG APP_LOCALE
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_TWITTER_HANDLE
+2026-Sep-26 22:59:42.045619 ARG AWS_ACCESS_KEY_ID
+2026-Sep-26 22:59:42.045619 ARG DB_USERNAME
+2026-Sep-26 22:59:42.045619 ARG DB_PORT
+2026-Sep-26 22:59:42.045619 ARG APP_ENV
+2026-Sep-26 22:59:42.045619 ARG APP_URL
+2026-Sep-26 22:59:42.045619 ARG DB_DATABASE
+2026-Sep-26 22:59:42.045619 ARG APP_KEY
+2026-Sep-26 22:59:42.045619 ARG DB_HOST
+2026-Sep-26 22:59:42.045619 ARG APP_DEBUG
+2026-Sep-26 22:59:42.045619 ARG DB_CONNECTION
+2026-Sep-26 22:59:42.045619 ARG CACHE_DRIVER
+2026-Sep-26 22:59:42.045619 ARG SESSION_DRIVER
+2026-Sep-26 22:59:42.045619 ARG QUEUE_CONNECTION
+2026-Sep-26 22:59:42.045619 ARG MAIL_MAILER
+2026-Sep-26 22:59:42.045619 ARG MAIL_HOST
+2026-Sep-26 22:59:42.045619 ARG MAIL_PORT
+2026-Sep-26 22:59:42.045619 ARG MAIL_FROM_NAME
+2026-Sep-26 22:59:42.045619 ARG MAIL_FROM_ADDRESS
+2026-Sep-26 22:59:42.045619 ARG RECAPTCHA_SITE_KEY
+2026-Sep-26 22:59:42.045619 ARG ADMIN_NAME
+2026-Sep-26 22:59:42.045619 ARG ADMIN_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG MAIL_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG MAIL_USERNAME
+2026-Sep-26 22:59:42.045619 ARG MAIL_ENCRYPTION
+2026-Sep-26 22:59:42.045619 ARG CACHE_STORE
+2026-Sep-26 22:59:42.045619 ARG DB_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG FILESYSTEM_DISK
+2026-Sep-26 22:59:42.045619 ARG ADMIN_EMAIL
+2026-Sep-26 22:59:42.045619 ARG APP_MAINTENANCE_DRIVER
+2026-Sep-26 22:59:42.045619 ARG APP_NAME
+2026-Sep-26 22:59:42.045619 ARG APP_TIMEZONE
+2026-Sep-26 22:59:42.045619 ARG SERVICE_PASSWORD_MYSQLROOT
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_USERNAME
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_FROM_NAME
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_ENCRYPTION
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAILER
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_HOST
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_PORT
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.23/install-php-extensions /usr/local/bin/
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 RUN apt-get update \
+2026-Sep-26 22:59:42.045619 && apt-get install -y --no-install-recommends curl \
+2026-Sep-26 22:59:42.045619 && install-php-extensions pcntl pdo_mysql intl zip gd exif ftp bcmath redis \
+2026-Sep-26 22:59:42.045619 && docker-php-ext-enable opcache \
+2026-Sep-26 22:59:42.045619 && apt-get clean \
+2026-Sep-26 22:59:42.045619 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # =============================================================================
+2026-Sep-26 22:59:42.045619 # Stage 3: Production runtime (Nginx Unit + PHP 8.2)
+2026-Sep-26 22:59:42.045619 # Frontend assets are pre-built and tracked in git (zero Node overhead on server)
+2026-Sep-26 22:59:42.045619 # =============================================================================
+2026-Sep-26 22:59:42.045619 FROM php-extensions AS runtime
+2026-Sep-26 22:59:42.045619 ARG COOLIFY_URL
+2026-Sep-26 22:59:42.045619 ARG COOLIFY_FQDN
+2026-Sep-26 22:59:42.045619 ARG APP_FALLBACK_LOCALE
+2026-Sep-26 22:59:42.045619 ARG ACTIVE_THEME
+2026-Sep-26 22:59:42.045619 ARG ACTIVE_THEME_ADMIN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_TAGLINE
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SITE_DOMAIN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_TITLE
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_AVATAR
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_TWITTER
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_LINKEDIN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_INSTAGRAM
+2026-Sep-26 22:59:42.045619 ARG BLOG_IDENTITY_MODE
+2026-Sep-26 22:59:42.045619 ARG LOG_CHANNEL
+2026-Sep-26 22:59:42.045619 ARG LOG_LEVEL
+2026-Sep-26 22:59:42.045619 ARG SESSION_LIFETIME
+2026-Sep-26 22:59:42.045619 ARG AWS_DEFAULT_REGION
+2026-Sep-26 22:59:42.045619 ARG AWS_BUCKET
+2026-Sep-26 22:59:42.045619 ARG AWS_USE_PATH_STYLE_ENDPOINT
+2026-Sep-26 22:59:42.045619 ARG USE_PLAN_SYSTEM
+2026-Sep-26 22:59:42.045619 ARG CLIENT_PLAN
+2026-Sep-26 22:59:42.045619 ARG FEATURE_SEO
+2026-Sep-26 22:59:42.045619 ARG FEATURE_MEDIA
+2026-Sep-26 22:59:42.045619 ARG FEATURE_BOOKS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_KHUTAB
+2026-Sep-26 22:59:42.045619 ARG FEATURE_VOD_VIDEO
+2026-Sep-26 22:59:42.045619 ARG FEATURE_VOD_PLAYLISTS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_CONTACT
+2026-Sep-26 22:59:42.045619 ARG FEATURE_DOWNLOAD
+2026-Sep-26 22:59:42.045619 ARG FEATURE_ADVANCED_SEO
+2026-Sep-26 22:59:42.045619 ARG RECAPTCHA_THRESHOLD
+2026-Sep-26 22:59:42.045619 ARG DELETED_USER_EMAIL
+2026-Sep-26 22:59:42.045619 ARG RUN_MIGRATIONS
+2026-Sep-26 22:59:42.045619 ARG RUN_SEEDER
+2026-Sep-26 22:59:42.045619 ARG FRONTEND_URL
+2026-Sep-26 22:59:42.045619 ARG REDIS_HOST
+2026-Sep-26 22:59:42.045619 ARG REDIS_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG REDIS_PORT
+2026-Sep-26 22:59:42.045619 ARG AWS_URL
+2026-Sep-26 22:59:42.045619 ARG AWS_ENDPOINT
+2026-Sep-26 22:59:42.045619 ARG SENTRY_LARAVEL_DSN
+2026-Sep-26 22:59:42.045619 ARG SENTRY_TRACES_SAMPLE_RATE
+2026-Sep-26 22:59:42.045619 ARG FEATURE_MANAGE_ADMINS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_GENERAL_SETTINGS
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SITE_NAME
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SITE_DESCRIPTION
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_NAME
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_NAME_EN
+2026-Sep-26 22:59:42.045619 ARG BRANDING_AUTHOR_BIO
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_FACEBOOK
+2026-Sep-26 22:59:42.045619 ARG BRANDING_DEFAULT_KEYWORDS
+2026-Sep-26 22:59:42.045619 ARG BRANDING_DEFAULT_OG_IMAGE
+2026-Sep-26 22:59:42.045619 ARG AWS_SECRET_ACCESS_KEY
+2026-Sep-26 22:59:42.045619 ARG FEATURE_THOUGHTS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_ABOUT
+2026-Sep-26 22:59:42.045619 ARG FEATURE_MEDIA_PAGES
+2026-Sep-26 22:59:42.045619 ARG FEATURE_VOD_AUDIO
+2026-Sep-26 22:59:42.045619 ARG RECAPTCHA_SECRET_KEY
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_FROM_ADDRESS
+2026-Sep-26 22:59:42.045619 ARG FEATURE_NEWSLETTER
+2026-Sep-26 22:59:42.045619 ARG FEATURE_LANDING
+2026-Sep-26 22:59:42.045619 ARG APP_LOCALE
+2026-Sep-26 22:59:42.045619 ARG BRANDING_SOCIAL_TWITTER_HANDLE
+2026-Sep-26 22:59:42.045619 ARG AWS_ACCESS_KEY_ID
+2026-Sep-26 22:59:42.045619 ARG DB_USERNAME
+2026-Sep-26 22:59:42.045619 ARG DB_PORT
+2026-Sep-26 22:59:42.045619 ARG APP_ENV
+2026-Sep-26 22:59:42.045619 ARG APP_URL
+2026-Sep-26 22:59:42.045619 ARG DB_DATABASE
+2026-Sep-26 22:59:42.045619 ARG APP_KEY
+2026-Sep-26 22:59:42.045619 ARG DB_HOST
+2026-Sep-26 22:59:42.045619 ARG APP_DEBUG
+2026-Sep-26 22:59:42.045619 ARG DB_CONNECTION
+2026-Sep-26 22:59:42.045619 ARG CACHE_DRIVER
+2026-Sep-26 22:59:42.045619 ARG SESSION_DRIVER
+2026-Sep-26 22:59:42.045619 ARG QUEUE_CONNECTION
+2026-Sep-26 22:59:42.045619 ARG MAIL_MAILER
+2026-Sep-26 22:59:42.045619 ARG MAIL_HOST
+2026-Sep-26 22:59:42.045619 ARG MAIL_PORT
+2026-Sep-26 22:59:42.045619 ARG MAIL_FROM_NAME
+2026-Sep-26 22:59:42.045619 ARG MAIL_FROM_ADDRESS
+2026-Sep-26 22:59:42.045619 ARG RECAPTCHA_SITE_KEY
+2026-Sep-26 22:59:42.045619 ARG ADMIN_NAME
+2026-Sep-26 22:59:42.045619 ARG ADMIN_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG MAIL_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG MAIL_USERNAME
+2026-Sep-26 22:59:42.045619 ARG MAIL_ENCRYPTION
+2026-Sep-26 22:59:42.045619 ARG CACHE_STORE
+2026-Sep-26 22:59:42.045619 ARG DB_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG FILESYSTEM_DISK
+2026-Sep-26 22:59:42.045619 ARG ADMIN_EMAIL
+2026-Sep-26 22:59:42.045619 ARG APP_MAINTENANCE_DRIVER
+2026-Sep-26 22:59:42.045619 ARG APP_NAME
+2026-Sep-26 22:59:42.045619 ARG APP_TIMEZONE
+2026-Sep-26 22:59:42.045619 ARG SERVICE_PASSWORD_MYSQLROOT
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_USERNAME
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_PASSWORD
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_FROM_NAME
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_ENCRYPTION
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAILER
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_HOST
+2026-Sep-26 22:59:42.045619 ARG NEWSLETTER_MAIL_PORT
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # OPCache configuration — production-optimized
+2026-Sep-26 22:59:42.045619 RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:42.045619 && echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:42.045619 && echo "opcache.interned_strings_buffer=16" >> /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:42.045619 && echo "opcache.max_accelerated_files=20000" >> /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:42.045619 && echo "opcache.validate_timestamps=0" >> /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:42.045619 && echo "opcache.save_comments=1" >> /usr/local/etc/php/conf.d/opcache.ini \
+2026-Sep-26 22:59:42.045619 && echo "opcache.enable_file_override=1" >> /usr/local/etc/php/conf.d/opcache.ini
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # PHP runtime configuration
+2026-Sep-26 22:59:42.045619 RUN echo "memory_limit=512M" > /usr/local/etc/php/conf.d/php-runtime.ini \
+2026-Sep-26 22:59:42.045619 && echo "upload_max_filesize=64M" >> /usr/local/etc/php/conf.d/php-runtime.ini \
+2026-Sep-26 22:59:42.045619 && echo "post_max_size=64M" >> /usr/local/etc/php/conf.d/php-runtime.ini
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 WORKDIR /var/www/html
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # Create storage directories with correct permissions
+2026-Sep-26 22:59:42.045619 RUN mkdir -p storage/app/public \
+2026-Sep-26 22:59:42.045619 storage/framework/cache/data \
+2026-Sep-26 22:59:42.045619 storage/framework/sessions \
+2026-Sep-26 22:59:42.045619 storage/framework/views \
+2026-Sep-26 22:59:42.045619 storage/logs \
+2026-Sep-26 22:59:42.045619 bootstrap/cache \
+2026-Sep-26 22:59:42.045619 && chown -R unit:unit storage bootstrap/cache \
+2026-Sep-26 22:59:42.045619 && chmod -R 775 storage bootstrap/cache
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # Copy Composer dependencies from builder stage
+2026-Sep-26 22:59:42.045619 COPY --from=composer-builder /build/vendor/ vendor/
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # Copy application code (including pre-built public/build/ assets)
+2026-Sep-26 22:59:42.045619 COPY . .
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # Run Composer dump-autoload now that artisan and full source exist
+2026-Sep-26 22:59:42.045619 COPY --from=composer-builder /usr/bin/composer /usr/local/bin/composer
+2026-Sep-26 22:59:42.045619 RUN composer dump-autoload --optimize --no-dev --no-interaction --ignore-platform-reqs \
+2026-Sep-26 22:59:42.045619 && rm -f /usr/local/bin/composer
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # Set final permissions
+2026-Sep-26 22:59:42.045619 RUN chown -R unit:unit storage bootstrap/cache . \
+2026-Sep-26 22:59:42.045619 && chmod -R 775 storage bootstrap/cache
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 # Copy Nginx Unit configuration and entrypoint
+2026-Sep-26 22:59:42.045619 COPY unit.json /docker-entrypoint.d/unit.json
+2026-Sep-26 22:59:42.045619 COPY docker-entrypoint.sh /entrypoint.sh
+2026-Sep-26 22:59:42.045619 RUN chmod +x /entrypoint.sh
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 HEALTHCHECK --interval=30s --timeout=10s --retries=5 --start-period=60s \
+2026-Sep-26 22:59:42.045619 CMD curl -f http://127.0.0.1:8000/up || exit 1
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 EXPOSE 8000
+2026-Sep-26 22:59:42.045619
+2026-Sep-26 22:59:42.045619 ENTRYPOINT ["/entrypoint.sh"]
+2026-Sep-26 22:59:42.045619 CMD ["unitd", "--no-daemon", "--control", "unix:/var/run/control.unit.sock"]
+2026-Sep-26 22:59:42.059236 Service worker: All required ARG declarations already exist.
+2026-Sep-26 22:59:42.072669 Pulling & building required images.
+2026-Sep-26 22:59:43.020796 Creating build-time .env file in /artifacts (outside Docker context).
+2026-Sep-26 22:59:43.258835 Adding build arguments to Docker Compose build command.
+2026-Sep-26 22:59:44.135576 [CMD]: docker exec uxdbvvr5vc5ua1psqjlkqzd9 bash -c 'DOCKER_BUILDKIT=1 COOLIFY_URL=v4w04cgcssk8oc08kwowo8kg.rukn.cloud COOLIFY_FQDN= COOLIFY_BRANCH='\''main'\'' COOLIFY_RESOURCE_UUID=v4w04cgcssk8oc08kwowo8kg docker compose --env-file /artifacts/build-time.env --project-name v4w04cgcssk8oc08kwowo8kg --project-directory /artifacts/uxdbvvr5vc5ua1psqjlkqzd9 -f /artifacts/uxdbvvr5vc5ua1psqjlkqzd9/compose.yml build --pull --build-arg COOLIFY_URL --build-arg COOLIFY_FQDN --build-arg APP_FALLBACK_LOCALE --build-arg ACTIVE_THEME --build-arg ACTIVE_THEME_ADMIN --build-arg BRANDING_TAGLINE --build-arg BRANDING_SITE_DOMAIN --build-arg BRANDING_AUTHOR_TITLE --build-arg BRANDING_AUTHOR_AVATAR --build-arg BRANDING_SOCIAL_TWITTER --build-arg BRANDING_SOCIAL_LINKEDIN --build-arg BRANDING_SOCIAL_INSTAGRAM --build-arg BLOG_IDENTITY_MODE --build-arg LOG_CHANNEL --build-arg LOG_LEVEL --build-arg SESSION_LIFETIME --build-arg AWS_DEFAULT_REGION --build-arg AWS_BUCKET --build-arg AWS_USE_PATH_STYLE_ENDPOINT --build-arg USE_PLAN_SYSTEM --build-arg CLIENT_PLAN --build-arg FEATURE_SEO --build-arg FEATURE_MEDIA --build-arg FEATURE_BOOKS --build-arg FEATURE_KHUTAB --build-arg FEATURE_VOD_VIDEO --build-arg FEATURE_VOD_PLAYLISTS --build-arg FEATURE_CONTACT --build-arg FEATURE_DOWNLOAD --build-arg FEATURE_ADVANCED_SEO --build-arg RECAPTCHA_THRESHOLD --build-arg DELETED_USER_EMAIL --build-arg RUN_MIGRATIONS --build-arg RUN_SEEDER --build-arg FRONTEND_URL --build-arg REDIS_HOST --build-arg REDIS_PASSWORD --build-arg REDIS_PORT --build-arg AWS_URL --build-arg AWS_ENDPOINT --build-arg SENTRY_LARAVEL_DSN --build-arg SENTRY_TRACES_SAMPLE_RATE --build-arg FEATURE_MANAGE_ADMINS --build-arg FEATURE_GENERAL_SETTINGS --build-arg BRANDING_SITE_NAME --build-arg BRANDING_SITE_DESCRIPTION --build-arg BRANDING_AUTHOR_NAME --build-arg BRANDING_AUTHOR_NAME_EN --build-arg BRANDING_AUTHOR_BIO --build-arg BRANDING_SOCIAL_FACEBOOK --build-arg BRANDING_DEFAULT_KEYWORDS --build-arg BRANDING_DEFAULT_OG_IMAGE --build-arg AWS_SECRET_ACCESS_KEY --build-arg FEATURE_THOUGHTS --build-arg FEATURE_ABOUT --build-arg FEATURE_MEDIA_PAGES --build-arg FEATURE_VOD_AUDIO --build-arg RECAPTCHA_SECRET_KEY --build-arg NEWSLETTER_MAIL_FROM_ADDRESS --build-arg FEATURE_NEWSLETTER --build-arg FEATURE_LANDING --build-arg APP_LOCALE --build-arg BRANDING_SOCIAL_TWITTER_HANDLE --build-arg AWS_ACCESS_KEY_ID --build-arg DB_USERNAME --build-arg DB_PORT --build-arg APP_ENV --build-arg APP_URL --build-arg DB_DATABASE --build-arg APP_KEY --build-arg DB_HOST --build-arg APP_DEBUG --build-arg DB_CONNECTION --build-arg CACHE_DRIVER --build-arg SESSION_DRIVER --build-arg QUEUE_CONNECTION --build-arg MAIL_MAILER --build-arg MAIL_HOST --build-arg MAIL_PORT --build-arg MAIL_FROM_NAME --build-arg MAIL_FROM_ADDRESS --build-arg RECAPTCHA_SITE_KEY --build-arg ADMIN_NAME --build-arg ADMIN_PASSWORD --build-arg MAIL_PASSWORD --build-arg MAIL_USERNAME --build-arg MAIL_ENCRYPTION --build-arg CACHE_STORE --build-arg DB_PASSWORD --build-arg FILESYSTEM_DISK --build-arg ADMIN_EMAIL --build-arg APP_MAINTENANCE_DRIVER --build-arg APP_NAME --build-arg APP_TIMEZONE --build-arg SERVICE_PASSWORD_MYSQLROOT --build-arg NEWSLETTER_MAIL_USERNAME --build-arg NEWSLETTER_MAIL_PASSWORD --build-arg NEWSLETTER_MAIL_FROM_NAME --build-arg NEWSLETTER_MAIL_ENCRYPTION --build-arg NEWSLETTER_MAILER --build-arg NEWSLETTER_MAIL_HOST --build-arg NEWSLETTER_MAIL_PORT --build-arg COOLIFY_BUILD_SECRETS_HASH=07a1778913da13590a3cfaf4caa8b2a278768c1439e0b8e47d0788cb8fe9efaa'
+2026-Sep-26 22:59:44.135576 #1 [internal] load local bake definitions
+2026-Sep-26 22:59:44.285934 #1 reading from stdin 9.45kB done
+2026-Sep-26 22:59:44.291935 #1 DONE 0.0s
+2026-Sep-26 22:59:44.545215 #2 [app internal] load build definition from Dockerfile
+2026-Sep-26 22:59:44.545215 #2 transferring dockerfile: 11.00kB 0.0s done
+2026-Sep-26 22:59:44.545215 #2 DONE 0.1s
+2026-Sep-26 22:59:44.545215
+2026-Sep-26 22:59:44.545215 #3 [worker internal] load build definition from Dockerfile
+2026-Sep-26 22:59:44.545215 #3 transferring dockerfile: 11.00kB 0.0s done
+2026-Sep-26 22:59:44.739888 #3 DONE 0.1s
+2026-Sep-26 22:59:44.739888
+2026-Sep-26 22:59:44.739888 #4 [worker internal] load metadata for docker.io/library/composer:2.8
+2026-Sep-26 22:59:45.041538 #4 ...
+2026-Sep-26 22:59:45.041538
+2026-Sep-26 22:59:45.041538 #5 [auth] library/unit:pull token for registry-1.docker.io
+2026-Sep-26 22:59:45.041538 #5 DONE 0.0s
+2026-Sep-26 22:59:45.041538
+2026-Sep-26 22:59:45.041538 #6 [auth] library/composer:pull token for registry-1.docker.io
+2026-Sep-26 22:59:45.041538 #6 DONE 0.0s
+2026-Sep-26 22:59:45.191711 #7 [worker internal] load metadata for docker.io/library/unit:php8.2
+2026-Sep-26 22:59:45.413779 #7 DONE 0.7s
+2026-Sep-26 22:59:45.413779
+2026-Sep-26 22:59:45.413779 #4 [worker internal] load metadata for docker.io/library/composer:2.8
+2026-Sep-26 22:59:45.413779 #4 DONE 0.7s
+2026-Sep-26 22:59:45.574093 #8 [worker internal] load .dockerignore
+2026-Sep-26 22:59:45.574093 #8 transferring context: 2.25kB 0.0s done
+2026-Sep-26 22:59:45.574093 #8 DONE 0.0s
+2026-Sep-26 22:59:45.574093
+2026-Sep-26 22:59:45.574093 #9 [app internal] load .dockerignore
+2026-Sep-26 22:59:45.574093 #9 transferring context: 2.25kB done
+2026-Sep-26 22:59:45.574093 #9 DONE 0.0s
+2026-Sep-26 22:59:45.574093
+2026-Sep-26 22:59:45.574093 #10 [worker composer-builder 1/5] FROM docker.io/library/composer:2.8@sha256:5248900ab8b5f7f880c2d62180e40960cd87f60149ec9a1abfd62ac72a02577c
+2026-Sep-26 22:59:45.574093 #10 DONE 0.0s
+2026-Sep-26 22:59:45.574093
+2026-Sep-26 22:59:45.574093 #11 [worker php-extensions 1/3] FROM docker.io/library/unit:php8.2@sha256:6e33f82a08b3e87673badf0c1899df5c818495678cc0e3594fae19951e0c973f
+2026-Sep-26 22:59:45.574093 #11 DONE 0.0s
+2026-Sep-26 22:59:45.574093
+2026-Sep-26 22:59:45.574093 #12 [app composer-builder 2/5] WORKDIR /build
+2026-Sep-26 22:59:45.574093 #12 CACHED
+2026-Sep-26 22:59:45.574093
+2026-Sep-26 22:59:45.574093 #13 [worker internal] load build context
+2026-Sep-26 22:59:45.945629 #13 transferring context: 4.15MB 0.4s done
+2026-Sep-26 22:59:45.945629 #13 DONE 0.4s
+2026-Sep-26 22:59:45.945629
+2026-Sep-26 22:59:45.945629 #14 [app internal] load build context
+2026-Sep-26 22:59:45.945629 #14 transferring context: 4.15MB 0.3s done
+2026-Sep-26 22:59:45.945629 #14 DONE 0.4s
+2026-Sep-26 22:59:45.945629
+2026-Sep-26 22:59:45.945629 #15 [worker php-extensions 2/3] ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.23/install-php-extensions /usr/local/bin/
+2026-Sep-26 22:59:49.037418 ========================================
+2026-Sep-26 22:59:49.048228 Deployment failed: Command execution failed (exit code 255): docker exec uxdbvvr5vc5ua1psqjlkqzd9 bash -c 'DOCKER_BUILDKIT=1 COOLIFY_URL=v4w04cgcssk8oc08kwowo8kg.rukn.cloud COOLIFY_FQDN= COOLIFY_BRANCH='\''main'\'' COOLIFY_RESOURCE_UUID=v4w04cgcssk8oc08kwowo8kg docker compose --env-file /artifacts/build-time.env --project-name v4w04cgcssk8oc08kwowo8kg --project-directory /artifacts/uxdbvvr5vc5ua1psqjlkqzd9 -f /artifacts/uxdbvvr5vc5ua1psqjlkqzd9/compose.yml build --pull --build-arg COOLIFY_URL --build-arg COOLIFY_FQDN --build-arg APP_FALLBACK_LOCALE --build-arg ACTIVE_THEME --build-arg ACTIVE_THEME_ADMIN --build-arg BRANDING_TAGLINE --build-arg BRANDING_SITE_DOMAIN --build-arg BRANDING_AUTHOR_TITLE --build-arg BRANDING_AUTHOR_AVATAR --build-arg BRANDING_SOCIAL_TWITTER --build-arg BRANDING_SOCIAL_LINKEDIN --build-arg BRANDING_SOCIAL_INSTAGRAM --build-arg BLOG_IDENTITY_MODE --build-arg LOG_CHANNEL --build-arg LOG_LEVEL --build-arg SESSION_LIFETIME --build-arg AWS_DEFAULT_REGION --build-arg AWS_BUCKET --build-arg AWS_USE_PATH_STYLE_ENDPOINT --build-arg USE_PLAN_SYSTEM --build-arg CLIENT_PLAN --build-arg FEATURE_SEO --build-arg FEATURE_MEDIA --build-arg FEATURE_BOOKS --build-arg FEATURE_KHUTAB --build-arg FEATURE_VOD_VIDEO --build-arg FEATURE_VOD_PLAYLISTS --build-arg FEATURE_CONTACT --build-arg FEATURE_DOWNLOAD --build-arg FEATURE_ADVANCED_SEO --build-arg RECAPTCHA_THRESHOLD --build-arg DELETED_USER_EMAIL --build-arg RUN_MIGRATIONS --build-arg RUN_SEEDER --build-arg FRONTEND_URL --build-arg REDIS_HOST --build-arg REDIS_PASSWORD --build-arg REDIS_PORT --build-arg AWS_URL --build-arg AWS_ENDPOINT --build-arg SENTRY_LARAVEL_DSN --build-arg SENTRY_TRACES_SAMPLE_RATE --build-arg FEATURE_MANAGE_ADMINS --build-arg FEATURE_GENERAL_SETTINGS --build-arg BRANDING_SITE_NAME --build-arg BRANDING_SITE_DESCRIPTION --build-arg BRANDING_AUTHOR_NAME --build-arg BRANDING_AUTHOR_NAME_EN --build-arg BRANDING_AUTHOR_BIO --build-arg BRANDING_SOCIAL_FACEBOOK --build-arg BRANDING_DEFAULT_KEYWORDS --build-arg BRANDING_DEFAULT_OG_IMAGE --build-arg AWS_SECRET_ACCESS_KEY --build-arg FEATURE_THOUGHTS --build-arg FEATURE_ABOUT --build-arg FEATURE_MEDIA_PAGES --build-arg FEATURE_VOD_AUDIO --build-arg RECAPTCHA_SECRET_KEY --build-arg NEWSLETTER_MAIL_FROM_ADDRESS --build-arg FEATURE_NEWSLETTER --build-arg FEATURE_LANDING --build-arg APP_LOCALE --build-arg BRANDING_SOCIAL_TWITTER_HANDLE --build-arg AWS_ACCESS_KEY_ID --build-arg DB_USERNAME --build-arg DB_PORT --build-arg APP_ENV --build-arg APP_URL --build-arg DB_DATABASE --build-arg APP_KEY --build-arg DB_HOST --build-arg APP_DEBUG --build-arg DB_CONNECTION --build-arg CACHE_DRIVER --build-arg SESSION_DRIVER --build-arg QUEUE_CONNECTION --build-arg MAIL_MAILER --build-arg MAIL_HOST --build-arg MAIL_PORT --build-arg MAIL_FROM_NAME --build-arg MAIL_FROM_ADDRESS --build-arg RECAPTCHA_SITE_KEY --build-arg ADMIN_NAME --build-arg ADMIN_PASSWORD --build-arg MAIL_PASSWORD --build-arg MAIL_USERNAME --build-arg MAIL_ENCRYPTION --build-arg CACHE_STORE --build-arg DB_PASSWORD --build-arg FILESYSTEM_DISK --build-arg ADMIN_EMAIL --build-arg APP_MAINTENANCE_DRIVER --build-arg APP_NAME --build-arg APP_TIMEZONE --build-arg SERVICE_PASSWORD_MYSQLROOT --build-arg NEWSLETTER_MAIL_USERNAME --build-arg NEWSLETTER_MAIL_PASSWORD --build-arg NEWSLETTER_MAIL_FROM_NAME --build-arg NEWSLETTER_MAIL_ENCRYPTION --build-arg NEWSLETTER_MAILER --build-arg NEWSLETTER_MAIL_HOST --build-arg NEWSLETTER_MAIL_PORT --build-arg COOLIFY_BUILD_SECRETS_HASH=07a1778913da13590a3cfaf4caa8b2a278768c1439e0b8e47d0788cb8fe9efaa'
+2026-Sep-26 22:59:49.048228 Error: #1 [internal] load local bake definitions
+2026-Sep-26 22:59:49.048228 #1 reading from stdin 9.45kB done
+2026-Sep-26 22:59:49.048228 #1 DONE 0.0s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #2 [app internal] load build definition from Dockerfile
+2026-Sep-26 22:59:49.048228 #2 transferring dockerfile: 11.00kB 0.0s done
+2026-Sep-26 22:59:49.048228 #2 DONE 0.1s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #3 [worker internal] load build definition from Dockerfile
+2026-Sep-26 22:59:49.048228 #3 transferring dockerfile: 11.00kB 0.0s done
+2026-Sep-26 22:59:49.048228 #3 DONE 0.1s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #4 [worker internal] load metadata for docker.io/library/composer:2.8
+2026-Sep-26 22:59:49.048228 #4 ...
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #5 [auth] library/unit:pull token for registry-1.docker.io
+2026-Sep-26 22:59:49.048228 #5 DONE 0.0s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #6 [auth] library/composer:pull token for registry-1.docker.io
+2026-Sep-26 22:59:49.048228 #6 DONE 0.0s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #7 [worker internal] load metadata for docker.io/library/unit:php8.2
+2026-Sep-26 22:59:49.048228 #7 DONE 0.7s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #4 [worker internal] load metadata for docker.io/library/composer:2.8
+2026-Sep-26 22:59:49.048228 #4 DONE 0.7s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #8 [worker internal] load .dockerignore
+2026-Sep-26 22:59:49.048228 #8 transferring context: 2.25kB 0.0s done
+2026-Sep-26 22:59:49.048228 #8 DONE 0.0s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #9 [app internal] load .dockerignore
+2026-Sep-26 22:59:49.048228 #9 transferring context: 2.25kB done
+2026-Sep-26 22:59:49.048228 #9 DONE 0.0s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #10 [worker composer-builder 1/5] FROM docker.io/library/composer:2.8@sha256:5248900ab8b5f7f880c2d62180e40960cd87f60149ec9a1abfd62ac72a02577c
+2026-Sep-26 22:59:49.048228 #10 DONE 0.0s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #11 [worker php-extensions 1/3] FROM docker.io/library/unit:php8.2@sha256:6e33f82a08b3e87673badf0c1899df5c818495678cc0e3594fae19951e0c973f
+2026-Sep-26 22:59:49.048228 #11 DONE 0.0s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #12 [app composer-builder 2/5] WORKDIR /build
+2026-Sep-26 22:59:49.048228 #12 CACHED
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #13 [worker internal] load build context
+2026-Sep-26 22:59:49.048228 #13 transferring context: 4.15MB 0.4s done
+2026-Sep-26 22:59:49.048228 #13 DONE 0.4s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #14 [app internal] load build context
+2026-Sep-26 22:59:49.048228 #14 transferring context: 4.15MB 0.3s done
+2026-Sep-26 22:59:49.048228 #14 DONE 0.4s
+2026-Sep-26 22:59:49.048228
+2026-Sep-26 22:59:49.048228 #15 [worker php-extensions 2/3] ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.23/install-php-extensions /usr/local/bin/
+2026-Sep-26 22:59:49.066771 Error type: App\Exceptions\DeploymentException
+2026-Sep-26 22:59:49.080306 Error code: 0
+2026-Sep-26 22:59:49.094760 Location: /var/www/html/app/Traits/ExecuteRemoteCommand.php:242
+2026-Sep-26 22:59:49.109309 Stack trace (first 5 lines):
+2026-Sep-26 22:59:49.122196 #0 /var/www/html/app/Traits/ExecuteRemoteCommand.php(106): App\Jobs\ApplicationDeploymentJob->executeCommandWithProcess()
+2026-Sep-26 22:59:49.135440 #1 /var/www/html/vendor/laravel/framework/src/Illuminate/Collections/Traits/EnumeratesValues.php(275): App\Jobs\ApplicationDeploymentJob->{closure:App\Traits\ExecuteRemoteCommand::execute_remote_command():72}()
+2026-Sep-26 22:59:49.148285 #2 /var/www/html/app/Traits/ExecuteRemoteCommand.php(72): Illuminate\Support\Collection->each()
+2026-Sep-26 22:59:49.157714 #3 /var/www/html/app/Jobs/ApplicationDeploymentJob.php(773): App\Jobs\ApplicationDeploymentJob->execute_remote_command()
+2026-Sep-26 22:59:49.169438 #4 /var/www/html/app/Jobs/ApplicationDeploymentJob.php(497): App\Jobs\ApplicationDeploymentJob->deploy_docker_compose_buildpack()
+2026-Sep-26 22:59:49.182822 ========================================

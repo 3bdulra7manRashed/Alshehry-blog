@@ -29,10 +29,10 @@ RUN if [ -n "$GITHUB_TOKEN" ]; then composer config --global github-oauth.github
 # here, BuildKit treats them as unused and does NOT bust the cache.
 FROM unit:php8.2 AS php-extensions
 
-ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.23/install-php-extensions /usr/local/bin/
-
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
+    && apt-get install -y --no-install-recommends curl ca-certificates \
+    && curl -fsSL -o /usr/local/bin/install-php-extensions https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.23/install-php-extensions \
+    && chmod 0755 /usr/local/bin/install-php-extensions \
     && install-php-extensions pcntl pdo_mysql intl zip gd exif ftp bcmath redis \
     && docker-php-ext-enable opcache \
     && apt-get clean \
