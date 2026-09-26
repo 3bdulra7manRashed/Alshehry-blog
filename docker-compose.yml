@@ -2,10 +2,7 @@
 # This file is kept in sync for environments expecting docker-compose.yml.
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: ${COMPOSE_PROJECT_NAME:-alshehri-blog}:latest
+    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
     container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-app
     restart: unless-stopped
     working_dir: /var/www/html
@@ -90,7 +87,7 @@ services:
       start_period: 60s
 
   worker:
-    image: ${COMPOSE_PROJECT_NAME:-alshehri-blog}:latest
+    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
     container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-worker
     restart: unless-stopped
     working_dir: /var/www/html
@@ -149,7 +146,7 @@ services:
       - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-1.0}
 
   scheduler:
-    image: ${COMPOSE_PROJECT_NAME:-alshehri-blog}:latest
+    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
     container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-scheduler
     restart: unless-stopped
     working_dir: /var/www/html

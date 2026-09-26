@@ -3,10 +3,7 @@ services:
   # WEB APPLICATION (NGINX Unit + PHP 8.2)
   # =============================================================================
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: ${COMPOSE_PROJECT_NAME:-alshehri-blog}:latest
+    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
     container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-app
     restart: unless-stopped
     working_dir: /var/www/html
@@ -121,7 +118,7 @@ services:
   # QUEUE WORKER (Background Jobs & Newsletter Dispatch)
   # =============================================================================
   worker:
-    image: ${COMPOSE_PROJECT_NAME:-alshehri-blog}:latest
+    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
     container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-worker
     restart: unless-stopped
     working_dir: /var/www/html
@@ -197,7 +194,7 @@ services:
   # SCHEDULER (Laravel Scheduled Tasks: Daily Sitemap, Maintenance)
   # =============================================================================
   scheduler:
-    image: ${COMPOSE_PROJECT_NAME:-alshehri-blog}:latest
+    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
     container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-scheduler
     restart: unless-stopped
     working_dir: /var/www/html
