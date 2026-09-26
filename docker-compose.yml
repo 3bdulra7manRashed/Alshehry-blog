@@ -81,10 +81,10 @@ services:
 
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/up || exit 1"]
-      interval: 30s
-      timeout: 10s
+      interval: 10s
+      timeout: 5s
       retries: 5
-      start_period: 60s
+      start_period: 30s
 
   worker:
     image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest

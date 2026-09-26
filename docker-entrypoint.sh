@@ -11,6 +11,9 @@ wait_for_db() {
         echo "Waiting for MySQL (${DB_HOST:-mysql}:${DB_PORT:-3306})..."
         until php -r '
             $host = getenv("DB_HOST") ?: "mysql";
+            if ($host === "127.0.0.1" || $host === "localhost") {
+                $host = "mysql";
+            }
             $port = getenv("DB_PORT") ?: "3306";
             $db   = getenv("DB_DATABASE") ?: "alshehri_blog";
             $user = getenv("DB_USERNAME") ?: "laravel";
@@ -22,7 +25,7 @@ wait_for_db() {
                 ]);
                 exit(0);
             } catch (Exception $e) {
-                fwrite(STDERR, "MySQL Connection error: " . $e->getMessage() . "\n");
+                fwrite(STDERR, "MySQL Connection error on {$host}:{$port} (user '{$user}', db '{$db}'): " . $e->getMessage() . "\n");
                 exit(1);
             }
         '; do
@@ -39,6 +42,9 @@ wait_for_migrations() {
         echo "Waiting for database migrations to be applied..."
         until php -r '
             $host = getenv("DB_HOST") ?: "mysql";
+            if ($host === "127.0.0.1" || $host === "localhost") {
+                $host = "mysql";
+            }
             $port = getenv("DB_PORT") ?: "3306";
             $db   = getenv("DB_DATABASE") ?: "alshehri_blog";
             $user = getenv("DB_USERNAME") ?: "laravel";
