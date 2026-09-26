@@ -31,7 +31,7 @@
             "processes": {
                 "max": 10,
                 "spare": 2,
-                "idle": 20
+                "idle_timeout": 20
             }
         }
     }

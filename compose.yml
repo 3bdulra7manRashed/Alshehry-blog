@@ -3,7 +3,9 @@ services:
   # WEB APPLICATION (NGINX Unit + PHP 8.2)
   # =============================================================================
   app:
-    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
@@ -115,7 +117,10 @@ services:
   # QUEUE WORKER (Background Jobs & Newsletter Dispatch)
   # =============================================================================
   worker:
-    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
+    image: ${COMPOSE_PROJECT_NAME:-alshehri-blog}:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
     working_dir: /var/www/html
     command: php artisan queue:work --tries=3 --timeout=90 --sleep=3 --max-jobs=1000 --max-time=3600
