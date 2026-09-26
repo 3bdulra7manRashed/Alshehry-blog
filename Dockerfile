@@ -91,9 +91,6 @@ COPY unit.json /docker-entrypoint.d/unit.json
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-HEALTHCHECK --interval=30s --timeout=10s --retries=5 --start-period=60s \
-    CMD curl -f http://127.0.0.1:8000/up || exit 1
-
 EXPOSE 8000
 
 ENTRYPOINT ["/entrypoint.sh"]

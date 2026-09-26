@@ -119,6 +119,8 @@ services:
     restart: unless-stopped
     working_dir: /var/www/html
     command: php artisan queue:work --tries=3 --timeout=90 --sleep=3 --max-jobs=1000 --max-time=3600
+    healthcheck:
+      test: ["NONE"]
     volumes:
       - storage:/var/www/html/storage
     depends_on:
