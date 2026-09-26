@@ -26,6 +26,9 @@ RUN if [ -n "$GITHUB_TOKEN" ]; then composer config --global github-oauth.github
 # =============================================================================
 FROM unit:php8.2 AS runtime
 
+# Restrict compilation to a single thread to prevent memory spikes (OOM exit 255)
+ENV MAKEFLAGS="-j1"
+
 # Install PHP extensions and required libraries
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
