@@ -4,7 +4,6 @@ services:
   # =============================================================================
   app:
     image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
-    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-app
     restart: unless-stopped
     working_dir: /var/www/html
     expose:
@@ -37,12 +36,12 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-warning}
 
       # Database
-      - DB_CONNECTION=${DB_CONNECTION:-mysql}
-      - DB_HOST=${DB_HOST:-mysql}
-      - DB_PORT=${DB_PORT:-3306}
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
       - DB_DATABASE=${DB_DATABASE:-alshehri_blog}
       - DB_USERNAME=${DB_USERNAME:-laravel}
-      - DB_PASSWORD=${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
+      - DB_PASSWORD=${SERVICE_PASSWORD_MYSQLROOT}
 
       # Cache, Session, Queue & Filesystem
       - CACHE_DRIVER=${CACHE_DRIVER:-file}
@@ -111,15 +110,14 @@ services:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/up || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 30s
+      retries: 10
+      start_period: 120s
 
   # =============================================================================
   # QUEUE WORKER (Background Jobs & Newsletter Dispatch)
   # =============================================================================
   worker:
     image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
-    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-worker
     restart: unless-stopped
     working_dir: /var/www/html
     command: php artisan queue:work --tries=3 --timeout=90 --sleep=3 --max-jobs=1000 --max-time=3600
@@ -140,12 +138,12 @@ services:
       - DELETED_USER_EMAIL=${DELETED_USER_EMAIL:-deleted-user@local}
 
       # Database
-      - DB_CONNECTION=${DB_CONNECTION:-mysql}
-      - DB_HOST=${DB_HOST:-mysql}
-      - DB_PORT=${DB_PORT:-3306}
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
       - DB_DATABASE=${DB_DATABASE:-alshehri_blog}
       - DB_USERNAME=${DB_USERNAME:-laravel}
-      - DB_PASSWORD=${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
+      - DB_PASSWORD=${SERVICE_PASSWORD_MYSQLROOT}
 
       # Queue & Cache
       - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
@@ -195,7 +193,6 @@ services:
   # =============================================================================
   scheduler:
     image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
-    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-scheduler
     restart: unless-stopped
     working_dir: /var/www/html
     command: php artisan schedule:work
@@ -216,12 +213,12 @@ services:
       - DELETED_USER_EMAIL=${DELETED_USER_EMAIL:-deleted-user@local}
 
       # Database
-      - DB_CONNECTION=${DB_CONNECTION:-mysql}
-      - DB_HOST=${DB_HOST:-mysql}
-      - DB_PORT=${DB_PORT:-3306}
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
       - DB_DATABASE=${DB_DATABASE:-alshehri_blog}
       - DB_USERNAME=${DB_USERNAME:-laravel}
-      - DB_PASSWORD=${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
+      - DB_PASSWORD=${SERVICE_PASSWORD_MYSQLROOT}
 
       # Cache & Queue
       - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
@@ -233,7 +230,6 @@ services:
   # =============================================================================
   mysql:
     image: mysql:8.0
-    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-mysql
     restart: unless-stopped
     command:
       - --character-set-server=utf8mb4
@@ -241,9 +237,9 @@ services:
       - --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-alshehri_blog}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
+      MYSQL_ROOT_PASSWORD: ${SERVICE_PASSWORD_MYSQLROOT}
       MYSQL_USER: ${DB_USERNAME:-laravel}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
+      MYSQL_PASSWORD: ${SERVICE_PASSWORD_MYSQLROOT}
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -256,11 +252,12 @@ services:
           "127.0.0.1",
           "-u",
           "root",
-          "-p$${MYSQL_ROOT_PASSWORD}",
+          "-p$$MYSQL_ROOT_PASSWORD",
         ]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
 volumes:
   mysql_data:
