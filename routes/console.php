@@ -12,3 +12,9 @@ Artisan::command('inspire', function () {
 Schedule::command('sitemap:generate')->dailyAt('06:00')
     ->appendOutputTo(storage_path('logs/sitemap.log'))
     ->description('Generate sitemap.xml for SEO');
+
+// Process queued jobs (like newsletter campaigns) every minute
+Schedule::command('queue:work --stop-when-empty --max-time=50')
+    ->everyMinute()
+    ->withoutOverlapping()
+    ->description('Process background queue jobs');
