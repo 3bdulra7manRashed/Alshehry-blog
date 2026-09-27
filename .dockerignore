@@ -63,6 +63,8 @@ vite.config.js.timestamp-*
 corrupted_*.txt
 fix_*.cjs
 encoding_repair_backup
+deploy-log*
+2026-*
 Docker Update
 docker
 

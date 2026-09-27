@@ -3,12 +3,9 @@ services:
   # WEB APPLICATION (NGINX Unit + PHP 8.2)
   # =============================================================================
   app:
-    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
-    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-app
+    image: ghcr.io/ibrahim317/alshehry-blog:latest
     restart: unless-stopped
     working_dir: /var/www/html
-    expose:
-      - 8000
     volumes:
       - storage:/var/www/html/storage
     depends_on:
@@ -37,12 +34,12 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-warning}
 
       # Database
-      - DB_CONNECTION=${DB_CONNECTION:-mysql}
-      - DB_HOST=${DB_HOST:-mysql}
-      - DB_PORT=${DB_PORT:-3306}
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
       - DB_DATABASE=${DB_DATABASE:-alshehri_blog}
       - DB_USERNAME=${DB_USERNAME:-laravel}
-      - DB_PASSWORD=${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
+      - DB_PASSWORD=${SERVICE_PASSWORD_MYSQLROOT}
 
       # Cache, Session, Queue & Filesystem
       - CACHE_DRIVER=${CACHE_DRIVER:-file}
@@ -111,129 +108,15 @@ services:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/up || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 30s
+      retries: 10
+      start_period: 120s
 
-  # =============================================================================
-  # QUEUE WORKER (Background Jobs & Newsletter Dispatch)
-  # =============================================================================
-  worker:
-    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
-    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-worker
-    restart: unless-stopped
-    working_dir: /var/www/html
-    command: php artisan queue:work --tries=3 --timeout=90 --sleep=3 --max-jobs=1000 --max-time=3600
-    volumes:
-      - storage:/var/www/html/storage
-    depends_on:
-      mysql:
-        condition: service_healthy
-      app:
-        condition: service_healthy
-
-    environment:
-      - APP_NAME=${APP_NAME:-مدونة صالح الشهري}
-      - APP_ENV=${APP_ENV:-production}
-      - APP_KEY=${APP_KEY}
-      - APP_URL=${APP_URL:-https://${SERVICE_FQDN_APP:-localhost}}
-      - APP_TIMEZONE=${APP_TIMEZONE:-Asia/Riyadh}
-      - DELETED_USER_EMAIL=${DELETED_USER_EMAIL:-deleted-user@local}
-
-      # Database
-      - DB_CONNECTION=${DB_CONNECTION:-mysql}
-      - DB_HOST=${DB_HOST:-mysql}
-      - DB_PORT=${DB_PORT:-3306}
-      - DB_DATABASE=${DB_DATABASE:-alshehri_blog}
-      - DB_USERNAME=${DB_USERNAME:-laravel}
-      - DB_PASSWORD=${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
-
-      # Queue & Cache
-      - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
-      - CACHE_DRIVER=${CACHE_DRIVER:-file}
-      - FILESYSTEM_DISK=${FILESYSTEM_DISK:-public}
-
-      # Redis (Optional)
-      - REDIS_HOST=${REDIS_HOST:-}
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
-      - REDIS_PORT=${REDIS_PORT:-6379}
-
-      # System Mail
-      - MAIL_MAILER=${MAIL_MAILER:-smtp}
-      - MAIL_HOST=${MAIL_HOST:-}
-      - MAIL_PORT=${MAIL_PORT:-587}
-      - MAIL_USERNAME=${MAIL_USERNAME:-}
-      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
-      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
-      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-no-reply@alshehrysaleh.com}
-      - MAIL_FROM_NAME=${MAIL_FROM_NAME:-${APP_NAME:-مدونة صالح الشهري}}
-
-      # Newsletter Mail
-      - NEWSLETTER_MAILER=${NEWSLETTER_MAILER:-newsletter}
-      - NEWSLETTER_MAIL_HOST=${NEWSLETTER_MAIL_HOST:-}
-      - NEWSLETTER_MAIL_PORT=${NEWSLETTER_MAIL_PORT:-587}
-      - NEWSLETTER_MAIL_USERNAME=${NEWSLETTER_MAIL_USERNAME:-}
-      - NEWSLETTER_MAIL_PASSWORD=${NEWSLETTER_MAIL_PASSWORD:-}
-      - NEWSLETTER_MAIL_ENCRYPTION=${NEWSLETTER_MAIL_ENCRYPTION:-tls}
-      - NEWSLETTER_MAIL_FROM_ADDRESS=${NEWSLETTER_MAIL_FROM_ADDRESS:-newsletter@alshehrysaleh.com}
-      - NEWSLETTER_MAIL_FROM_NAME=${NEWSLETTER_MAIL_FROM_NAME:-${APP_NAME:-مدونة صالح الشهري}}
-
-      # AWS S3 (Media processing in background)
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
-      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
-      - AWS_BUCKET=${AWS_BUCKET:-}
-      - AWS_URL=${AWS_URL:-}
-      - AWS_ENDPOINT=${AWS_ENDPOINT:-}
-      - AWS_USE_PATH_STYLE_ENDPOINT=${AWS_USE_PATH_STYLE_ENDPOINT:-false}
-
-      # Sentry Error Monitoring (for background jobs)
-      - SENTRY_LARAVEL_DSN=${SENTRY_LARAVEL_DSN:-https://d1f3276a2d07c1398870f7050b5df419@o4512150994681856.ingest.de.sentry.io/4512151049076816}
-      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-1.0}
-
-  # =============================================================================
-  # SCHEDULER (Laravel Scheduled Tasks: Daily Sitemap, Maintenance)
-  # =============================================================================
-  scheduler:
-    image: ghcr.io/3bdulra7manrashed/alshehry-blog:latest
-    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-scheduler
-    restart: unless-stopped
-    working_dir: /var/www/html
-    command: php artisan schedule:work
-    volumes:
-      - storage:/var/www/html/storage
-    depends_on:
-      mysql:
-        condition: service_healthy
-      app:
-        condition: service_healthy
-
-    environment:
-      - APP_NAME=${APP_NAME:-مدونة صالح الشهري}
-      - APP_ENV=${APP_ENV:-production}
-      - APP_KEY=${APP_KEY}
-      - APP_URL=${APP_URL:-https://${SERVICE_FQDN_APP:-localhost}}
-      - APP_TIMEZONE=${APP_TIMEZONE:-Asia/Riyadh}
-      - DELETED_USER_EMAIL=${DELETED_USER_EMAIL:-deleted-user@local}
-
-      # Database
-      - DB_CONNECTION=${DB_CONNECTION:-mysql}
-      - DB_HOST=${DB_HOST:-mysql}
-      - DB_PORT=${DB_PORT:-3306}
-      - DB_DATABASE=${DB_DATABASE:-alshehri_blog}
-      - DB_USERNAME=${DB_USERNAME:-laravel}
-      - DB_PASSWORD=${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
-
-      # Cache & Queue
-      - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
-      - CACHE_DRIVER=${CACHE_DRIVER:-file}
-      - FILESYSTEM_DISK=${FILESYSTEM_DISK:-public}
 
   # =============================================================================
   # MYSQL DATABASE
   # =============================================================================
   mysql:
     image: mysql:8.0
-    container_name: ${COMPOSE_PROJECT_NAME:-alshehri-blog}-mysql
     restart: unless-stopped
     command:
       - --character-set-server=utf8mb4
@@ -241,9 +124,9 @@ services:
       - --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-alshehri_blog}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
+      MYSQL_ROOT_PASSWORD: ${SERVICE_PASSWORD_MYSQLROOT}
       MYSQL_USER: ${DB_USERNAME:-laravel}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-${SERVICE_PASSWORD_MYSQLROOT:-secret}}
+      MYSQL_PASSWORD: ${SERVICE_PASSWORD_MYSQLROOT}
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -256,11 +139,12 @@ services:
           "127.0.0.1",
           "-u",
           "root",
-          "-p$${MYSQL_ROOT_PASSWORD}",
+          "-p$$MYSQL_ROOT_PASSWORD",
         ]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
 volumes:
   mysql_data:
